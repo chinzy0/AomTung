@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/icon_home"
+        android:title="หน้าหลัก"
+        android:icon="@drawable/home"/>
+
+    <item
+        android:id="@+id/icon_income"
+        android:title="รายรับ - รายจ่าย"
+        android:icon="@drawable/income"
+        />
+
+    <item
+        android:title=""
+        android:enabled="false"
+        />
+
+    <item
+        android:id="@+id/icon_autosave"
+        android:title="บันทึกอัตโนมัติ"
+        android:icon="@drawable/auto" />
+    <item
+        android:id="@+id/icon_profile"
+        android:title="โปรไฟล์"
+        android:icon="@drawable/profile__2_" />
+</menu>

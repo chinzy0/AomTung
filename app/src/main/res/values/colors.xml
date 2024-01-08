@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray">#FF888888</color>
+    <color name="blue">#FF0000FF</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="green">#2BC66C</color>
+    <color name="red">#FF0000</color>
+    <color name="letter">#F97171</color>
+    <color name="button">#FF8686</color>
+    <color name="button_disable">#C4C4C4</color>
+    <color name="sure_pinCode">#292D33</color>
+    <color name="alert_pin">#949494</color>
+    <color name="ok">#0589BD</color>
+    <color name="income">#81C8E4</color>
+    <color name="expends">#FF8686</color>
+    <color name="appbarListAdd">#373D45</color>
+    <color name="bg">#F4F4F4</color>
+    <color name="b">#515151</color>
+    <color name="income_chart_2">#05658B</color>
+    <color name="income_chart_1">#B4E2F4</color>
+    <color name="expends_chart_2">#F56C6C</color>
+    <color name="expends_chart_1">#F8ED75</color>
+
+</resources>

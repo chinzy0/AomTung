@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">AomTung</string>
+    <string name="type_phone">+66</string>
+    <string name="hint_phone">063xxxxxxx</string>
+    <string name="get_otp">รับรหัส OTP</string>
+    <string name="submit">ยืนยัน</string>
+    <string name="hint_name">ตัวอย่าง : หน้าตาดี ทรัพย์จาง </string>
+    <string name="input_name">กรอกชื่อของคุณ</string>
+    <string name="skip">ข้าม</string>
+    <string name="input_phone">ระบุหมายเลขโทรศัพท์</string>
+    <string name="input_otp">ระบุรหัส OTP ที่ได้รับจากเบอร์</string>
+    <string name="re_input_otp">กรุณากรอกภายใน</string>
+    <string name="re_input_otp_second">วินาที</string>
+    <string name="second">  00:58</string>
+    <string name="set_pinCode">ตั้งรหัส PIN</string>
+    <string name="ConfirmPincode">ยืนยัน PIN</string>
+    <string name="FOrgotPincode">ลืม PIN </string>
+    <string name="pincodeDidntMatch">PIN  ไม่ถูกต้อง โปรดลองอีกครั้ง</string>
+    <string name="alert">แจ้งเตือน</string>
+    <string name="save">บันทึก</string>
+    <string name="not_found_data">ยังไม่มีข้อมูล</string>
+    <string name="pastList">รายการย้อนหลัง</string>
+    <string name="otp_dint_match">รหัส OTP ของคุณไม่ถูกต้อง </string>
+    <string name="okay">OK</string>
+    <string name="balance">คงเหลือ (บาท)</string>
+    <string name="sum">ยอดรวม</string>
+    <string name="balance_money">0.00</string>
+    <string name="income_bath">รายรับ (บาท)</string>
+    <string name="income">รายรับ</string>
+    <string name="expends_bath">รายจ่าย (บาท)</string>
+    <string name="expends">รายจ่าย</string>
+    <string name="addList">เพิ่มรายการ</string>
+    <string name="b">฿</string>
+    <string name="wellcome">ยินดีต้อนรับ !</string>
+    <string name="you">คุณ</string>
+    <string name="digits">0123456789,abcdefghijklmnopqrstuvwxyz,ก ข ฃ ค ฅ ฆ ง จ ฉ ช ซ ฌ ญ ฎ ฏ ฐ ฑ ฒ ณ ด ต ถ ท ธ น บ ป ผ ฝ พ ฟ ภ ม ย ร ล ว ศ ษ ส ห ฬ อ ฮ,ะ  ั  ็ า  ิ ่ ่ ่ ํ ุ ู ์ เ ใ ไ โ อ ย ว ฤ ฤๅ ฦ ฦๅ </string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
