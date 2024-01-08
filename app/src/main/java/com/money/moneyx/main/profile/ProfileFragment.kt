@@ -29,6 +29,7 @@ class ProfileFragment : Fragment() {
             container,
             false
         )
+
         return binding.root
     }
 
