@@ -12,10 +12,12 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.money.moneyx.R
+import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.ActivityLoginBinding
 import com.money.moneyx.login.otpScreen.OtpScreenActivity
 import com.money.moneyx.viewModel.TestViewModel
@@ -65,5 +67,7 @@ class LoginActivity : AppCompatActivity() {
             }
         })
     }
+
+
 
 }

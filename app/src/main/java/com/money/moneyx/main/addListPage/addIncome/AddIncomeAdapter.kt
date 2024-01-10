@@ -31,7 +31,7 @@ class AddIncomeAdapter(
             holder.binding.underline.visibility = View.GONE
         }
         holder.itemView.setOnClickListener{
-            callback.invoke(addIncomeModel[position].title,)
+            callback.invoke(addIncomeModel[position].title)
         }
     }
 

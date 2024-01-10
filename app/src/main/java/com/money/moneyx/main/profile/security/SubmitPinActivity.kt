@@ -3,11 +3,13 @@ package com.money.moneyx.main.profile.security
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -42,6 +44,8 @@ class SubmitPinActivity : AppCompatActivity() {
         setEventClick()
         pinView()
         onBack()
+        binding.textView2.paintFlags =  Paint.UNDERLINE_TEXT_FLAG
+
     }
 
     private fun makeKeyBoard() {
@@ -132,6 +136,7 @@ class SubmitPinActivity : AppCompatActivity() {
         dialog.setCanceledOnTouchOutside(false)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dailog_wrong_pincode)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialog.show()

@@ -80,5 +80,7 @@ dependencies {
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     //bio
     implementation ("androidx.biometric:biometric-ktx:1.2.0-alpha05")
+    //datePicker
+    implementation ("com.github.commandiron:WheelPickerCompose:1.1.11")
 
 }

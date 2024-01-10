@@ -40,7 +40,7 @@ class PasswordAndSecurityActivity : AppCompatActivity() {
             if (isChecked) {
                 sharePreferences.saveString("FINGERPRINT","ON")
             }else{
-                sharePreferences.saveString("FACEID","OFF")
+                sharePreferences.saveString("FINGERPRINT","OFF")
 
             }
         }
@@ -48,10 +48,11 @@ class PasswordAndSecurityActivity : AppCompatActivity() {
     }
     private fun setSwitchesFromPreferences() {
         val isFingerprintEnabled = sharePreferences.getString("FINGERPRINT", "") == "ON"
-        val isFaceIdEnabled = sharePreferences.getString("FACEID", "") == "ON"
 
         binding.switchFingerprint.isChecked = isFingerprintEnabled
     }
+
+
     private fun checkDeviceHasBiometric() {
         val biometricManager = BiometricManager.from(this)
         when (biometricManager.canAuthenticate()) {
@@ -72,6 +73,8 @@ class PasswordAndSecurityActivity : AppCompatActivity() {
 
         }
     }
+
+
 
 
 

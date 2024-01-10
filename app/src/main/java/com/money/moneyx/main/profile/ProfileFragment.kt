@@ -95,7 +95,9 @@ class ProfileFragment : Fragment() {
         dialog.setCanceledOnTouchOutside(false)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.exit_dialog)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
 
         dialog.show()
         var cancel = dialog.findViewById<ConstraintLayout>(R.id.cancle_exit_button)

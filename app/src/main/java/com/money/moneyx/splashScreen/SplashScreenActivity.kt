@@ -16,7 +16,6 @@ import com.money.moneyx.view.MainActivity
 class SplashScreenActivity : AppCompatActivity() {
     private  lateinit var binding: ActivitySplashScreenBinding
     private var savedPin = ""
-    private var face = ""
     private var status = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +25,6 @@ class SplashScreenActivity : AppCompatActivity() {
         val preferences = Preference.getInstance(this)
 
         savedPin = preferences.getString("PINCODE","")
-        face = preferences.getString("FACEID","")
-        Log.i("asdasdasd",face)
 
         check()
 
@@ -53,4 +50,6 @@ class SplashScreenActivity : AppCompatActivity() {
             status = true
         }
     }
+
+
 }

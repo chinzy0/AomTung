@@ -12,8 +12,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -35,6 +38,8 @@ class EnterPinCodeActivity : AppCompatActivity() {
     private lateinit var keyboardAdapter: CustomKeyboardAdapter
     private var listKeyboard = ArrayList<CustomKeyboardModel>()
     private var savedPin = ""
+    private var fingerprint = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +50,9 @@ class EnterPinCodeActivity : AppCompatActivity() {
         binding.loginViewModel = viewModel
         val preferences = Preference.getInstance(this)
         savedPin = preferences.getString("PINCODE","")
-
+        fingerprint = preferences.getString("FINGERPRINT","")
         setEventClick()
+        checkDeviceHasBiometric()
 
 
         listKeyboard.add(CustomKeyboardModel("1",R.drawable.delete))
@@ -144,12 +150,65 @@ class EnterPinCodeActivity : AppCompatActivity() {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dailog_wrong_pincode)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.show()
         var ok = dialog.findViewById<TextView>(R.id.okDialog)
         ok.setOnClickListener {
             dialog.dismiss()
         }
+    }
 
+    private fun checkDeviceHasBiometric() {
+        val biometricManager = BiometricManager.from(this)
+        when (biometricManager.canAuthenticate()) {
+            BiometricManager.BIOMETRIC_SUCCESS ->{
+                Log.d("MY_APP_TAG", "App can authenticate using biometrics.")
+                checkBiometric()
+            }
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
+                Log.e("MY_APP_TAG", "No biometric features available on this device.")
+
+            }
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
+                Log.e("MY_APP_TAG", "Biometric features are currently unavailable.")
+
+            }
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+
+            }
+
+        }
+    }
+
+    private fun checkBiometric(){
+        if (fingerprint == "ON"){
+            showBiometricPrompt()
+        }
+    }
+
+    private fun showBiometricPrompt() {
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("ยืนยันตัวตนด้วยลายนิ้วมือ")
+            .setSubtitle("โปรดสแกนลายนิ้วมือเพื่อเข้าสู่ระบบ")
+            .setNegativeButtonText("ใช้รหัส PIN แทน")
+            .build()
+
+        val biometricPrompt = BiometricPrompt(
+            this,
+            ContextCompat.getMainExecutor(this),
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    val preferences = Preference.getInstance(this@EnterPinCodeActivity)
+                    val savedPin = preferences.getString("PINCODE", "")
+                    binding.PinView.setText(savedPin)
+                }
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+
+                }
+            })
+
+        biometricPrompt.authenticate(promptInfo)
     }
 }

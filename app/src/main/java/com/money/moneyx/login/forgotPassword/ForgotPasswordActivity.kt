@@ -14,6 +14,7 @@ import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
@@ -166,6 +167,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
         dialog.setCanceledOnTouchOutside(false)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.alert_otp)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialog.show()
