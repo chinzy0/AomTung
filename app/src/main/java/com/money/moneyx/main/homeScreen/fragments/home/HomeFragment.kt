@@ -40,6 +40,21 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_home, container, false)
+
+
+        fragmentSetup()
+        swapTab()
+        changeColor()
+
+
+        return binding.root
+
+
+
+
+
+    }
+    private fun fragmentSetup(){
         val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
         fragment.clear()
         fragment.add(IncomeReportFragment())
@@ -50,11 +65,15 @@ class HomeFragment : Fragment() {
 
         binding.report.adapter = mPageAdapter
         binding.report.isUserInputEnabled = false
-
+    }
+    private fun swapTab(){
         val tabTitles = listOf("รายรับ", "รายจ่าย")
         TabLayoutMediator(binding.tabLayout, binding.report) { tab, position ->
             tab.text = tabTitles[position]
         }.attach()
+    }
+
+    private fun changeColor(){
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab?.position == 1) {
@@ -68,8 +87,6 @@ class HomeFragment : Fragment() {
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
         })
-
-        return binding.root
     }
 
 

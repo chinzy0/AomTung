@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/bg"
+    >
 
     <data>
         <variable
@@ -12,9 +14,45 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg"
-        tools:context=".main.addListPage.addIncome.AddIncomeFragment">
+        tools:context=".main.addListPage.calculator.CalculatorActivity">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> reportViewModel.onBack()}"
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="20dp"
+                android:src="@drawable/chevron_left_lg"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="6dp"
+                android:fontFamily="@font/sukhumvit_set_text"
+                android:text="@string/calculator"
+                android:textColor="@color/appbarListAdd"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView6"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/imageView6" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout5"
@@ -23,9 +61,9 @@
             android:layout_marginHorizontal="17dp"
             android:layout_marginTop="24dp"
             android:background="@drawable/border_home"
-            app:layout_constraintEnd_toStartOf="@+id/calculateBtn"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout9">
 
             <TextView
                 android:id="@+id/textView11"
@@ -61,57 +99,19 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/calculateBtn"
-            android:layout_width="47dp"
-            android:layout_height="51dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/border_radius"
-            android:backgroundTint="#FF8686"
-            android:onClick="@{() -> reportViewModel.calculateClick()}"
-            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout5"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/constraintLayout5">
-
-            <ImageView
-                android:id="@+id/imageView10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/calculate"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/RCVincome"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="42dp"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/buttonAddIncome"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
-            tools:listitem="@layout/list_information" />
-
         <Button
-            android:id="@+id/buttonAddIncome"
+            android:id="@+id/button2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/save"
-            android:textSize="22sp"
-            android:textColor="@color/white"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/button_save"
-            android:backgroundTint="@color/button_disable"
-            android:enabled="false"
-            android:fontFamily="@font/sukhumvit_set_text"
+            android:text="Button"
+            android:onClick="@{()-> reportViewModel.btn()}"
+            android:layout_marginHorizontal="40dp"
+            android:layout_marginBottom="100dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

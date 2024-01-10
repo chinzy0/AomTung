@@ -10,8 +10,7 @@ import com.money.moneyx.R
 import com.money.moneyx.databinding.ListInformationBinding
 
 class AddIncomeAdapter(
-    private val addIncomeModel: ArrayList<AddIncomeModel>,
-    function: () -> Unit,) :RecyclerView.Adapter<AddIncomeViewAdapter>(){
+    private val addIncomeModel: ArrayList<AddIncomeModel>, private val callback: (String) -> Unit) : RecyclerView.Adapter<AddIncomeViewAdapter>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddIncomeViewAdapter {
        val list : ListInformationBinding = DataBindingUtil.inflate(
            LayoutInflater.from(parent.context),
@@ -31,8 +30,9 @@ class AddIncomeAdapter(
         if (addIncomeModel.size-1 == position){
             holder.binding.underline.visibility = View.GONE
         }
-        val x = position
-        Log.i("asdadsds",x.toString())
+        holder.itemView.setOnClickListener{
+            callback.invoke(addIncomeModel[position].title,)
+        }
     }
 
 }

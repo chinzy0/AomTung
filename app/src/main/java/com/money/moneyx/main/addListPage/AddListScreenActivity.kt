@@ -20,22 +20,28 @@ class AddListScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddListScreenBinding.inflate(layoutInflater)
-        val fragmentManager: FragmentManager = supportFragmentManager
-        fragment.clear()
-        fragment.add(AddIncomeFragment())
-        fragment.add(AddExpendsFragment())
+        setContentView(binding.root)
+//        if รายรับ
+//        mPageAdapter = ViewPagerAdapter(AddIncomeFragment(), lifecycle, fragment)
+//        else
+//        AddExpendsFragment()
 
-        mPageAdapter = ViewPagerAdapter(fragmentManager, lifecycle, fragment)
+        tabLayout()
+        changeTab()
+        changeColorTab()
+        onBack()
 
 
-        binding.ListAddPage.adapter = mPageAdapter
-        binding.ListAddPage.isUserInputEnabled = false
-
+    }
+    private fun changeTab(){
         val tabTitles = listOf("รายรับ", "รายจ่าย")
         TabLayoutMediator(binding.tabLayoutListAdd, binding.ListAddPage) { tab, position ->
             tab.text = tabTitles[position]
         }.attach()
 
+    }
+
+    private fun changeColorTab(){
         binding.tabLayoutListAdd.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab?.position == 1) {
@@ -49,9 +55,20 @@ class AddListScreenActivity : AppCompatActivity() {
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
         })
+    }
+    private fun tabLayout(){
+        val fragmentManager: FragmentManager = supportFragmentManager
+        fragment.clear()
+        fragment.add(AddIncomeFragment())
+        fragment.add(AddExpendsFragment())
+        mPageAdapter = ViewPagerAdapter(fragmentManager, lifecycle, fragment)
+        binding.ListAddPage.adapter = mPageAdapter
+        binding.ListAddPage.isUserInputEnabled = false
+    }
+
+    private fun onBack(){
         binding.appbarAddListPage.imageView6.setOnClickListener{
             onBackPressed()
         }
-        setContentView(binding.root)
     }
 }

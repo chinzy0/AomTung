@@ -74,9 +74,11 @@ dependencies {
     implementation ("io.github.chaosleung:pinview:1.4.4")
     //chart
     implementation ("com.diogobernardino:williamchart:3.10.1")
-    implementation ("androidx.biometric:biometric-ktx:1.2.0-alpha05")
     implementation ("com.androidplot:androidplot-core:1.5.10")
     implementation ("ir.mahozad.android:pie-chart:0.7.0")
     //circle
     implementation ("de.hdodenhof:circleimageview:3.1.0")
+    //bio
+    implementation ("androidx.biometric:biometric-ktx:1.2.0-alpha05")
+
 }

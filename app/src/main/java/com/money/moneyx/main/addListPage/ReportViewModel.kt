@@ -13,5 +13,11 @@ class ReportViewModel : ViewModel() {
     fun calculateClick() {
         onClick.value = "calculateClick"
     }
+    fun onBack() {
+        onClick.value = "onBack"
+    }
+    fun btn() {
+        onClick.value = "btn"
+    }
 
 }

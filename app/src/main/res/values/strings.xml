@@ -4,6 +4,10 @@
     <string name="hint_phone">063xxxxxxx</string>
     <string name="get_otp">รับรหัส OTP</string>
     <string name="submit">ยืนยัน</string>
+    <string name="cancle">ยกเลิก</string>
+    <string name="fingerprint">ลายนิ้วมือ</string>
+    <string name="faceId">แสกนใบหน้า</string>
+    <string name="changePassword">เปลี่ยนรหัสผ่าน </string>
     <string name="hint_name">ตัวอย่าง : หน้าตาดี ทรัพย์จาง </string>
     <string name="input_name">กรอกชื่อของคุณ</string>
     <string name="skip">ข้าม</string>
@@ -14,9 +18,10 @@
     <string name="second">  00:58</string>
     <string name="set_pinCode">ตั้งรหัส PIN</string>
     <string name="ConfirmPincode">ยืนยัน PIN</string>
-    <string name="FOrgotPincode">ลืม PIN </string>
+    <string name="FOrgotPincode">ลืมรหัสผ่าน </string>
     <string name="pincodeDidntMatch">PIN  ไม่ถูกต้อง โปรดลองอีกครั้ง</string>
     <string name="alert">แจ้งเตือน</string>
+    <string name="signOut">คุณต้องการออกจากระบบ ?</string>
     <string name="save">บันทึก</string>
     <string name="not_found_data">ยังไม่มีข้อมูล</string>
     <string name="pastList">รายการย้อนหลัง</string>
@@ -30,7 +35,9 @@
     <string name="expends_bath">รายจ่าย (บาท)</string>
     <string name="expends">รายจ่าย</string>
     <string name="addList">เพิ่มรายการ</string>
+    <string name="calculator">เครื่องคิดเลข</string>
     <string name="b">฿</string>
+    <string name="securityAndPassword">รหัสผ่านและความปลอดภัย</string>
     <string name="wellcome">ยินดีต้อนรับ !</string>
     <string name="you">คุณ</string>
     <string name="digits">0123456789,abcdefghijklmnopqrstuvwxyz,ก ข ฃ ค ฅ ฆ ง จ ฉ ช ซ ฌ ญ ฎ ฏ ฐ ฑ ฒ ณ ด ต ถ ท ธ น บ ป ผ ฝ พ ฟ ภ ม ย ร ล ว ศ ษ ส ห ฬ อ ฮ,ะ  ั  ็ า  ิ ่ ่ ่ ํ ุ ู ์ เ ใ ไ โ อ ย ว ฤ ฤๅ ฦ ฦๅ </string>
