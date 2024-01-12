@@ -116,6 +116,8 @@
                 android:hint="@string/note_hint"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:textSize="18sp"
+                android:textColor="@color/appbarListAdd"
                 android:maxLength="50"
                 android:paddingVertical="30dp"
                 android:layout_margin="5dp"

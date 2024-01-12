@@ -1,13 +1,28 @@
 package com.money.moneyx.main.addListPage.addExpends
 
 import android.app.Activity
+import android.app.DatePickerDialog
+import android.app.Dialog
+import android.app.TimePickerDialog
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +33,10 @@ import com.money.moneyx.main.addListPage.ReportViewModel
 import com.money.moneyx.main.addListPage.addIncome.AddIncomeAdapter
 import com.money.moneyx.main.addListPage.addIncome.AddIncomeModel
 import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
+import com.money.moneyx.main.addListPage.category.CategoryExpendsActivity
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 class AddExpendsFragment : Fragment() {
@@ -25,6 +44,7 @@ class AddExpendsFragment : Fragment() {
     private lateinit var addIncomeAdapter: AddIncomeAdapter
     private var addIncomeModel = ArrayList<AddIncomeModel>()
     private lateinit var viewModel: ReportViewModel
+    private val date = getCurrentDateTime()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,28 +59,14 @@ class AddExpendsFragment : Fragment() {
         viewModel = ViewModelProvider(this)[ReportViewModel::class.java]
         binding.reportViewModel = viewModel
 
-        addIncomeModel.add(AddIncomeModel("วันที่ เวลา",R.drawable.calendar,"22/12/2023,11:17"))
-        addIncomeModel.add(AddIncomeModel("ประเภท",R.drawable.type,"เลือก"))
-        addIncomeModel.add(AddIncomeModel("หมวดหมู่",R.drawable.category,"เลือก"))
-        addIncomeModel.add(AddIncomeModel("โน้ต",R.drawable.note_,"เลือก"))
-        addIncomeModel.add(
-            AddIncomeModel("บันทึกอัตโนมัติ",R.drawable.autosave,"เลือก" +
-                "")
-        )
-
-        addIncomeAdapter = AddIncomeAdapter(addIncomeModel) {
-
-
-        }
-        binding.RCVincome.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = addIncomeAdapter
-            addIncomeAdapter.notifyDataSetChanged()
-        }
+        setDataAdapter()
+        addAdapter()
         setEventClick()
 
 
-      return binding.root
+
+
+        return binding.root
     }
 
     private fun setEventClick() {
@@ -74,6 +80,7 @@ class AddExpendsFragment : Fragment() {
             }
         })
     }
+
     private val resultActivityAppointment =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -84,5 +91,199 @@ class AddExpendsFragment : Fragment() {
                 }
             }
         }
+    private fun setDataAdapter() {
+        addIncomeModel.add(AddIncomeModel("วันที่ เวลา",R.drawable.calendar,date))
+        addIncomeModel.add(AddIncomeModel("ประเภท",R.drawable.type,"เลือก"))
+        addIncomeModel.add(AddIncomeModel("หมวดหมู่",R.drawable.category,"เลือก"))
+        addIncomeModel.add(AddIncomeModel("โน้ต",R.drawable.note_,"เลือก"))
+        addIncomeModel.add(AddIncomeModel("บันทึกอัตโนมัติ",R.drawable.autosave_icon,"เลือก" ))
+    }
+    private fun addAdapter(){
+        addIncomeAdapter = AddIncomeAdapter(addIncomeModel) {
+            Log.i("asdsadasd",it)
+            when(it) {
+                "วันที่ เวลา" -> {
+                    dateTime()
+                }
+                "ประเภท" -> {
+                    selectType()
+                }
+                "หมวดหมู่" -> {
+                    selectCategory()
+                }
+                "โน้ต" -> {
+                    showNote()
+                }
+                "บันทึกอัตโนมัติ" -> {
+                    autoSave()
+                }
+            }
+        }
+        binding.RCVincome.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = addIncomeAdapter
+            addIncomeAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private val getCategory =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.let { data ->
+                    val categorySelected = data.getStringExtra("Category").toString()
+                    Log.i("categorySelected",categorySelected)
+                    addIncomeModel.clear()
+                    addIncomeModel.add(AddIncomeModel("วันที่ เวลา",R.drawable.calendar,date))
+                    addIncomeModel.add(AddIncomeModel("ประเภท",R.drawable.type,"เลือก"))
+                    addIncomeModel.add(AddIncomeModel("หมวดหมู่",R.drawable.category,categorySelected))
+                    addIncomeModel.add(AddIncomeModel("โน้ต",R.drawable.note_,"เลือก"))
+                    addIncomeModel.add(AddIncomeModel("บันทึกอัตโนมัติ",R.drawable.autosave_icon,"เลือก" ))
+                    addAdapter()
+
+
+
+                }
+            }
+        }
+    private fun showNote(){
+        //โน๊ต
+        val dialog = Dialog(requireActivity())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.addlist_note)
+        dialog.show()
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setGravity(Gravity.BOTTOM)
+
+        var note = dialog.findViewById<EditText>(R.id.textNote)
+        var counter = dialog.findViewById<TextView>(R.id.textCount)
+        var button = dialog.findViewById<Button>(R.id.buttonSave)
+        val colorButtonEnable = ContextCompat.getColor(requireActivity(), R.color.button)
+        val colorButtonDisable = ContextCompat.getColor(requireActivity(), R.color.button_disable)
+
+
+        note.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val remainingCharacters = (50 - s?.length!!) ?: 0
+                counter?.text = remainingCharacters.toString()
+                Log.i("asdasda",s.toString())
+                if (s.isNotEmpty()){
+                    button.isEnabled = true
+                    button.backgroundTintList = ColorStateList.valueOf(colorButtonEnable)
+                }else{
+                    button.isEnabled = false
+                    button.backgroundTintList = ColorStateList.valueOf(colorButtonDisable)
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+        button.setOnClickListener {
+            dialog.dismiss()
+        }
+
+
+    }
+    private fun dateTime() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+        val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+
+
+        val datePickerDialog = DatePickerDialog(requireContext(), R.style.DialogThemeEx, { _, selectedYear, selectedMonth, selectedDay ->
+
+            val timePickerDialog = TimePickerDialog(
+                requireContext(),R.style.DialogThemeEx,
+                { _, selectedHour, selectedMinute ->
+                    val selectedDateTime = Calendar.getInstance()
+                    selectedDateTime.set(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute)
+                    val formattedDateTime = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(selectedDateTime.time)
+                    Log.d("SelectedDateTime", formattedDateTime)
+                },
+                hourOfDay,
+                minute,
+                true
+
+            )
+
+            timePickerDialog.show()
+        }, year, month, dayOfMonth)
+
+        // Show the date picker dialog
+        datePickerDialog.show()
+    }
+
+    private fun getCurrentDateTime(): String {
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy, HH:mm")
+        return dateFormat.format(calendar.time)
+    }
+    private fun selectType() {
+        val dialog = Dialog(requireActivity())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.select_type_dialog)
+        dialog.show()
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setGravity(Gravity.BOTTOM)
+
+        var necessaryExpenses = dialog.findViewById<TextView>(R.id.necessary_expenses)
+        var unnecessaryExpenses = dialog.findViewById<TextView>(R.id.Unnecessary_expenses)
+
+        necessaryExpenses.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        unnecessaryExpenses.setOnClickListener {
+            dialog.dismiss()
+        }
+
+
+    }
+    private fun selectCategory(){
+        val intent = Intent(requireActivity(), CategoryExpendsActivity::class.java)
+        getCategory.launch(intent)
+    }
+    private fun autoSave(){
+        val dialog = Dialog(requireActivity())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.autosave_dailog)
+        dialog.show()
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setGravity(Gravity.BOTTOM)
+
+        var none = dialog.findViewById<TextView>(R.id.none)
+        var everyday = dialog.findViewById<TextView>(R.id.everyday)
+        var every_week = dialog.findViewById<TextView>(R.id.every_week)
+        var every_month = dialog.findViewById<TextView>(R.id.every_month)
+        var every_3month = dialog.findViewById<TextView>(R.id.every_3month)
+
+
+        none.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        everyday.setOnClickListener {
+            dialog.dismiss()
+        }
+        every_week.setOnClickListener {
+            dialog.dismiss()
+        }
+        every_month.setOnClickListener {
+            dialog.dismiss()
+        }
+        every_3month.setOnClickListener {
+            dialog.dismiss()
+        }
+
+    }
+
+
+
+
 
 }

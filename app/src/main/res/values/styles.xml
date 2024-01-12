@@ -36,5 +36,13 @@
         <!--<item name="android:windowTranslucentStatus">true</item>-->
     </style>
 
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">#81C8E4</item>
+    </style>
+
+    <style name="DialogThemeEx" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/button</item>
+    </style>
+
 
 </resources>

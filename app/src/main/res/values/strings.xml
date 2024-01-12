@@ -26,6 +26,7 @@
     <string name="pincodeDidntMatch">PIN  ไม่ถูกต้อง โปรดลองอีกครั้ง</string>
     <string name="alert">แจ้งเตือน</string>
     <string name="type">ประเภท</string>
+    <string name="autoSave">บันทึกอัตโนมัติ</string>
     <string name="salary">เงินเดือน</string>
     <string name="transactions">การทำธุรกรรม</string>
     <string name="rent">ค่าเช่า</string>
@@ -48,6 +49,7 @@
     <string name="pastList">รายการย้อนหลัง</string>
     <string name="otp_dint_match">รหัส OTP ของคุณไม่ถูกต้อง </string>
     <string name="okay">OK</string>
+    <string name="none">ไม่มี</string>
     <string name="balance">คงเหลือ (บาท)</string>
     <string name="sum">ยอดรวม</string>
     <string name="balance_money">0.00</string>
@@ -58,6 +60,10 @@
     <string name="addList">เพิ่มรายการ</string>
     <string name="calculator">เครื่องคิดเลข</string>
     <string name="b">฿</string>
+    <string name="everyday">ทุกวัน</string>
+    <string name="every_week">ทุกสัปดาห์</string>
+    <string name="every_month">ทุกเดือน</string>
+    <string name="every_3month">ทุก 3 เดือน</string>
     <string name="category">หมวดหมู่</string>
     <string name="securityAndPassword">รหัสผ่านและความปลอดภัย</string>
     <string name="wellcome">ยินดีต้อนรับ !</string>

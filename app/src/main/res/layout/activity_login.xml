@@ -81,8 +81,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginBottom="53dp"
                 android:background="@drawable/border_radius"
-                android:backgroundTint="@color/button_disable"
-                android:enabled="false"
+                android:backgroundTint="@color/gray"
                 android:fontFamily="@font/sukhumvit_set_text"
                 android:onClick="@{() -> loginViewModel.clickGetOtp()}"
                 android:selectAllOnFocus="true"
@@ -90,6 +89,7 @@
                 android:textColor="#FFF"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                android:enabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

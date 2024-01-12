@@ -35,7 +35,7 @@ class OtpScreenActivity : AppCompatActivity() {
     private lateinit var viewModel: LoginViewModel
     private lateinit var countDownTimer: CountDownTimer
     var status = false
-    private var timeLeftInMillis: Long = 5 * 1000
+    private var timeLeftInMillis: Long = 60 * 1000
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +47,7 @@ class OtpScreenActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         viewModel.getOtp()
-        viewModel.Otp.observe(this, Observer {
+        viewModel.otp.observe(this, Observer {
 
             if (it.isNullOrEmpty())
                 Toast.makeText(this,"พบข้อผิดพลาด",Toast.LENGTH_LONG).show()
@@ -66,7 +66,7 @@ class OtpScreenActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val textLength = s?.length ?:0
                 if (textLength == 6){
-                    if (s.toString() == viewModel.Otp.value) {
+                    if (s.toString() == viewModel.otp.value) {
                         binding.buttonSubmit.isEnabled = true
                         binding.buttonSubmit.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button))
                         status = true
@@ -136,7 +136,7 @@ class OtpScreenActivity : AppCompatActivity() {
 
 
                 binding.reOtp.setOnClickListener{
-                    timeLeftInMillis = 5 * 1000
+                    timeLeftInMillis = 60 * 1000
                     startCountDownTimer()
                     genOTP()
                     binding.textView8.text = "กรุณากรอกภายใน"

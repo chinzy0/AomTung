@@ -18,7 +18,7 @@ class LoginViewModel  : ViewModel() {
 
     val text = ObservableField("Login")
     val onClick = MutableLiveData<String>()
-    val Otp = MutableLiveData<String>()
+    val otp = MutableLiveData<String>()
 
     fun clickGetOtp(){
         onClick.value = "getOtp"
@@ -39,6 +39,7 @@ class LoginViewModel  : ViewModel() {
 
 
     fun getOtp(){
+
         val client = OkHttpClient()
         val formBody: RequestBody = FormBody.Builder()
             .add("user_id", "1")
@@ -48,14 +49,15 @@ class LoginViewModel  : ViewModel() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
-                Otp.postValue("")
+                otp.postValue("")
             }
 
             @SuppressLint("NotifyDataSetChanged")
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
-                Otp.postValue("213446")
+                otp.postValue("000000")
             }
+
         })
     }
 

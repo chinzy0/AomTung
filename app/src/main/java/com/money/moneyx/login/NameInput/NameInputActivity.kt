@@ -2,9 +2,12 @@ package com.money.moneyx.login.NameInput
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.ColorStateList
 import android.graphics.Paint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -26,9 +29,27 @@ class NameInputActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         setEventClick()
-
-
         binding.textView4.paintFlags =  Paint.UNDERLINE_TEXT_FLAG
+
+        binding.editTextText.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val enteredText = s.toString()
+                if (enteredText.isNotEmpty()) {
+                    binding.buttonSubmitName.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button))
+                    binding.buttonSubmitName.isEnabled = true
+                }else{
+                    binding.buttonSubmitName.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button_disable))
+                    binding.buttonSubmitName.isEnabled = false
+                }
+            }
+
+        })
     }
     private fun setEventClick() {
         viewModel.onClick.observe(this, Observer {

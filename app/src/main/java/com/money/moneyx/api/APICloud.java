@@ -25,7 +25,7 @@ public class APICloud extends Thread {
     }
 
     public Request GetService2(@NotNull RequestBody body) {
-        String url = "https://jsonplaceholder.typicode.com/todos/1";
+        String url = "https://datausa.io/api/data?drilldowns=Nation&measures=Population";
         return createRequest(url, body, true);
     }
 

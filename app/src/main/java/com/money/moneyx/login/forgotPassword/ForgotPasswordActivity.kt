@@ -44,7 +44,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         viewModel.getOtp()
-        viewModel.Otp.observe(this, Observer {
+        viewModel.otp.observe(this, Observer {
 
             if (it.isNullOrEmpty())
                 Toast.makeText(this,"พบข้อผิดพลาด", Toast.LENGTH_LONG).show()
@@ -63,7 +63,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val textLength = s?.length ?:0
                 if (textLength == 6){
-                    if (s.toString() == viewModel.Otp.value) {
+                    if (s.toString() == viewModel.otp.value) {
                         binding.buttonSubmit.isEnabled = true
                         binding.buttonSubmit.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button))
                         status = true

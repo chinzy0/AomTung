@@ -15,7 +15,13 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
-            android:name=".main.addListPage.addIncome.CategoryIncomeActivity"
+            android:name=".main.autoSave.AutosaveActivity"
+            android:exported="false" />
+        <activity
+            android:name=".main.addListPage.category.CategoryExpendsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".main.addListPage.category.CategoryIncomeActivity"
             android:exported="false" />
         <activity
             android:name=".main.profile.security.PasswordAndSecurityActivity"

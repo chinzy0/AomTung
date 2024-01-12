@@ -43,13 +43,13 @@ class LoginActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
             override fun afterTextChanged(s: Editable?) {
-                if ( s?.length == 10){
-                    binding.buttonGetOTP.isEnabled = true
+                val enteredText = s.toString()
+                if ( enteredText.length == 10){
                     binding.buttonGetOTP.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button))
-
+                    binding.buttonGetOTP.isEnabled = true
                 }else{
-                    binding.buttonGetOTP.isEnabled = false
                     binding.buttonGetOTP.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button_disable))
+                    binding.buttonGetOTP.isEnabled = false
                 }
             }
         })
