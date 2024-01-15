@@ -4,12 +4,16 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.EditText
+import android.widget.NumberPicker
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -18,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.money.moneyx.R
 import com.money.moneyx.databinding.FragmentIncomeReportBinding
 import ir.mahozad.android.PieChart
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 
 class IncomeReportFragment : Fragment() {
@@ -26,6 +32,8 @@ class IncomeReportFragment : Fragment() {
     private lateinit var dropdownAdapter: DropdownAdapter
     private var dropdownModel = ArrayList<DropdownModel>()
     private var incomeModel = ArrayList<IncomeReportModel>()
+    private val currentMonth = getCurrentMonth()
+    private val currentYear = getCurrentYear()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,8 +50,8 @@ class IncomeReportFragment : Fragment() {
         adapter()
         chart()
         showDropdown()
-
-
+        setMonth()
+        setYear()
 
 
 
@@ -89,7 +97,7 @@ class IncomeReportFragment : Fragment() {
         }
     }
 
-    private fun showDropdown(){
+    private fun showDropdown() {
         binding.dropDownMonth.setOnClickListener {
             val dialog = Dialog(requireActivity())
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -98,27 +106,64 @@ class IncomeReportFragment : Fragment() {
             dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             dialog.window?.setGravity(Gravity.BOTTOM)
-//            dialog.window?.attributes!!.height = (requireActivity().resources.displayMetrics.heightPixels * 1).toInt()
+
+            val months = arrayOf("มกราคม" , "กุมภาพันธ์"  ,"มีนาคม"  ,"เมษายน" , "พฤษภาคม" , "มิถุนายน" , "กรกฎาคม", "สิงหาคม",
+                "กันยายน", " ตุลาคม ", "พฤศจิกายน" ,"ธันวาคม")
+
+            val monthPicker = dialog.findViewById<NumberPicker>(R.id.monthPicker)
+            monthPicker.minValue = 0
+            monthPicker.maxValue = months.size - 1
+            monthPicker.displayedValues = months
+
+            val yearPicker = dialog.findViewById<NumberPicker>(R.id.yearPicker)
+            val yearNow = Calendar.getInstance().get(Calendar.YEAR)
+
+            yearPicker.minValue = yearNow-100
+            yearPicker.maxValue = yearNow+100
+            yearPicker.displayedValues
 
 
-            dropdownModel.add(DropdownModel("ธันวาคม","2566"))
-            dropdownModel.add(DropdownModel("ธันวาคม","2566"))
-            dropdownModel.add(DropdownModel("ธันวาคม","2566"))
+            val calendar = Calendar.getInstance()
+            val currentMonth = calendar.get(Calendar.MONTH)
+            val currentYear = calendar.get(Calendar.YEAR)
 
-            dropdownAdapter = DropdownAdapter(dropdownModel){
+            monthPicker.value = currentMonth
+            yearPicker.value = currentYear
 
-            }
-            val RCV = dialog.findViewById<RecyclerView>(R.id.list_month)
-
-
-            RCV.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = dropdownAdapter
-                dropdownAdapter.notifyDataSetChanged()
+            val submit = dialog.findViewById<ConstraintLayout>(R.id.buttonSubmitMonthYear)
+            submit.setOnClickListener {
+                
+                dialog.dismiss()
             }
         }
+    }
 
+
+    private fun getCurrentMonth(): String {
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("MMMM")
+        return dateFormat.format(calendar.time)
 
     }
+    private fun getCurrentYear(): String {
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("yyyy")
+        return dateFormat.format(calendar.time)
+
+    }
+
+    private fun setMonth(){
+        binding.textMonth.text = currentMonth
+    }
+    private fun setYear(){
+        binding.textYear.text = currentYear
+
+    }
+
+
+
+
+
+
 
 }

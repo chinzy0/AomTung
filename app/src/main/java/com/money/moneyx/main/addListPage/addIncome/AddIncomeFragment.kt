@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
-import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -22,7 +21,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.NumberPicker
 import android.widget.TextView
-import android.widget.TimePicker
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -46,7 +44,9 @@ class AddIncomeFragment : Fragment() {
     private lateinit var addIncomeAdapter: AddIncomeAdapter
     private var addIncomeModel = ArrayList<AddIncomeModel>()
     private lateinit var viewModel: ReportViewModel
-    private val date = getCurrentDateTime()
+    private val date = getCurrentDate()
+    private val time = getCurrentTime()
+
 
 
 
@@ -71,15 +71,16 @@ class AddIncomeFragment : Fragment() {
 
 
 
+
         return binding.root
     }
 
     private fun setDataAdapter() {
-        addIncomeModel.add(AddIncomeModel("วันที่ เวลา",R.drawable.calendar,date))
-        addIncomeModel.add(AddIncomeModel("ประเภท",R.drawable.type,"เลือก"))
-        addIncomeModel.add(AddIncomeModel("หมวดหมู่",R.drawable.category,"เลือก"))
-        addIncomeModel.add(AddIncomeModel("โน้ต",R.drawable.note_,"เลือก"))
-        addIncomeModel.add(AddIncomeModel("บันทึกอัตโนมัติ",R.drawable.autosave_icon,"เลือก" ))
+        addIncomeModel.add(AddIncomeModel("วันที่ เวลา",R.drawable.calendar,date,time))
+        addIncomeModel.add(AddIncomeModel("ประเภท", R.drawable.type, "เลือก", time))
+        addIncomeModel.add(AddIncomeModel("หมวดหมู่", R.drawable.category, "เลือก", time))
+        addIncomeModel.add(AddIncomeModel("โน้ต", R.drawable.note_, "เลือก", time))
+        addIncomeModel.add(AddIncomeModel("บันทึกอัตโนมัติ",R.drawable.autosave_icon, "เลือก", time))
     }
 
     private fun setEventClick() {
@@ -96,10 +97,22 @@ class AddIncomeFragment : Fragment() {
 
     private fun addAdapter(){
         addIncomeAdapter = AddIncomeAdapter(addIncomeModel) {
-            Log.i("asdsadasd",it)
-            when(it) {
+            Log.i("asdsadasd",it.first)
+
+            when(it.first) {
                 "วันที่ เวลา" -> {
-                    dateTime()
+                    when (it.second) {
+                        "date" -> {
+                            dateTime()
+                        }
+                        "time" -> {
+                            showTimePicker()
+                        }
+                        else -> {
+
+                        }
+                    }
+
                 }
                 "ประเภท" -> {
                     selectType()
@@ -143,11 +156,26 @@ class AddIncomeFragment : Fragment() {
                     val categorySelected = data.getStringExtra("Category").toString()
                     Log.i("categorySelected",categorySelected)
                     addIncomeModel.clear()
-                    addIncomeModel.add(AddIncomeModel("วันที่ เวลา",R.drawable.calendar,date))
-                    addIncomeModel.add(AddIncomeModel("ประเภท",R.drawable.type,"เลือก"))
-                    addIncomeModel.add(AddIncomeModel("หมวดหมู่",R.drawable.category,categorySelected))
-                    addIncomeModel.add(AddIncomeModel("โน้ต",R.drawable.note_,"เลือก"))
-                    addIncomeModel.add(AddIncomeModel("บันทึกอัตโนมัติ",R.drawable.autosave_icon,"เลือก" ))
+                    addIncomeModel.add(AddIncomeModel(
+                        "วันที่ เวลา",
+                        R.drawable.calendar,
+                        date,
+                        time
+                    ))
+                    addIncomeModel.add(AddIncomeModel("ประเภท", R.drawable.type, "เลือก", time))
+                    addIncomeModel.add(AddIncomeModel(
+                        "หมวดหมู่",
+                        R.drawable.category,
+                        categorySelected,
+                        time
+                    ))
+                    addIncomeModel.add(AddIncomeModel("โน้ต", R.drawable.note_, "เลือก", time))
+                    addIncomeModel.add(AddIncomeModel(
+                        "บันทึกอัตโนมัติ",
+                        R.drawable.autosave_icon,
+                        "เลือก",
+                        time
+                    ))
                     addAdapter()
 
 
@@ -201,17 +229,19 @@ class AddIncomeFragment : Fragment() {
         val month = calendar.get(Calendar.MONTH)
         val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+        val datePickerDialog = DatePickerDialog(requireContext(), R.style.DialogTheme, { _, selectedYear, selectedMonth, selectedDay ->
             val selectedDate = Calendar.getInstance()
             selectedDate.set(selectedYear, selectedMonth, selectedDay)
-            showTimePicker()
+            Log.i("selectedDate",selectedDate.toString())
+            val x = "${selectedDate.get(Calendar.YEAR)}/${selectedDate.get(Calendar.MONTH)}/${selectedDate.get(Calendar.DAY_OF_MONTH)}"
+            Log.i("asdasdasdasdasd",x)
         }, year, month, dayOfMonth)
         datePickerDialog.show()
     }
 
     private fun showTimePicker() {
         val calendar = Calendar.getInstance()
-        val currentTime = getCurrentDateTime()
+        val currentTime = getCurrentTime()
 
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.time_picker_dialog, null)
@@ -229,7 +259,7 @@ class AddIncomeFragment : Fragment() {
 
         val builder = AlertDialog.Builder(requireContext())
         builder.setView(view)
-        builder.setTitle("Select Time")
+
         builder.setPositiveButton("OK") { dialog, _ ->
             val selectedHour = numberPickerHour.value
             val selectedMinute = numberPickerMinute.value
@@ -243,6 +273,7 @@ class AddIncomeFragment : Fragment() {
         }
         builder.setNegativeButton("Cancel") { dialog, _ ->
             dialog.dismiss()
+
         }
 
         builder.show()
@@ -252,9 +283,14 @@ class AddIncomeFragment : Fragment() {
 
 
 
-    private fun getCurrentDateTime(): String {
+    private fun getCurrentDate(): String {
         val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy, HH:mm")
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+        return dateFormat.format(calendar.time)
+    }
+    private fun getCurrentTime(): String {
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("HH:mm")
         return dateFormat.format(calendar.time)
     }
     private fun selectType() {

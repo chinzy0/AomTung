@@ -36,12 +36,30 @@
         <!--<item name="android:windowTranslucentStatus">true</item>-->
     </style>
 
+
+
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">#81C8E4</item>
     </style>
 
     <style name="DialogThemeEx" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/button</item>
+    </style>
+
+    <style name="DefaultNumberPickerTheme" parent="AppTheme">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="fontFamily">@font/sukhumvit_set_text</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="NumberPickerThemeAddList" parent="AppTheme">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="fontFamily">@font/sukhumvit_set_text</item>
+        <item name="android:textColorPrimary">#545F71</item>
     </style>
 
 

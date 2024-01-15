@@ -10,7 +10,7 @@ import com.money.moneyx.R
 import com.money.moneyx.databinding.ListInformationBinding
 
 class AddIncomeAdapter(
-    private val addIncomeModel: ArrayList<AddIncomeModel>, private val callback: (String) -> Unit) : RecyclerView.Adapter<AddIncomeViewAdapter>(){
+    private val addIncomeModel: ArrayList<AddIncomeModel>, private val callback: (Pair<String,String>) -> Unit) : RecyclerView.Adapter<AddIncomeViewAdapter>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddIncomeViewAdapter {
        val list : ListInformationBinding = DataBindingUtil.inflate(
            LayoutInflater.from(parent.context),
@@ -25,13 +25,30 @@ class AddIncomeAdapter(
 
     override fun onBindViewHolder(holder: AddIncomeViewAdapter, position: Int) {
         holder.binding.title.text = addIncomeModel[position].title
-        holder.binding.textView18.text = addIncomeModel[position].detail
+        holder.binding.textDate.text = addIncomeModel[position].detail
+        holder.binding.textTime.text = addIncomeModel[position].time
         holder.binding.img.setImageResource(addIncomeModel[position].img)
         if (addIncomeModel.size-1 == position){
             holder.binding.underline.visibility = View.GONE
         }
+
+
+        if (addIncomeModel[position].title == "วันที่ เวลา" ){
+            holder.binding.textTime.visibility = View.VISIBLE
+        }else{
+            holder.binding.textTime.visibility = View.GONE
+        }
+
+        holder.binding.textDate.setOnClickListener {
+            callback.invoke(Pair(addIncomeModel[position].title,"date"))
+        }
+        holder.binding.textTime.setOnClickListener {
+            callback.invoke(Pair(addIncomeModel[position].title,"time"))
+        }
+
         holder.itemView.setOnClickListener{
-            callback.invoke(addIncomeModel[position].title)
+            callback.invoke(Pair(addIncomeModel[position].title,""))
+
         }
     }
 

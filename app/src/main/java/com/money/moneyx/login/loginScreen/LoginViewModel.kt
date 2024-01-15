@@ -42,8 +42,6 @@ class LoginViewModel  : ViewModel() {
 
         val client = OkHttpClient()
         val formBody: RequestBody = FormBody.Builder()
-            .add("user_id", "1")
-            .add("user_id", "1")
             .build()
         val request: Request = APICloud().GetOtp(formBody)
         client.newCall(request).enqueue(object : Callback {
