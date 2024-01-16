@@ -12,19 +12,16 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.money.moneyx.R
 import com.money.moneyx.databinding.ActivityOtpScreenBinding
+import com.money.moneyx.function.wrongOtpDialog
 import com.money.moneyx.login.createPincode.CreatePinActivity
 import com.money.moneyx.login.loginScreen.LoginViewModel
 import java.util.Locale
@@ -36,6 +33,7 @@ class OtpScreenActivity : AppCompatActivity() {
     private lateinit var countDownTimer: CountDownTimer
     var status = false
     private var timeLeftInMillis: Long = 60 * 1000
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,7 +106,7 @@ class OtpScreenActivity : AppCompatActivity() {
             when (it) {
                 "SubmitOtpButton" -> {
                     if (!status){
-                        showCustomDialog()
+                        wrongOtpDialog(this)
                     }else{
                         val intent = Intent(this, CreatePinActivity::class.java)
                         startActivity(intent)
@@ -178,6 +176,8 @@ class OtpScreenActivity : AppCompatActivity() {
         }
 
     }
+
+
 
 
 }

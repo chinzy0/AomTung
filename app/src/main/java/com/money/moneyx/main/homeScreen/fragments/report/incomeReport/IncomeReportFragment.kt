@@ -1,26 +1,20 @@
 package com.money.moneyx.main.homeScreen.fragments.report.incomeReport
 
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.EditText
-import android.widget.NumberPicker
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.money.moneyx.R
 import com.money.moneyx.databinding.FragmentIncomeReportBinding
+import com.money.moneyx.function.dropdownHomePage
+import com.money.moneyx.main.homeScreen.fragments.report.expendsReport.ExpendsViewModel
 import ir.mahozad.android.PieChart
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -34,6 +28,7 @@ class IncomeReportFragment : Fragment() {
     private var incomeModel = ArrayList<IncomeReportModel>()
     private val currentMonth = getCurrentMonth()
     private val currentYear = getCurrentYear()
+    private lateinit var viewModel: IncomeViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,24 +40,50 @@ class IncomeReportFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_income_report,container,false)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_income_report, container, false)
+        viewModel = ViewModelProvider(this)[IncomeViewModel::class.java]
+        binding.incomeViewModel = viewModel
 
         adapter()
         chart()
-        showDropdown()
         setMonth()
         setYear()
+        setEventClick()
+        setView()
 
 
 
         return binding.root
     }
-    private fun adapter(){
-        incomeModel.add(IncomeReportModel("รายรับแน่นอน","เงินเดือน","+1,000.00","22/12/2023 11:17"))
-        incomeModel.add(IncomeReportModel("รายรับไม่แน่นอน","ของขวัญ","+500.00","22/12/2023 11:17"))
-        incomeModel.add(IncomeReportModel("รายรับไม่แน่นอน","ของขวัญ","+500.00","22/12/2023 11:17"))
 
-        incomeAdapter = IncomeReportAdapter(incomeModel){
+    private fun adapter() {
+        incomeModel.add(
+            IncomeReportModel(
+                "รายรับแน่นอน",
+                "เงินเดือน",
+                "+1,000.00",
+                "22/12/2023 11:17"
+            )
+        )
+        incomeModel.add(
+            IncomeReportModel(
+                "รายรับไม่แน่นอน",
+                "ของขวัญ",
+                "+500.00",
+                "22/12/2023 11:17"
+            )
+        )
+        incomeModel.add(
+            IncomeReportModel(
+                "รายรับไม่แน่นอน",
+                "ของขวัญ",
+                "+500.00",
+                "22/12/2023 11:17"
+            )
+        )
+
+        incomeAdapter = IncomeReportAdapter(incomeModel) {
 
         }
         binding.RCVpastIncome.apply {
@@ -71,16 +92,16 @@ class IncomeReportFragment : Fragment() {
             incomeAdapter.notifyDataSetChanged()
         }
 
-        if (incomeModel!=null){
+        if (incomeModel != null) {
             binding.RCVpastIncome.visibility = View.VISIBLE
             binding.textView21.visibility = View.GONE
-        }else{
+        } else {
             binding.RCVpastIncome.visibility = View.GONE
             binding.textView21.visibility = View.VISIBLE
         }
     }
 
-    private fun chart(){
+    private fun chart() {
         val pieChart = binding.pieChartIncome
 
         val color1 = ContextCompat.getColor(requireContext(), R.color.income_chart_1)
@@ -97,46 +118,7 @@ class IncomeReportFragment : Fragment() {
         }
     }
 
-    private fun showDropdown() {
-        binding.dropDownMonth.setOnClickListener {
-            val dialog = Dialog(requireActivity())
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setContentView(R.layout.dropdown_month)
-            dialog.show()
-            dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            dialog.window?.setGravity(Gravity.BOTTOM)
 
-            val months = arrayOf("มกราคม" , "กุมภาพันธ์"  ,"มีนาคม"  ,"เมษายน" , "พฤษภาคม" , "มิถุนายน" , "กรกฎาคม", "สิงหาคม",
-                "กันยายน", " ตุลาคม ", "พฤศจิกายน" ,"ธันวาคม")
-
-            val monthPicker = dialog.findViewById<NumberPicker>(R.id.monthPicker)
-            monthPicker.minValue = 0
-            monthPicker.maxValue = months.size - 1
-            monthPicker.displayedValues = months
-
-            val yearPicker = dialog.findViewById<NumberPicker>(R.id.yearPicker)
-            val yearNow = Calendar.getInstance().get(Calendar.YEAR)
-
-            yearPicker.minValue = yearNow-100
-            yearPicker.maxValue = yearNow+100
-            yearPicker.displayedValues
-
-
-            val calendar = Calendar.getInstance()
-            val currentMonth = calendar.get(Calendar.MONTH)
-            val currentYear = calendar.get(Calendar.YEAR)
-
-            monthPicker.value = currentMonth
-            yearPicker.value = currentYear
-
-            val submit = dialog.findViewById<ConstraintLayout>(R.id.buttonSubmitMonthYear)
-            submit.setOnClickListener {
-                
-                dialog.dismiss()
-            }
-        }
-    }
 
 
     private fun getCurrentMonth(): String {
@@ -145,6 +127,7 @@ class IncomeReportFragment : Fragment() {
         return dateFormat.format(calendar.time)
 
     }
+
     private fun getCurrentYear(): String {
         val calendar = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("yyyy")
@@ -152,18 +135,28 @@ class IncomeReportFragment : Fragment() {
 
     }
 
-    private fun setMonth(){
+    private fun setMonth() {
         binding.textMonth.text = currentMonth
     }
-    private fun setYear(){
+
+    private fun setYear() {
         binding.textYear.text = currentYear
 
     }
 
-
-
-
-
+    private fun setEventClick() {
+        viewModel.onClick.observe(requireActivity(), Observer {
+            when (it) {
+                "showDropdown" -> dropdownHomePage(requireActivity(), viewModel.onClickDialog)
+            }
+        })
+    }
+    private fun setView() {
+        viewModel.onClickDialog.observe(requireActivity(), Observer {
+            binding.textMonth.text = it.first
+            binding.textYear.text = it.second
+        })
+    }
 
 
 }

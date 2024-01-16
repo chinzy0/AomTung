@@ -10,9 +10,7 @@ class ReportViewModel : ViewModel() {
 
     val text = ObservableField("text001")
 
-    fun calculateClick() {
-        onClick.value = "calculateClick"
-    }
+
     fun onBack() {
         onClick.value = "onBack"
     }

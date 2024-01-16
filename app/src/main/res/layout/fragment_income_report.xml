@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="incomeViewModel"
+            type="com.money.moneyx.main.homeScreen.fragments.report.incomeReport.IncomeViewModel" />
     </data>
 
     <ScrollView
@@ -86,9 +88,9 @@
                 android:id="@+id/dropDownMonth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:src="@drawable/path_down"
                 android:padding="5dp"
+                android:onClick="@{() -> incomeViewModel.dropdownClick()}"
                 app:layout_constraintBottom_toBottomOf="@+id/textView20"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView20">

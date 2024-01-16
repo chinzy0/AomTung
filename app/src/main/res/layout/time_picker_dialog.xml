@@ -29,7 +29,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_weight="1"
                 android:fontFamily="@font/sukhumvit_set_text"
-                android:text="Hour"
+                android:text="ชั่วโมง"
                 android:textAlignment="textStart"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
@@ -41,7 +41,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_weight="1"
                 android:fontFamily="@font/sukhumvit_set_text"
-                android:text="Minute"
+                android:text="นาที"
                 android:textAlignment="viewStart"
                 android:textColor="@color/black"
                 android:textSize="16sp" />

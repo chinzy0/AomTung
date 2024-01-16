@@ -166,7 +166,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:fontFamily="@font/sukhumvit_set_text"
-                            android:text="@string/income_bath"
+                            android:text="@string/expends_bath"
                             android:textColor="@color/black"
                             android:textSize="12sp"
                             app:layout_constraintStart_toEndOf="@+id/imageView9"

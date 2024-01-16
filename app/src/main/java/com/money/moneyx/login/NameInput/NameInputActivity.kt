@@ -56,13 +56,11 @@ class NameInputActivity : AppCompatActivity() {
             when (it) {
                 "Skip" -> {
                     val intent = Intent(this, HomeActivity::class.java)
-                    startActivity(intent)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
                 }
                 "SubmitName" -> {
                     val intent = Intent(this, HomeActivity::class.java)
-                    startActivity(intent)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
                 }

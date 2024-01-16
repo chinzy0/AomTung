@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="reportViewModel"
-            type="com.money.moneyx.main.addListPage.ReportViewModel" />
+            name="addExpendsViewModel"
+            type="com.money.moneyx.main.addListPage.addExpends.AddExpendsViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -68,7 +68,7 @@
             android:layout_marginEnd="10dp"
             android:background="@drawable/border_radius"
             android:backgroundTint="#FF8686"
-            android:onClick="@{() -> reportViewModel.calculateClick()}"
+            android:onClick="@{() -> addExpendsViewModel.calculateClick()}"
             app:layout_constraintBottom_toBottomOf="@+id/constraintLayout5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/constraintLayout5">
