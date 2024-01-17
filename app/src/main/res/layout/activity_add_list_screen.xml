@@ -13,7 +13,6 @@
         tools:context=".main.addListPage.AddListScreenActivity">
 
         <include
-
             android:id="@+id/appbarAddListPage"
             layout="@layout/appbar_addlistpage"
             app:layout_constraintEnd_toEndOf="parent"

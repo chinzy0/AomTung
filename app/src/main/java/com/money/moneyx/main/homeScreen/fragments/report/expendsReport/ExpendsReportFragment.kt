@@ -14,12 +14,15 @@ import com.money.moneyx.R
 import com.money.moneyx.databinding.FragmentExpendsReportBinding
 import com.money.moneyx.function.dropdownHomePage
 import ir.mahozad.android.PieChart
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 
 class ExpendsReportFragment : Fragment() {
     private lateinit var binding: FragmentExpendsReportBinding
     private lateinit var viewModel: ExpendsViewModel
-
+    private val currentMonth = getCurrentMonth()
+    private val currentYear = getCurrentYear()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -35,6 +38,8 @@ class ExpendsReportFragment : Fragment() {
 
         showPieChart()
         setView()
+        setMonth()
+        setYear()
         setEventClick()
 
 
@@ -71,6 +76,27 @@ class ExpendsReportFragment : Fragment() {
                 "showDropdown" -> dropdownHomePage(requireActivity(),viewModel.onClickDialog)
             }
         })
+
+    }
+    private fun getCurrentMonth(): String {
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("MMMM")
+        return dateFormat.format(calendar.time)
+
+    }
+    private fun getCurrentYear(): String {
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("yyyy")
+        return dateFormat.format(calendar.time)
+
+    }
+
+    private fun setMonth() {
+        binding.textMonth.text = currentMonth
+    }
+
+    private fun setYear() {
+        binding.textYear.text = currentYear
 
     }
 

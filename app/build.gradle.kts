@@ -83,6 +83,9 @@ dependencies {
     //datePicker
     implementation ("com.github.commandiron:WheelPickerCompose:1.1.11")
 
+    implementation ("net.objecthunter:exp4j:0.4.8")
+
+
 
 
 

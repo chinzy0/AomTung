@@ -13,11 +13,12 @@
     <color name="red">#FF0000</color>
     <color name="letter">#F97171</color>
     <color name="button">#FF8686</color>
+    <color name="income">#81C8E4</color>
     <color name="button_disable">#C4C4C4</color>
     <color name="sure_pinCode">#292D33</color>
     <color name="alert_pin">#949494</color>
     <color name="ok">#0589BD</color>
-    <color name="income">#81C8E4</color>
+
     <color name="expends">#FF8686</color>
     <color name="appbarListAdd">#373D45</color>
     <color name="bg">#F4F4F4</color>

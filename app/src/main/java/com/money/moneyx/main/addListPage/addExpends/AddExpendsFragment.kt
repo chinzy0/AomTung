@@ -71,7 +71,7 @@ class AddExpendsFragment : Fragment() {
         viewModel.setDataAdapter("")
         addAdapter()
         setEventClick()
-
+        changeColorBtn()
 
         return binding.root
     }
@@ -81,7 +81,7 @@ class AddExpendsFragment : Fragment() {
             when (it) {
                 "calculateClick" -> {
                     val intent = Intent(requireActivity(), CalculatorActivity::class.java)
-
+                    intent.putExtra("resultExpends",binding.textTv.text.toString())
                     resultActivityAppointment.launch(intent)
                 }
             }
@@ -129,8 +129,9 @@ class AddExpendsFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.let { data ->
-                    val x = data.getIntExtra("number",0).toString()
-                    binding.textView14.setText(x)
+                    val x = data.getStringExtra("number").toString()
+                    binding.textTv.setText(x)
+                    Log.i("qwewqt",x)
                 }
             }
         }
@@ -153,6 +154,29 @@ class AddExpendsFragment : Fragment() {
         val intent = Intent(requireActivity(), CategoryIncomeActivity::class.java)
         getCategory.launch(intent)
     }
+    private fun changeColorBtn(){
+        binding.textTv.addTextChangedListener(object :TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                if (s!!.isNotEmpty()){
+                    val buttonColor = ContextCompat.getColor(requireContext(), R.color.expends)
+                    binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                    binding.buttonAddIncome.isEnabled = true
+                }else{
+                    val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
+                    binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                    binding.buttonAddIncome.isEnabled = false
+                }
+            }
+
+        })
+    }
+
 
 
 

@@ -43,14 +43,16 @@
                 app:layout_constraintVertical_bias="0.5" />
 
             <EditText
-                android:id="@+id/textView14"
+                android:id="@+id/textResult"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_margin="3dp"
-                android:layout_marginEnd="10dp"
+                android:paddingEnd="10dp"
                 android:background="@color/white"
                 android:hint="@string/balance_money"
                 android:maxLines="1"
+                android:imeOptions="actionDone"
+                android:inputType="number"
                 android:textAlignment="textEnd"
                 android:textColor="@color/b"
                 android:textSize="25sp"

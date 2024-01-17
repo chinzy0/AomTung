@@ -21,10 +21,7 @@ class AddListScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddListScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        if รายรับ
-//        mPageAdapter = ViewPagerAdapter(AddIncomeFragment(), lifecycle, fragment)
-//        else
-//        AddExpendsFragment()
+
 
         tabLayout()
         changeTab()

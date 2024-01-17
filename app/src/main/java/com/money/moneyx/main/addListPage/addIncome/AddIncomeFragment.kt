@@ -66,7 +66,7 @@ class AddIncomeFragment : Fragment() {
         viewModel.setDataAdapter("")
         addAdapter()
         setEventClick()
-
+        changeColorBtn()
         return binding.root
     }
 
@@ -77,7 +77,9 @@ class AddIncomeFragment : Fragment() {
                 "calculateClick" -> {
                     val intent = Intent(requireActivity(), CalculatorActivity::class.java)
                     intent.putExtra("status", "true")
+                    intent.putExtra("resultIncome",binding.textResult.text.toString())
                     resultActivityAppointment.launch(intent)
+
                 }
             }
         })
@@ -90,6 +92,7 @@ class AddIncomeFragment : Fragment() {
                     when (it.second) {
                         "date" -> {
                             dateTime(requireActivity())
+
                         }
                         "time" -> {
                             showTimePicker(requireActivity())
@@ -124,8 +127,10 @@ class AddIncomeFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.let { data ->
-                    val x = data.getIntExtra("number",0).toString()
-                    binding.textView14.setText(x)
+                    val x = data.getStringExtra("number").toString()
+                    binding.textResult.setText(x)
+                    Log.i("asdasdasdasd",x)
+
                 }
             }
         }
@@ -147,6 +152,29 @@ class AddIncomeFragment : Fragment() {
     private fun selectCategory(){
         val intent = Intent(requireActivity(), CategoryIncomeActivity::class.java)
         getCategory.launch(intent)
+    }
+
+    private fun changeColorBtn(){
+        binding.textResult.addTextChangedListener(object :TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                if (s!!.isNotEmpty()){
+                    val buttonColor = ContextCompat.getColor(requireContext(), R.color.income)
+                    binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                    binding.buttonAddIncome.isEnabled = true
+                }else{
+                    val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
+                    binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                    binding.buttonAddIncome.isEnabled = false
+                }
+            }
+
+        })
     }
 
 
