@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -23,6 +24,7 @@ import com.money.moneyx.R
 import com.money.moneyx.databinding.ActivityOtpScreenBinding
 import com.money.moneyx.function.wrongOtpDialog
 import com.money.moneyx.login.createPincode.CreatePinActivity
+import com.money.moneyx.login.loginScreen.DataOTP
 import com.money.moneyx.login.loginScreen.LoginViewModel
 import java.util.Locale
 import kotlin.random.Random
@@ -44,58 +46,64 @@ class OtpScreenActivity : AppCompatActivity() {
         binding.loginViewModel = viewModel
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        viewModel.getOtp()
-        viewModel.otp.observe(this, Observer {
+        viewModel.mDataModel = intent.getParcelableExtra<DataOTP>("mDataModel")
 
-            if (it.isNullOrEmpty())
-                Toast.makeText(this,"พบข้อผิดพลาด",Toast.LENGTH_LONG).show()
-            else
-                binding.OtpPinview.setText(it)
-        })
-
+        setOTPText()
         setEventClick()
         startCountDownTimer()
 
-        binding.OtpPinview.addTextChangedListener(object :TextWatcher{
+        binding.OtpPinview.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
+
             override fun afterTextChanged(s: Editable?) {
-                val textLength = s?.length ?:0
-                if (textLength == 6){
-                    if (s.toString() == viewModel.otp.value) {
+                val textLength = s?.length ?: 0
+                if (textLength == 6) {
+                    if (s.toString() == viewModel.mDataModel?.codeotp) {
                         binding.buttonSubmit.isEnabled = true
-                        binding.buttonSubmit.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button))
+                        binding.buttonSubmit.backgroundTintList =
+                            ColorStateList.valueOf(getColor(R.color.button))
                         status = true
                     } else {
                         binding.buttonSubmit.isEnabled = true
-                        binding.buttonSubmit.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button))
-                       status = false
+                        binding.buttonSubmit.backgroundTintList =
+                            ColorStateList.valueOf(getColor(R.color.button))
+                        status = false
                     }
-                }
-                else{
+                } else {
                     binding.buttonSubmit.isEnabled = false
-                    binding.buttonSubmit.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button_disable))
+                    binding.buttonSubmit.backgroundTintList =
+                        ColorStateList.valueOf(getColor(R.color.button_disable))
                 }
             }
         })
 
-        binding.appbarOtp.BackPage.setOnClickListener{
+        binding.appbarOtp.BackPage.setOnClickListener {
             this.onBackPressed()
         }
 
 
+    }
 
+    private fun setOTPText() {
+        viewModel.mDataModel?.let { data ->
+            if (data.codeotp.isNullOrEmpty()) {
+                Toast.makeText(this, "พบข้อผิดพลาด", Toast.LENGTH_LONG).show()
+            } else
+                binding.OtpPinview.setText(data.codeotp)
 
-}
+        }
+    }
 
-    private fun genOTP():String{
+    private fun genOTP(): String {
         val OtpLength = 6
         val OTP = StringBuilder()
 
-        repeat(OtpLength){
-            val randomDigit = Random.nextInt(0,10)
+        repeat(OtpLength) {
+            val randomDigit = Random.nextInt(0, 10)
             OTP.append(randomDigit)
         }
         return OTP.toString()
@@ -105,9 +113,9 @@ class OtpScreenActivity : AppCompatActivity() {
         viewModel.onClick.observe(this, Observer {
             when (it) {
                 "SubmitOtpButton" -> {
-                    if (!status){
+                    if (!status) {
                         wrongOtpDialog(this)
-                    }else{
+                    } else {
                         val intent = Intent(this, CreatePinActivity::class.java)
                         startActivity(intent)
                     }
@@ -133,7 +141,7 @@ class OtpScreenActivity : AppCompatActivity() {
                 binding.reOtp.isEnabled = true
 
 
-                binding.reOtp.setOnClickListener{
+                binding.reOtp.setOnClickListener {
                     timeLeftInMillis = 60 * 1000
                     startCountDownTimer()
                     genOTP()
@@ -141,8 +149,6 @@ class OtpScreenActivity : AppCompatActivity() {
                     binding.textView8.paintFlags = 0
                     binding.imageView.visibility = View.GONE
                     binding.OtpPinview.setText(genOTP())
-
-
 
 
                 }
@@ -166,7 +172,10 @@ class OtpScreenActivity : AppCompatActivity() {
         dialog.setCanceledOnTouchOutside(false)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.alert_otp)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialog.show()
@@ -176,8 +185,6 @@ class OtpScreenActivity : AppCompatActivity() {
         }
 
     }
-
-
 
 
 }

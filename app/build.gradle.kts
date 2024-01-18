@@ -82,8 +82,13 @@ dependencies {
     implementation ("androidx.biometric:biometric-ktx:1.2.0-alpha05")
     //datePicker
     implementation ("com.github.commandiron:WheelPickerCompose:1.1.11")
-
+    //cal
     implementation ("net.objecthunter:exp4j:0.4.8")
+
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
+    implementation("com.google.code.gson:gson:2.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
 
 
 

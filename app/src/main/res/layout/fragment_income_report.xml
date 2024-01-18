@@ -156,6 +156,7 @@
                     android:fontFamily="@font/sukhumvit_set_text"
                     android:hint="@string/not_found_data"
                     android:textSize="14sp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

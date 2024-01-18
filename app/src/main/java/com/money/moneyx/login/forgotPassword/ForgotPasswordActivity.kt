@@ -43,14 +43,14 @@ class ForgotPasswordActivity : AppCompatActivity() {
         binding.loginViewModel = viewModel
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        viewModel.getOtp()
-        viewModel.otp.observe(this, Observer {
-
-            if (it.isNullOrEmpty())
-                Toast.makeText(this,"พบข้อผิดพลาด", Toast.LENGTH_LONG).show()
-            else
-                binding.OtpPinview.setText(it)
-        })
+//        viewModel.generateOTP()
+//        viewModel.otp.observe(this, Observer {
+//
+//            if (it.isNullOrEmpty())
+//                Toast.makeText(this,"พบข้อผิดพลาด", Toast.LENGTH_LONG).show()
+//            else
+//                binding.OtpPinview.setText(it)
+//        })
 
         setEventClick()
         startCountDownTimer()
@@ -62,21 +62,21 @@ class ForgotPasswordActivity : AppCompatActivity() {
             }
             override fun afterTextChanged(s: Editable?) {
                 val textLength = s?.length ?:0
-                if (textLength == 6){
-                    if (s.toString() == viewModel.otp.value) {
-                        binding.buttonSubmit.isEnabled = true
-                        binding.buttonSubmit.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button))
-                        status = true
-                    } else {
-                        binding.buttonSubmit.isEnabled = true
-                        binding.buttonSubmit.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button))
-                        status = false
-                    }
-                }
-                else{
-                    binding.buttonSubmit.isEnabled = false
-                    binding.buttonSubmit.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button_disable))
-                }
+//                if (textLength == 6){
+//                    if (s.toString() == viewModel.otp.value) {
+//                        binding.buttonSubmit.isEnabled = true
+//                        binding.buttonSubmit.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button))
+//                        status = true
+//                    } else {
+//                        binding.buttonSubmit.isEnabled = true
+//                        binding.buttonSubmit.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button))
+//                        status = false
+//                    }
+//                }
+//                else{
+//                    binding.buttonSubmit.isEnabled = false
+//                    binding.buttonSubmit.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button_disable))
+//                }
             }
         })
 
