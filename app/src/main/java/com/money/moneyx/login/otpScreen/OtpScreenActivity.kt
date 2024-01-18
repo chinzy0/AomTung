@@ -1,5 +1,6 @@
 package com.money.moneyx.login.otpScreen
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -61,6 +62,7 @@ class OtpScreenActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {
                 val textLength = s?.length ?: 0
+                Log.i("asdwqefgskmkfv",textLength.toString())
                 if (textLength == 6) {
                     if (s.toString() == viewModel.mDataModel?.codeotp) {
                         binding.buttonSubmit.isEnabled = true
@@ -92,8 +94,26 @@ class OtpScreenActivity : AppCompatActivity() {
         viewModel.mDataModel?.let { data ->
             if (data.codeotp.isNullOrEmpty()) {
                 Toast.makeText(this, "พบข้อผิดพลาด", Toast.LENGTH_LONG).show()
-            } else
-                binding.OtpPinview.setText(data.codeotp)
+            } else {
+                var dialog = Dialog(this)
+                dialog.setCanceledOnTouchOutside(false)
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                dialog.setContentView(R.layout.send_otp)
+                dialog.window?.setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                var otp = dialog.findViewById<TextView>(R.id.textOTP)
+                otp.text = data.codeotp
+                var ok = dialog.findViewById<TextView>(R.id.okOtp)
+                ok.setOnClickListener {
+                    binding.OtpPinview.setText(data.codeotp)
+                    dialog.dismiss()
+                }
+                dialog.show()
+            }
+
 
         }
     }
@@ -185,6 +205,7 @@ class OtpScreenActivity : AppCompatActivity() {
         }
 
     }
+
 
 
 }
