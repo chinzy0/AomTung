@@ -9,10 +9,5 @@ class HomeViewModel : ViewModel() {
     val onClick = MutableLiveData<String>()
     val text = ObservableField("text001")
 
-    fun incomeReport() {
-        onClick.value = "incomeReport"
 
-    }fun expendsReport() {
-        onClick.value = "expendsReport"
-    }
 }

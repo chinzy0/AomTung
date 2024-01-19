@@ -8,19 +8,24 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.money.moneyx.R
 import com.money.moneyx.data.ViewPagerAdapter
 import com.money.moneyx.databinding.FragmentHomeBinding
+import com.money.moneyx.main.homeScreen.HomeViewModel
 import com.money.moneyx.main.homeScreen.fragments.report.expendsReport.ExpendsReportFragment
 import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.IncomeReportFragment
+import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.IncomeViewModel
 
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val fragment = ArrayList<Fragment>()
     private lateinit var  mPageAdapter: ViewPagerAdapter
+    private lateinit var viewModel: HomeViewModel
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +45,8 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_home, container, false)
-
+        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        binding.homeViewModel = viewModel
 
         fragmentSetup()
         swapTab()
