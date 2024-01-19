@@ -7,26 +7,20 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.money.moneyx.R
 import com.money.moneyx.databinding.FragmentIncomeReportBinding
 import com.money.moneyx.function.dropdownHomePage
-import com.money.moneyx.main.homeScreen.fragments.report.expendsReport.ExpendsViewModel
 import ir.mahozad.android.PieChart
-import java.text.SimpleDateFormat
-import java.util.Calendar
 
 
 class IncomeReportFragment : Fragment() {
     private lateinit var binding: FragmentIncomeReportBinding
     private lateinit var incomeAdapter: IncomeReportAdapter
     private lateinit var viewModel: IncomeViewModel
-     private var incomeModel = ArrayList<IncomeReportModel>()
-    private val currentMonth = getCurrentMonth()
-    private val currentYear = getCurrentYear()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +36,7 @@ class IncomeReportFragment : Fragment() {
         viewModel = ViewModelProvider(this)[IncomeViewModel::class.java]
         binding.incomeViewModel = viewModel
 
-
+        viewModel.addIncomeModel()
         adapter()
         chart()
         setMonth()
@@ -51,10 +45,8 @@ class IncomeReportFragment : Fragment() {
         setView()
 
 
-
         return binding.root
     }
-
 
 
     private fun chart() {
@@ -72,32 +64,9 @@ class IncomeReportFragment : Fragment() {
 
         }
     }
+
     private fun adapter() {
-        incomeModel.add(
-            IncomeReportModel(
-                "รายรับแน่นอน",
-                "เงินเดือน",
-                "+1,000.00",
-                "22/12/2023 11:17"
-            )
-        )
-        incomeModel.add(
-            IncomeReportModel(
-                "รายรับไม่แน่นอน",
-                "ของขวัญ",
-                "+500.00",
-                "22/12/2023 11:17"
-            )
-        )
-        incomeModel.add(
-            IncomeReportModel(
-                "รายรับไม่แน่นอน",
-                "ของขวัญ",
-                "+500.00",
-                "22/12/2023 11:17"
-            )
-        )
-        incomeAdapter = IncomeReportAdapter(incomeModel) {
+        incomeAdapter = IncomeReportAdapter(viewModel.incomeModel) {
         }
         binding.RCVpastIncome.apply {
             layoutManager = LinearLayoutManager(context)
@@ -105,7 +74,7 @@ class IncomeReportFragment : Fragment() {
             incomeAdapter.notifyDataSetChanged()
         }
 
-        if (incomeModel.isEmpty()) {
+        if (viewModel.incomeModel.isEmpty()) {
             binding.RCVpastIncome.visibility = View.GONE
             binding.textView21.visibility = View.VISIBLE
         } else {
@@ -114,31 +83,12 @@ class IncomeReportFragment : Fragment() {
         }
     }
 
-    fun getCurrentMonth(): String {
-        val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("MMMM")
-        return dateFormat.format(calendar.time)
-
-    }
-
-    fun getCurrentYear(): String {
-        val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("yyyy")
-        return dateFormat.format(calendar.time)
-
-    }
-
-
-
-
-
-
     private fun setMonth() {
-        binding.textMonth.text = currentMonth
+        binding.textMonth.text = viewModel.currentMonthIncome
     }
 
     private fun setYear() {
-        binding.textYear.text = currentYear
+        binding.textYear.text = viewModel.currentYearIncome
 
     }
 
@@ -149,6 +99,7 @@ class IncomeReportFragment : Fragment() {
             }
         })
     }
+
     private fun setView() {
         viewModel.onClickDialog.observe(requireActivity(), Observer {
             binding.textMonth.text = it.first
