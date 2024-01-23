@@ -6,6 +6,8 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
+import com.money.moneyx.R
+import com.money.moneyx.login.createPincode.CustomKeyboardModel
 import kotlinx.serialization.json.Json
 import okhttp3.Call
 import okhttp3.Callback
@@ -24,6 +26,8 @@ class LoginViewModel : ViewModel() {
     val onClick = MutableLiveData<String>()
     var mDataModel: DataOTP? = null
     var status = String
+    var otpAuth = false
+    var otpExpired = true
 
 
     fun clickGetOtp() {
@@ -47,70 +51,120 @@ class LoginViewModel : ViewModel() {
     }
 
 
-//    fun generateOTPx() {
-//        val json = JSONObject().put("phone", "0214536954").toString()
-//        val client = OkHttpClient()
-//        val requestBody = json.toRequestBody("application/json".toMediaType())
-//        val request: Request = APICloud().GenerateOTP(requestBody)
-//        client.newCall(request).enqueue(object : Callback {
-//            override fun onFailure(call: Call, e: IOException) {
-//                e.printStackTrace()
-//                otp.postValue("")
-//            }
-//
-//            @SuppressLint("NotifyDataSetChanged")
-//            @Throws(IOException::class)
-//            override fun onResponse(call: Call, response: Response) {
-//                otp.postValue("000000")
-//            }
-//
-//        })
-//    }
-
-    fun generateOTP(phone: String, clickCallback: ((DataOTP) -> Unit)) {
-        val jsonContent =
-            JSONObject().put("phone", phone).toString() // Replace this with your JSON string
+    fun generateOTP(phone: String, clickCallback: ((ResultOTP) -> Unit)) {
+        val jsonContent = JSONObject().put("phone", phone).toString()
 
         val client = OkHttpClient()
         val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
         val request = Request.Builder()
-            .url("http://zaserzafear.thddns.net:9973/api/OTP/GenerateOTP") // Replace with your API endpoint
+            .url("http://zaserzafear.thddns.net:9973/api/OTP/GenerateOTP")
             .post(requestBody)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
-                // Handle the response on the background thread
                 if (response.isSuccessful) {
-
-
                     val responseBody = response.body?.string()
-                    val jsonResponse = JSONObject(responseBody.toString())
-                    val jsonObject = jsonResponse.getJSONObject("data")
-
-                    val dataObject = jsonResponse.getJSONObject("data")
-                    val sendTo = dataObject.getString("sendTO")
-                    val refCode = dataObject.getString("refCode")
-                    val codeOtp = dataObject.getString("codeotp")
-                    val expired = dataObject.getInt("expired")
-                    val validateLengthPhone = dataObject.getBoolean("validateLegthPhone")
-                    val isDuplicate = dataObject.getBoolean("is_Duplicate")
-
-                    var dataModel = DataOTP(codeOtp,expired,isDuplicate,refCode,sendTo,validateLengthPhone)
-
-                    clickCallback.invoke(dataModel)
-
+                    val apiResponse = parseJson(responseBody.toString())
+                    clickCallback.invoke(apiResponse)
                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                // Handle the failure on the background thread
                 e.printStackTrace()
             }
         })
     }
 
 
+    private fun parseJson(jsonString: String): ResultOTP {
+        return Gson().fromJson(jsonString, ResultOTP::class.java)
+    }
+
+
+     fun confirmOTP(phone: String,refCode: String,otpCode : String,clickCallback: ((ConfirmOTP) -> Unit)) {
+        val jsonContent = JSONObject()
+            .put("refCode", refCode)
+            .put("phone", phone)
+            .put("otpCode",otpCode).toString()
+
+
+        val client = OkHttpClient()
+        val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url("http://zaserzafear.thddns.net:9973/api/OTP/ConfirmOTP")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    val apiResponse = Gson().fromJson(responseBody.toString(), ConfirmOTP::class.java)
+                    clickCallback.invoke(apiResponse)
+                }
+            }
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+        })
+    }
+
+    fun createAccount(phone: String,username: String,password : String,clickCallback: ((CreateAccount) -> Unit)) {
+        val jsonContent = JSONObject()
+            .put("phone", phone)
+            .put("username", username)
+            .put("password",password).toString()
+
+
+        val client = OkHttpClient()
+        val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url("http://zaserzafear.thddns.net:9973/api/Authentication/CreateAccount")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    val apiResponse = Gson().fromJson(responseBody.toString(), CreateAccount::class.java)
+                    clickCallback.invoke(apiResponse)
+                }
+            }
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+        })
+    }
+
+
+    fun memberLogin(phone: String,password : String,clickCallback: ((MemberLogin) -> Unit)) {
+        val jsonContent = JSONObject()
+            .put("phone", phone)
+            .put("password",password).toString()
+
+
+        val client = OkHttpClient()
+        val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url("http://zaserzafear.thddns.net:9973/api/Authentication/MemberLogin")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    val apiResponse = Gson().fromJson(responseBody.toString(), MemberLogin::class.java)
+                    clickCallback.invoke(apiResponse)
+                }
+            }
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+        })
+    }
 
 
 }

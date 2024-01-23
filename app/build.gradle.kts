@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.money.moneyx"
-        minSdk = 26
+        minSdk = 29
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -89,6 +89,11 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+    //loading
+    implementation("com.github.iamauttamai:Loading-lib:1.0.4")
+
+    implementation ("com.github.asadej0951:Dialog-Loading-lib:1.0.2")
+
 
 
 

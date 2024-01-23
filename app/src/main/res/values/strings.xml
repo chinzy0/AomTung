@@ -70,7 +70,7 @@
     <string name="securityAndPassword">รหัสผ่านและความปลอดภัย</string>
     <string name="wellcome">ยินดีต้อนรับ !</string>
     <string name="you">คุณ</string>
-    <string name="digits">0123456789,abcdefghijklmnopqrstuvwxyz,ก ข ฃ ค ฅ ฆ ง จ ฉ ช ซ ฌ ญ ฎ ฏ ฐ ฑ ฒ ณ ด ต ถ ท ธ น บ ป ผ ฝ พ ฟ ภ ม ย ร ล ว ศ ษ ส ห ฬ อ ฮ,ะ  ั  ็ า  ิ ่ ่ ่ ํ ุ ู ์ เ ใ ไ โ อ ย ว ฤ ฤๅ ฦ ฦๅ </string>
+    <string name="digits">0123456789,abcdefghijklmnopqrstuvwxyz,ก ข ฃ ค ฅ ฆ ง จ ฉ ช ซ ฌ ญ ฎ ฏ ฐ ฑ ฒ ณ ด ต ถ ท ธ น บ ป ผ ฝ พ ฟ ภ ม ย ร ล ว ศ ษ ส ห ฬ อ ฮ,ะ  ั  ็ า  ิ ๊ ๆ ๋ ่ ่ ่ ํ ุ ู ์ เ ใ ไ โ อ ย ว ฤ ฤๅ ฦ ฦๅ </string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

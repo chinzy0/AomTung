@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 
 import com.money.moneyx.R
+import com.money.moneyx.login.loginScreen.DataOTP
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -52,7 +53,7 @@ fun showExitDialog(mContext: Activity, onClickDialog: MutableLiveData<String>) {
     }
 }
 
-fun wrongOtpDialog(mContext: Activity) {
+fun wrongOtpDialog(mContext: Activity, message: String) {
     val dialog = Dialog(mContext)
     dialog.setCanceledOnTouchOutside(false)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -62,14 +63,14 @@ fun wrongOtpDialog(mContext: Activity) {
         ViewGroup.LayoutParams.WRAP_CONTENT
     )
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
     dialog.show()
+    var textMessage = dialog.findViewById<TextView>(R.id.textWrongOTP)
+    textMessage.text = message
     var ok = dialog.findViewById<TextView>(R.id.okDialog)
     ok.setOnClickListener {
         dialog.dismiss()
     }
 }
-
 
 
 fun dropdownHomePage(mContext: Activity, onClickDialog: MutableLiveData<Pair<String, String>>) {
@@ -257,12 +258,16 @@ fun selectType(mContext: Activity) {
         dialog.dismiss()
     }
 }
- fun autoSave(mContext: Activity){
+
+fun autoSave(mContext: Activity) {
     val dialog = Dialog(mContext)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(R.layout.autosave_dailog)
     dialog.show()
-    dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    )
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     dialog.window?.setGravity(Gravity.BOTTOM)
 
@@ -288,5 +293,25 @@ fun selectType(mContext: Activity) {
     every_3month.setOnClickListener {
         dialog.dismiss()
     }
+}
 
+fun dialogOtp(mContext: Activity, data: DataOTP, callback: (String) -> Unit) {
+
+    val dialog = Dialog(mContext)
+    dialog.setCanceledOnTouchOutside(false)
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(R.layout.send_otp)
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    )
+    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    val otp = dialog.findViewById<TextView>(R.id.textOTP)
+    otp.text = data.codeotp
+    val ok = dialog.findViewById<TextView>(R.id.okOtp)
+    ok.setOnClickListener {
+        callback.invoke(data.codeotp)
+        dialog.dismiss()
+    }
+    dialog.show()
 }

@@ -21,9 +21,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.iamauttamai.avloading.AVLoadingIndicatorView.TypeIndicator
+import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
 import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.ActivityEnterPinCodeBinding
+import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.login.NameInput.NameInputActivity
 import com.money.moneyx.login.createPincode.CustomKeyboardAdapter
 import com.money.moneyx.login.createPincode.CustomKeyboardModel
@@ -37,8 +40,12 @@ class EnterPinCodeActivity : AppCompatActivity() {
     private lateinit var viewModel : LoginViewModel
     private lateinit var keyboardAdapter: CustomKeyboardAdapter
     private var listKeyboard = ArrayList<CustomKeyboardModel>()
-    private var savedPin = ""
+    private val preferences = Preference.getInstance(this)
+    private var isDialogShowing = false
     private var fingerprint = ""
+    private var phoneNumber = ""
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,12 +56,24 @@ class EnterPinCodeActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         binding.loginViewModel = viewModel
         val preferences = Preference.getInstance(this)
-        savedPin = preferences.getString("PINCODE","")
         fingerprint = preferences.getString("FINGERPRINT","")
+        loadingScreen(this)
+
+
+
         setEventClick()
+        keyboard()
+        pinview()
         checkDeviceHasBiometric()
 
 
+
+
+
+
+
+    }
+    private fun keyboard(){
         listKeyboard.add(CustomKeyboardModel("1",R.drawable.delete))
         listKeyboard.add(CustomKeyboardModel("2",R.drawable.delete))
         listKeyboard.add(CustomKeyboardModel("3",R.drawable.delete))
@@ -92,8 +111,9 @@ class EnterPinCodeActivity : AppCompatActivity() {
             adapter = keyboardAdapter
             keyboardAdapter.notifyDataSetChanged()
         }
+    }
 
-
+    private fun pinview(){
 
         binding.PinView.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -105,23 +125,15 @@ class EnterPinCodeActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val enteredText = s.toString()
                 if (enteredText.length == 6) {
-                    if (enteredText == savedPin){
                         pinConfirmationSuccess()
-                    }else{
-                        binding.PinView.text?.clear()
-                        binding.textView.text = "ลองใหม่อีกครั้ง"
-                        binding.textView.setTextColor(ContextCompat.getColor(this@EnterPinCodeActivity, R.color.red))
-                        showCustomDialog()
-                    }
 
                 }
 
             }
 
         })
-
-
     }
+
 
     private fun setEventClick() {
         viewModel.onClick.observe(this, Observer {
@@ -135,26 +147,60 @@ class EnterPinCodeActivity : AppCompatActivity() {
     }
 
     private fun pinConfirmationSuccess() {
-        val intent = Intent(this, HomeActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        binding.PinView.text?.clear()
-        listKeyboard.clear()
-        keyboardAdapter.notifyDataSetChanged()
-        finish()
-        startActivity(intent)
+        AVLoading.startAnimLoading()
+        phoneNumber = intent.getStringExtra("PHONE").toString()
+        viewModel.memberLogin(phone = phoneNumber, password = binding.PinView.text.toString())
+        { member ->
+            AVLoading.stopAnimLoading()
+            if (member.success) {
+                if (member.data.is_Verified){
+                    val intent = Intent(this, HomeActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    listKeyboard.clear()
+                    preferences.saveString("idmember", member.data.idmember.toString())
+                    preferences.saveString("phone", phoneNumber)
+                    preferences.saveString("username", member.data.username)
+                    preferences.saveString("image", member.data.image)
+                    startActivity(intent)
+                }else{
+                    runOnUiThread {
+                        binding.PinView.text!!.clear()
+                        showCustomDialog()
+                        binding.textView.text = "ลองใหม่อีกครั้ง"
+                        binding.textView.setTextColor(ContextCompat.getColor(this, R.color.red))
+
+                    }
+
+                }
+            }
+        }
+
     }
 
     private fun showCustomDialog() {
-        val dialog = Dialog(this)
-        dialog.setCanceledOnTouchOutside(false)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dailog_wrong_pincode)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.show()
-        var ok = dialog.findViewById<TextView>(R.id.okDialog)
-        ok.setOnClickListener {
-            dialog.dismiss()
+        if (isDialogShowing) {
+            return
+        }
+        runOnUiThread {
+            val dialog = Dialog(this)
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setContentView(R.layout.dailog_wrong_pincode)
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.window?.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            isDialogShowing = true
+
+            dialog.show()
+
+            var ok = dialog.findViewById<TextView>(R.id.okDialog)
+            ok.setOnClickListener {
+                dialog.dismiss()
+                binding.PinView.text?.clear()
+                isDialogShowing = false
+            }
         }
     }
 

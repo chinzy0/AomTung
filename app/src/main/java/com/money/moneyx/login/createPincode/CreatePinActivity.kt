@@ -21,9 +21,10 @@ class CreatePinActivity : AppCompatActivity() {
     private lateinit var binding : ActivityCreatePinBinding
     private lateinit var viewModel : LoginViewModel
     private lateinit var keyboardAdapter: CustomKeyboardAdapter
-    private var listKeyboard = ArrayList<CustomKeyboardModel>()
-    private var firstEnteredPin: String = ""
     private lateinit var sharePreferences: Preference
+    private var listKeyboard = ArrayList<CustomKeyboardModel>()
+    private var phoneNumber = ""
+    private var firstEnteredPin: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,8 +35,44 @@ class CreatePinActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         binding.loginViewModel = viewModel
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        phoneNumber = intent.getStringExtra("PHONE").toString()
 
 
+        addButtonKeyboard()
+        pinviewValidate()
+        binding.appbarCreatePin.BackPage.setOnClickListener{
+            this.onBackPressed()
+        }
+
+
+    }
+    private fun pinviewValidate(){
+        binding.PinView.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val enteredText = s.toString()
+                if (enteredText.length == 6) {
+                    firstEnteredPin = enteredText
+                    askForPinAgain()
+                }
+
+            }
+
+        })
+    }
+
+
+    private fun askForPinAgain() {
+        val intent = Intent(this, ConfirmPincodeActivity::class.java)
+        intent.putExtra("savedPin", firstEnteredPin)
+        intent.putExtra("PHONE", phoneNumber)
+        startActivity(intent)
+        binding.PinView.setText("")
+
+    }
+
+    private fun addButtonKeyboard(){
         listKeyboard.add(CustomKeyboardModel("1",R.drawable.delete))
         listKeyboard.add(CustomKeyboardModel("2",R.drawable.delete))
         listKeyboard.add(CustomKeyboardModel("3",R.drawable.delete))
@@ -62,52 +99,12 @@ class CreatePinActivity : AppCompatActivity() {
                 val newText = currentText + number
                 binding.PinView.setText(newText)
             }
-
         }
-
-
         binding.keyboard.apply {
             layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
             adapter = keyboardAdapter
             keyboardAdapter.notifyDataSetChanged()
         }
-
-
-
-
-
-
-        binding.appbarCreatePin.BackPage.setOnClickListener{
-            this.onBackPressed()
-        }
-
-        binding.PinView.addTextChangedListener(object : TextWatcher{
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                val enteredText = s.toString()
-                if (enteredText.length == 6) {
-                    firstEnteredPin = enteredText
-                    askForPinAgain()
-                }
-
-            }
-
-        })
-    }
-
-
-    private fun askForPinAgain() {
-        val intent = Intent(this, ConfirmPincodeActivity::class.java)
-        intent.putExtra("savedPin", firstEnteredPin)
-        startActivity(intent)
-        binding.PinView.setText("")
-
-
     }
 
 

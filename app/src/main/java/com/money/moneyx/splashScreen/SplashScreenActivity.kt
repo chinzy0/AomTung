@@ -15,7 +15,7 @@ import com.money.moneyx.view.MainActivity
 
 class SplashScreenActivity : AppCompatActivity() {
     private  lateinit var binding: ActivitySplashScreenBinding
-    private var savedPin = ""
+    private var savedPhone = ""
     private var status = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,13 +24,14 @@ class SplashScreenActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         val preferences = Preference.getInstance(this)
 
-        savedPin = preferences.getString("PINCODE","")
+        savedPhone = preferences.getString("phone","")
 
         check()
 
         Handler().postDelayed({
             if (status == true){
                 val intent = Intent(this@SplashScreenActivity, EnterPinCodeActivity::class.java)
+                intent.putExtra("PHONE",savedPhone)
                 startActivity(intent)
             }else{
                 val intent = Intent(this@SplashScreenActivity, LoginActivity::class.java)
@@ -46,7 +47,7 @@ class SplashScreenActivity : AppCompatActivity() {
 //    Intent(this, NameInputActivity::class.java)
 
     private fun check() {
-        if (savedPin.isNotEmpty()) {
+        if (savedPhone.isNotEmpty()) {
             status = true
         }
     }

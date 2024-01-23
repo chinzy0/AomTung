@@ -23,6 +23,8 @@ class ConfirmPincodeActivity : AppCompatActivity() {
     private lateinit var keyboardAdapter: CustomKeyboardAdapter
     private var listKeyboard = ArrayList<CustomKeyboardModel>()
     private lateinit var sharePreferences: Preference
+    private var phoneNumber = ""
+    private var savedPin = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,11 +34,53 @@ class ConfirmPincodeActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         binding.loginViewModel = viewModel
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        val savedPin = intent.getStringExtra("savedPin")
+        savedPin = intent.getStringExtra("savedPin").toString()
+        phoneNumber = intent.getStringExtra("PHONE").toString()
+        customKeyboard()
+        pinviewValidate()
+
+
+        binding.appbarCreatePin.BackPage.setOnClickListener{
+            this.onBackPressed()
+        }
+    }
+
+    private fun pinviewValidate(){
+        binding.PinView.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val enteredText = s.toString()
+                if (enteredText.length == 6 ) {
+                    if (enteredText == savedPin){
+                        binding.textAlert.visibility = View.GONE
+                        binding.textView.text = "ยืนยัน PINCODE"
+                        binding.textView.setTextColor(ContextCompat.getColor(this@ConfirmPincodeActivity, R.color.sure_pinCode))
+//                       savePin(enteredText)
+                        intent.putExtra("PASSWORD",enteredText)
+                        pinConfirmationSuccess()
+                    }else{
+                        binding.PinView.text?.clear()
+                        binding.textView.text = "ลองใหม่อีกครั้ง"
+                        binding.textAlert.visibility = View.VISIBLE
+                        binding.textView.setTextColor(ContextCompat.getColor(this@ConfirmPincodeActivity, R.color.red))
+                    }
+
+                }
 
 
 
 
+
+            }
+
+        })
+    }
+    private fun customKeyboard(){
         listKeyboard.add(CustomKeyboardModel("1",R.drawable.delete))
         listKeyboard.add(CustomKeyboardModel("2",R.drawable.delete))
         listKeyboard.add(CustomKeyboardModel("3",R.drawable.delete))
@@ -73,48 +117,6 @@ class ConfirmPincodeActivity : AppCompatActivity() {
             keyboardAdapter.notifyDataSetChanged()
         }
 
-
-
-
-        binding.appbarCreatePin.BackPage.setOnClickListener{
-            this.onBackPressed()
-        }
-
-        binding.PinView.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                val enteredText = s.toString()
-                if (enteredText.length == 6 ) {
-                   if (enteredText == savedPin){
-                       binding.textAlert.visibility = View.GONE
-                       binding.textView.text = "ยืนยัน PINCODE"
-                       binding.textView.setTextColor(ContextCompat.getColor(this@ConfirmPincodeActivity, R.color.sure_pinCode))
-                       savePin(enteredText)
-                       pinConfirmationSuccess()
-                   }else{
-                       binding.PinView.text?.clear()
-                       binding.textView.text = "ลองใหม่อีกครั้ง"
-                       binding.textAlert.visibility = View.VISIBLE
-                       binding.textView.setTextColor(ContextCompat.getColor(this@ConfirmPincodeActivity, R.color.red))
-                   }
-
-                }
-
-
-
-
-
-            }
-
-        })
-
-
-
     }
     private fun savePin(pin: String) {
         //เก็บ pin code ลง preference
@@ -129,6 +131,8 @@ class ConfirmPincodeActivity : AppCompatActivity() {
         binding.PinView.text?.clear()
         listKeyboard.clear()
         keyboardAdapter.notifyDataSetChanged()
+        intent.putExtra("PASSWORD",savedPin)
+        intent.putExtra("PHONE",phoneNumber)
         finish()
         startActivity(intent)
     }
