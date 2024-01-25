@@ -50,6 +50,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -58,29 +59,14 @@
 
             >
 
-            <TextView
-                android:id="@+id/necessary_expenses"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/RcvListMenuSelect"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/necessaryExpenses"
-                android:fontFamily="@font/sukhumvit_set_text"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:paddingVertical="15dp"
-                android:layout_marginBottom="5dp"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/list_dailog"
                 />
 
-            <TextView
-                android:id="@+id/Unnecessary_expenses"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/unnecessaryExpenses"
-                android:fontFamily="@font/sukhumvit_set_text"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:paddingVertical="15dp"
-                android:layout_marginBottom="5dp"
-                />
+
         </LinearLayout>
 
     </LinearLayout>

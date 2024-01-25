@@ -16,9 +16,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
-import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.ActivityOtpScreenBinding
 import com.money.moneyx.function.dialogOtp
+import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.function.wrongOtpDialog
 import com.money.moneyx.login.createPincode.CreatePinActivity
 import com.money.moneyx.login.loginScreen.DataOTP
@@ -47,7 +47,7 @@ class OtpScreenActivity : AppCompatActivity() {
         otp = viewModel.mDataModel!!.codeotp
         refCode = viewModel.mDataModel!!.refCode
 
-
+        loadingScreen(this)
         setEventClick()
         buttonActivated()
         setOTPText()
@@ -62,12 +62,8 @@ class OtpScreenActivity : AppCompatActivity() {
 
     private fun buttonActivated() {
         binding.OtpPinview.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 val textLength = s?.length ?: 0
                 if (textLength == 6) {
@@ -98,7 +94,7 @@ class OtpScreenActivity : AppCompatActivity() {
             if (data.codeotp.isNullOrEmpty()) {
                 Toast.makeText(this, "พบข้อผิดพลาด", Toast.LENGTH_LONG).show()
             } else {
-                dialogOtp(this, data) {
+                dialogOtp(this, data.codeotp) {
                     binding.OtpPinview.setText(it)
                     startCountDownTimer()
                     binding.reOtp.isEnabled = false
@@ -108,11 +104,10 @@ class OtpScreenActivity : AppCompatActivity() {
     }
 
     private fun setEventClick() {
-        AVLoading.startAnimLoading()
         viewModel.onClick.observe(this, Observer {
-            AVLoading.stopAnimLoading()
             when (it) {
                 "SubmitOtpButton" -> {
+                    binding.buttonSubmit.isEnabled = false
                     if (viewModel.otpAuth && viewModel.otpExpired)
                     { viewModel.confirmOTP(phone = phoneNumber, refCode = refCode, otpCode = otp) { model ->
                             if (model.data.is_Success) {
@@ -125,6 +120,7 @@ class OtpScreenActivity : AppCompatActivity() {
                                     binding.textView10.text = ""
                                     binding.reOtp.isEnabled = true
                                     binding.OtpPinview.setText("")
+                                    binding.buttonSubmit.isEnabled = true
                                 }
                                 val intent = Intent(this, CreatePinActivity::class.java)
                                 intent.putExtra("mDataModel", model.data)
@@ -132,7 +128,6 @@ class OtpScreenActivity : AppCompatActivity() {
                                 startActivity(intent)
                             } else {
                                 wrongOtpDialog(this, model.data.message)
-                                Log.i("asdsadsa",model.data.message)
                             }
                         }
                     } else {
@@ -148,14 +143,13 @@ class OtpScreenActivity : AppCompatActivity() {
             viewModel.generateOTP(phoneNumber) { model ->
                 AVLoading.stopAnimLoading()
                 runOnUiThread {
-                    dialogOtp(this, model.data) {
+                    dialogOtp(this, model.data.codeotp) {
                         otp = it
                         refCode = model.data.refCode
                         binding.OtpPinview.setText(it)
                         timeLeftInMillis = 60 * 1000
                         startCountDownTimer()
                         viewModel.otpExpired = true
-
                     }
                 }
             }

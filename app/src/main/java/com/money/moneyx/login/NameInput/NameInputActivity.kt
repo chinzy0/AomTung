@@ -10,12 +10,14 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.TextView
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
 import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.ActivityNameInputBinding
+import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.login.loginScreen.LoginViewModel
 import com.money.moneyx.login.otpScreen.OtpScreenActivity
 import com.money.moneyx.main.homeScreen.HomeActivity
@@ -36,7 +38,7 @@ class NameInputActivity : AppCompatActivity() {
 
         password = intent.getStringExtra("PASSWORD").toString()
         phoneNumber = intent.getStringExtra("PHONE").toString()
-
+        loadingScreen(this)
         validateNameButton()
         setEventClick()
         binding.textView4.paintFlags = Paint.UNDERLINE_TEXT_FLAG
@@ -45,9 +47,7 @@ class NameInputActivity : AppCompatActivity() {
     }
 
     private fun setEventClick() {
-        AVLoading.startAnimLoading()
         viewModel.onClick.observe(this, Observer {
-            AVLoading.stopAnimLoading()
             when (it) {
                 "Skip" -> {
                     AVLoading.startAnimLoading()
@@ -75,7 +75,6 @@ class NameInputActivity : AppCompatActivity() {
                             }
                         }
                     }
-
                 }
 
                 "SubmitName" -> {
@@ -91,6 +90,7 @@ class NameInputActivity : AppCompatActivity() {
                                     preferences.saveString("phone", phoneNumber)
                                     preferences.saveString("username", member.data.username)
                                     preferences.saveString("image", member.data.image)
+                                    preferences.saveString("pincode", password)
                                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                                     startActivity(intent)
                                 } else {
@@ -112,9 +112,8 @@ class NameInputActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 val enteredText = s.toString()
-                if (enteredText.isNotEmpty()) {
-                    binding.buttonSubmitName.backgroundTintList =
-                        ColorStateList.valueOf(getColor(R.color.button))
+                if (enteredText.isNotEmpty() && enteredText.matches("[a-zA-Z0-9ก-๙ ]+".toRegex())) {
+                    binding.buttonSubmitName.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button))
                     binding.buttonSubmitName.isEnabled = true
                 } else {
                     binding.buttonSubmitName.backgroundTintList =

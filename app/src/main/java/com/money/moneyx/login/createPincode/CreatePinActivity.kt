@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.money.moneyx.R
 import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.ActivityCreatePinBinding
+import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.login.NameInput.NameInputActivity
 import com.money.moneyx.login.loginScreen.LoginViewModel
 import com.money.moneyx.main.homeScreen.HomeActivity
@@ -37,7 +38,7 @@ class CreatePinActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         phoneNumber = intent.getStringExtra("PHONE").toString()
 
-
+        loadingScreen(this)
         addButtonKeyboard()
         pinviewValidate()
         binding.appbarCreatePin.BackPage.setOnClickListener{

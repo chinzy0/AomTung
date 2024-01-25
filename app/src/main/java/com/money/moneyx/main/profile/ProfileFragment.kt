@@ -28,6 +28,7 @@ class ProfileFragment : Fragment() {
     private lateinit var sharePreferences: Preference
     private val onClickDialog = MutableLiveData<String>()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

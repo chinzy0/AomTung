@@ -6,45 +6,41 @@ import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.iamauttamai.avloading.AVLoadingIndicatorView.TypeIndicator
 import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
 import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.ActivityEnterPinCodeBinding
 import com.money.moneyx.function.loadingScreen
-import com.money.moneyx.login.NameInput.NameInputActivity
 import com.money.moneyx.login.createPincode.CustomKeyboardAdapter
 import com.money.moneyx.login.createPincode.CustomKeyboardModel
 import com.money.moneyx.login.forgotPassword.ForgotPasswordActivity
 import com.money.moneyx.login.loginScreen.LoginViewModel
-import com.money.moneyx.login.otpScreen.OtpScreenActivity
 import com.money.moneyx.main.homeScreen.HomeActivity
 
 class EnterPinCodeActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityEnterPinCodeBinding
-    private lateinit var viewModel : LoginViewModel
+    private lateinit var binding: ActivityEnterPinCodeBinding
+    private lateinit var viewModel: LoginViewModel
     private lateinit var keyboardAdapter: CustomKeyboardAdapter
     private var listKeyboard = ArrayList<CustomKeyboardModel>()
     private val preferences = Preference.getInstance(this)
     private var isDialogShowing = false
     private var fingerprint = ""
     private var phoneNumber = ""
-
+    private val positionClick = "forgot_password"
 
 
 
@@ -56,46 +52,41 @@ class EnterPinCodeActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         binding.loginViewModel = viewModel
         val preferences = Preference.getInstance(this)
-        fingerprint = preferences.getString("FINGERPRINT","")
+        fingerprint = preferences.getString("FINGERPRINT", "")
+
+
         loadingScreen(this)
-
-
-
         setEventClick()
         keyboard()
         pinview()
         checkDeviceHasBiometric()
 
 
-
-
-
-
-
     }
-    private fun keyboard(){
-        listKeyboard.add(CustomKeyboardModel("1",R.drawable.delete))
-        listKeyboard.add(CustomKeyboardModel("2",R.drawable.delete))
-        listKeyboard.add(CustomKeyboardModel("3",R.drawable.delete))
-        listKeyboard.add(CustomKeyboardModel("4",R.drawable.delete))
-        listKeyboard.add(CustomKeyboardModel("5",R.drawable.delete))
-        listKeyboard.add(CustomKeyboardModel("6",R.drawable.delete))
-        listKeyboard.add(CustomKeyboardModel("7",R.drawable.delete))
-        listKeyboard.add(CustomKeyboardModel("8",R.drawable.delete))
-        listKeyboard.add(CustomKeyboardModel("9",R.drawable.delete))
-        listKeyboard.add(CustomKeyboardModel("-",R.drawable.delete))
-        listKeyboard.add(CustomKeyboardModel("0",R.drawable.delete))
-        listKeyboard.add(CustomKeyboardModel("delete",R.drawable.delete))
+
+    private fun keyboard() {
+        listKeyboard.add(CustomKeyboardModel("1", R.drawable.delete))
+        listKeyboard.add(CustomKeyboardModel("2", R.drawable.delete))
+        listKeyboard.add(CustomKeyboardModel("3", R.drawable.delete))
+        listKeyboard.add(CustomKeyboardModel("4", R.drawable.delete))
+        listKeyboard.add(CustomKeyboardModel("5", R.drawable.delete))
+        listKeyboard.add(CustomKeyboardModel("6", R.drawable.delete))
+        listKeyboard.add(CustomKeyboardModel("7", R.drawable.delete))
+        listKeyboard.add(CustomKeyboardModel("8", R.drawable.delete))
+        listKeyboard.add(CustomKeyboardModel("9", R.drawable.delete))
+        listKeyboard.add(CustomKeyboardModel("-", R.drawable.delete))
+        listKeyboard.add(CustomKeyboardModel("0", R.drawable.delete))
+        listKeyboard.add(CustomKeyboardModel("delete", R.drawable.delete))
 
 
-        keyboardAdapter = CustomKeyboardAdapter(listKeyboard){number ->
+        keyboardAdapter = CustomKeyboardAdapter(listKeyboard) { number ->
             if (number == "delete") {
                 val currentText = binding.PinView.text.toString()
                 if (currentText.isNotEmpty()) {
                     val newText = currentText.substring(0, currentText.length - 1)
                     binding.PinView.setText(newText)
                 }
-            }else {
+            } else {
                 val currentText = binding.PinView.text.toString()
                 val newText = currentText + number
                 binding.PinView.setText(newText)
@@ -104,7 +95,7 @@ class EnterPinCodeActivity : AppCompatActivity() {
         }
 
 
-        binding.textView2.paintFlags =  Paint.UNDERLINE_TEXT_FLAG
+        binding.textView2.paintFlags = Paint.UNDERLINE_TEXT_FLAG
 
         binding.keyboard.apply {
             layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
@@ -113,20 +104,15 @@ class EnterPinCodeActivity : AppCompatActivity() {
         }
     }
 
-    private fun pinview(){
+    private fun pinview() {
 
         binding.PinView.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 val enteredText = s.toString()
                 if (enteredText.length == 6) {
-                        pinConfirmationSuccess()
-
+                    pinConfirmationSuccess()
                 }
 
             }
@@ -136,11 +122,19 @@ class EnterPinCodeActivity : AppCompatActivity() {
 
 
     private fun setEventClick() {
+        phoneNumber = intent.getStringExtra("PHONE").toString()
         viewModel.onClick.observe(this, Observer {
             when (it) {
                 "ForgotPincode" -> {
-                    val intent = Intent(this, ForgotPasswordActivity::class.java)
-                    startActivity(intent)
+                    AVLoading.startAnimLoading()
+                    viewModel.otpForgotPassword(phoneNumber) { model ->
+                        AVLoading.stopAnimLoading()
+                        val intent = Intent(this, ForgotPasswordActivity::class.java)
+                        intent.putExtra("PHONE",phoneNumber)
+                        intent.putExtra("forgotPasswordDataModel",model.data)
+                        startActivity(intent)
+                    }
+
                 }
             }
         })
@@ -153,7 +147,7 @@ class EnterPinCodeActivity : AppCompatActivity() {
         { member ->
             AVLoading.stopAnimLoading()
             if (member.success) {
-                if (member.data.is_Verified){
+                if (member.data.is_Verified) {
                     val intent = Intent(this, HomeActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     listKeyboard.clear()
@@ -161,8 +155,9 @@ class EnterPinCodeActivity : AppCompatActivity() {
                     preferences.saveString("phone", phoneNumber)
                     preferences.saveString("username", member.data.username)
                     preferences.saveString("image", member.data.image)
+                    preferences.saveString("pincode",binding.PinView.text.toString())
                     startActivity(intent)
-                }else{
+                } else {
                     runOnUiThread {
                         binding.PinView.text!!.clear()
                         showCustomDialog()
@@ -207,18 +202,21 @@ class EnterPinCodeActivity : AppCompatActivity() {
     private fun checkDeviceHasBiometric() {
         val biometricManager = BiometricManager.from(this)
         when (biometricManager.canAuthenticate()) {
-            BiometricManager.BIOMETRIC_SUCCESS ->{
+            BiometricManager.BIOMETRIC_SUCCESS -> {
                 Log.d("MY_APP_TAG", "App can authenticate using biometrics.")
                 checkBiometric()
             }
+
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
                 Log.e("MY_APP_TAG", "No biometric features available on this device.")
 
             }
+
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
                 Log.e("MY_APP_TAG", "Biometric features are currently unavailable.")
 
             }
+
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
 
             }
@@ -226,8 +224,8 @@ class EnterPinCodeActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkBiometric(){
-        if (fingerprint == "ON"){
+    private fun checkBiometric() {
+        if (fingerprint == "ON") {
             showBiometricPrompt()
         }
     }
@@ -246,9 +244,10 @@ class EnterPinCodeActivity : AppCompatActivity() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
                     val preferences = Preference.getInstance(this@EnterPinCodeActivity)
-                    val savedPin = preferences.getString("PINCODE", "")
+                    val savedPin = preferences.getString("pincode", "")
                     binding.PinView.setText(savedPin)
                 }
+
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
 

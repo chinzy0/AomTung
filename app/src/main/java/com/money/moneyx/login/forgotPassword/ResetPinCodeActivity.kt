@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.money.moneyx.R
 import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.ActivityResetPinCodeBinding
+import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.login.createPincode.CustomKeyboardAdapter
 import com.money.moneyx.login.createPincode.CustomKeyboardModel
 import com.money.moneyx.login.loginScreen.LoginViewModel
@@ -24,7 +25,9 @@ class ResetPinCodeActivity : AppCompatActivity() {
     private lateinit var keyboardAdapter: CustomKeyboardAdapter
     private var listKeyboard = ArrayList<CustomKeyboardModel>()
     private lateinit var sharePreferences: Preference
-    private var firstEnteredPin: String = ""
+    private var firstEnteredPin =  ""
+    private var phonenumber =  ""
+    private var positionClick =  ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +37,47 @@ class ResetPinCodeActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         binding.loginViewModel = viewModel
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        val enteredPin = intent.getStringExtra("savedPin")
+        phonenumber = intent.getStringExtra("PHONE").toString()
+        positionClick = intent.getStringExtra("positionClick").toString()
+        loadingScreen(this)
+        keyboard()
+        inputPassword()
 
 
+        binding.appbarCreatePin.BackPage.setOnClickListener{
+            this.onBackPressed()
+        }
+
+
+
+
+    }
+    private fun inputPassword(){
+        binding.PinView.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val enteredText = s.toString()
+                if (enteredText.length == 6) {
+                    firstEnteredPin = enteredText
+                    askForPinAgain()
+                }
+
+            }
+
+        })
+    }
+
+    private fun askForPinAgain() {
+        val intent = Intent(this, ConfirmResetPincodeActivity::class.java)
+        intent.putExtra("NewPassword", firstEnteredPin)
+        intent.putExtra("PHONE", phonenumber)
+        intent.putExtra("positionClick", positionClick)
+        startActivity(intent)
+        binding.PinView.setText("")
+    }
+
+    private fun keyboard(){
         listKeyboard.add(CustomKeyboardModel("1",R.drawable.delete))
         listKeyboard.add(CustomKeyboardModel("2",R.drawable.delete))
         listKeyboard.add(CustomKeyboardModel("3",R.drawable.delete))
@@ -72,39 +113,6 @@ class ResetPinCodeActivity : AppCompatActivity() {
             keyboardAdapter.notifyDataSetChanged()
         }
 
-
-
-        binding.appbarCreatePin.BackPage.setOnClickListener{
-            this.onBackPressed()
-        }
-
-        binding.PinView.addTextChangedListener(object : TextWatcher{
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                val enteredText = s.toString()
-                if (enteredText.length == 6) {
-                    firstEnteredPin = enteredText
-                    askForPinAgain()
-                }
-
-            }
-
-        })
-
-
-
     }
-    private fun askForPinAgain() {
-        val intent = Intent(this, ConfirmResetPincodeActivity::class.java)
-        intent.putExtra("savedPin", firstEnteredPin)
-        startActivity(intent)
-        binding.PinView.setText("")
 
-
-    }
 }

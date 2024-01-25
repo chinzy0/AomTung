@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
@@ -38,10 +39,10 @@ class SubmitPinActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         binding.loginViewModel = viewModel
         val preferences = Preference.getInstance(this)
-        savedPin = preferences.getString("PINCODE","")
+        savedPin = preferences.getString("pincode","")
+
 
         makeKeyBoard()
-        setEventClick()
         pinView()
         onBack()
         binding.textView2.paintFlags =  Paint.UNDERLINE_TEXT_FLAG
@@ -85,16 +86,6 @@ class SubmitPinActivity : AppCompatActivity() {
         }
     }
 
-    private fun setEventClick() {
-        viewModel.onClick.observe(this, Observer {
-            when (it) {
-                "ForgotPincode" -> {
-                    val intent = Intent(this, ForgotPasswordActivity::class.java)
-                    startActivity(intent)
-                }
-            }
-        })
-    }
 
     private fun pinView(){
         binding.PinView.addTextChangedListener(object : TextWatcher {
@@ -124,6 +115,8 @@ class SubmitPinActivity : AppCompatActivity() {
     }
     private fun pinConfirmationSuccess() {
         val intent = Intent(this, PasswordAndSecurityActivity::class.java)
+        val positionClick = intent.getStringExtra("positionClick")
+        intent.putExtra("positionClick",positionClick)
         binding.PinView.text?.clear()
         listKeyboard.clear()
         keyboardAdapter.notifyDataSetChanged()

@@ -81,6 +81,7 @@
             android:text="@string/FOrgotPincode"
             android:textColor="@color/sure_pinCode"
             android:textSize="17sp"
+            android:padding="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

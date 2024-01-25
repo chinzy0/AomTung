@@ -29,7 +29,6 @@ class LoginActivity : AppCompatActivity() {
         binding.loginViewModel = viewModel
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        loadingScreen(this)
         validateButton()
         setEventClick()
 
@@ -39,12 +38,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun validateButton(){
         binding.editTextPhone.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 val enteredText = s.toString()
                 if (enteredText.length == 10) {
@@ -62,28 +57,33 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun setEventClick() {
-
+        loadingScreen(this)
         viewModel.onClick.observe(this, Observer {
             when (it) {
                 "getOtp" -> {
+                    binding.buttonGetOTP.isEnabled = false
                     AVLoading.startAnimLoading()
                     viewModel.generateOTP(binding.editTextPhone.text.toString()) { model ->
                         AVLoading.stopAnimLoading()
-                        if (model.success) {
-                            if (model.data.is_Duplicate){
-                                val intent = Intent(this, EnterPinCodeActivity::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                                intent.putExtra("PHONE",binding.editTextPhone.text.toString())
-                                startActivity(intent)
-                            }else{
-                            val intent = Intent(this, OtpScreenActivity::class.java)
-                            intent.putExtra("mDataModel", model.data)
-                            intent.putExtra("PHONE",binding.editTextPhone.text.toString())
-                            intent.putExtra("refCode",viewModel.mDataModel?.refCode)
-                            startActivity(intent)
+                        runOnUiThread {
+                            if (model.success) {
+                                if (model.data.is_Duplicate) {
+                                    val intent = Intent(this, EnterPinCodeActivity::class.java)
+                                    intent.flags =
+                                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                                    intent.putExtra("PHONE", binding.editTextPhone.text.toString())
+                                    startActivity(intent)
+                                } else {
+                                    val intent = Intent(this, OtpScreenActivity::class.java)
+                                    intent.putExtra("mDataModel", model.data)
+                                    intent.putExtra("PHONE", binding.editTextPhone.text.toString())
+                                    intent.putExtra("refCode", viewModel.mDataModel?.refCode)
+                                    startActivity(intent)
+                                }
                             }
-
+                            binding.buttonGetOTP.isEnabled = true
                         }
+
                     }
                 }
             }

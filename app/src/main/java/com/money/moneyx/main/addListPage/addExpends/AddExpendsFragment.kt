@@ -1,27 +1,16 @@
 package com.money.moneyx.main.addListPage.addExpends
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.Button
-import android.widget.EditText
-import android.widget.NumberPicker
-import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -35,17 +24,9 @@ import com.money.moneyx.function.dateTime
 import com.money.moneyx.function.note
 import com.money.moneyx.function.selectType
 import com.money.moneyx.function.showTimePicker
-import com.money.moneyx.main.addListPage.ReportViewModel
 import com.money.moneyx.main.addListPage.addIncome.AddIncomeAdapter
-import com.money.moneyx.main.addListPage.addIncome.AddIncomeModel
-import com.money.moneyx.main.addListPage.addIncome.AddIncomeViewModel
 import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
-import com.money.moneyx.main.addListPage.category.CategoryExpendsActivity
 import com.money.moneyx.main.addListPage.category.CategoryIncomeActivity
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 
 class AddExpendsFragment : Fragment() {
@@ -94,10 +75,14 @@ class AddExpendsFragment : Fragment() {
                 "วันที่ เวลา" -> {
                     when (it.second) {
                         "date" -> {
-                            dateTime(requireActivity())
+                            dateTime(requireActivity()) { formattedDate ->
+                                Log.i("Income Date", formattedDate)
+                            }
                         }
                         "time" -> {
-                            showTimePicker(requireActivity())
+                            dateTime(requireActivity()) { formattedDate ->
+
+                            }
                         }
                         else -> {
                         }
@@ -105,16 +90,16 @@ class AddExpendsFragment : Fragment() {
 
                 }
                 "ประเภท" -> {
-                    selectType(requireActivity())
+//                    selectType(requireActivity())
                 }
                 "หมวดหมู่" -> {
-                    selectCategory()
+//                    selectCategory()
                 }
                 "โน้ต" -> {
-                    note(requireActivity())
+//                    note(requireActivity())
                 }
                 "บันทึกอัตโนมัติ" -> {
-                    autoSave(requireActivity())
+//                    autoSave(requireActivity())
                 }
             }
         }
@@ -125,13 +110,11 @@ class AddExpendsFragment : Fragment() {
         }
     }
 
-    private val resultActivityAppointment =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val resultActivityAppointment = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.let { data ->
                     val x = data.getStringExtra("number").toString()
                     binding.textTv.setText(x)
-                    Log.i("qwewqt",x)
                 }
             }
         }

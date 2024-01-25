@@ -90,7 +90,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/RCVincome"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="42dp"
@@ -100,7 +99,347 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
-            tools:listitem="@layout/list_information" />
+            tools:listitem="@layout/list_information" >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="15dp"
+                    android:layout_marginStart="25dp"
+                    android:src="@drawable/calendar"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="11dp"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:text="วันที่ เวลา"
+                    android:textColor="#292D33"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img"
+                    app:layout_constraintStart_toEndOf="@+id/img"
+                    app:layout_constraintTop_toTopOf="@+id/img" />
+
+                <TextView
+                    android:id="@+id/textDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="11dp"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:text="22/12/2023"
+                    android:textColor="#292D33"
+                    android:textSize="17sp"
+                    android:paddingVertical="20dp"
+                    android:onClick="@{() -> addIncomeViewModel.incomeDateClick()}"
+                    app:layout_constraintBottom_toBottomOf="@+id/img"
+                    app:layout_constraintEnd_toStartOf="@+id/textTime"
+                    app:layout_constraintTop_toTopOf="@+id/img" />
+                <TextView
+                    android:id="@+id/textTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:paddingVertical="20dp"
+                    android:text="11:17"
+                    android:textColor="#292D33"
+                    android:textSize="17sp"
+                    android:onClick="@{() -> addIncomeViewModel.incomeTimeClick()}"
+                    app:layout_constraintBottom_toBottomOf="@+id/img"
+                    app:layout_constraintEnd_toStartOf="@+id/detail"
+                    app:layout_constraintTop_toTopOf="@+id/img" />
+                <ImageView
+                    android:id="@+id/detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="23dp"
+                    android:src="@drawable/path"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/underline"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="18dp"
+                    android:layout_marginTop="25dp"
+                    android:background="#E2E2E2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/TypeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> addIncomeViewModel.incomeTypeClick()}"
+                >
+                <ImageView
+                    android:id="@+id/img2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="15dp"
+                    android:layout_marginStart="25dp"
+                    android:src="@drawable/type"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/title2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="11dp"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:text="ประเภท"
+                    android:textColor="#292D33"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img2"
+                    app:layout_constraintStart_toEndOf="@+id/img2"
+                    app:layout_constraintTop_toTopOf="@+id/img2" />
+
+                <TextView
+                    android:id="@+id/textTime2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:paddingVertical="20dp"
+                    android:text="เลือก"
+                    android:textColor="#292D33"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img2"
+                    app:layout_constraintEnd_toStartOf="@+id/detail2"
+                    app:layout_constraintTop_toTopOf="@+id/img2" />
+                <ImageView
+                    android:id="@+id/detail2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="23dp"
+                    android:src="@drawable/path"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/underline2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="18dp"
+                    android:layout_marginTop="25dp"
+                    android:background="#E2E2E2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/categoryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> addIncomeViewModel.incomeCategoryClick()}"
+
+                >
+                <ImageView
+                    android:id="@+id/img3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="15dp"
+                    android:layout_marginStart="25dp"
+                    android:src="@drawable/category"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/title3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="11dp"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:text="หมวดหมู่"
+                    android:textColor="#292D33"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img3"
+                    app:layout_constraintStart_toEndOf="@+id/img3"
+                    app:layout_constraintTop_toTopOf="@+id/img3" />
+
+                <TextView
+                    android:id="@+id/textTime3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:paddingVertical="20dp"
+                    android:text="เลือก"
+                    android:textColor="#292D33"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img3"
+                    app:layout_constraintEnd_toStartOf="@+id/detail3"
+                    app:layout_constraintTop_toTopOf="@+id/img3" />
+                <ImageView
+                    android:id="@+id/detail3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="23dp"
+                    android:src="@drawable/path"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/underline3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="18dp"
+                    android:layout_marginTop="25dp"
+                    android:background="#E2E2E2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/noteButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> addIncomeViewModel.incomeNoteClick()}"
+
+                >
+                <ImageView
+                    android:id="@+id/img4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="15dp"
+                    android:layout_marginStart="25dp"
+                    android:src="@drawable/note_"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/title4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="11dp"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:text="โน้ต"
+                    android:textColor="#292D33"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img4"
+                    app:layout_constraintStart_toEndOf="@+id/img4"
+                    app:layout_constraintTop_toTopOf="@+id/img4" />
+
+                <TextView
+                    android:id="@+id/textTime4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:paddingVertical="20dp"
+                    android:text="เลือก"
+                    android:textColor="#292D33"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img4"
+                    app:layout_constraintEnd_toStartOf="@+id/detail4"
+                    app:layout_constraintTop_toTopOf="@+id/img4" />
+                <ImageView
+                    android:id="@+id/detail4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="23dp"
+                    android:src="@drawable/path"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/underline4"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="18dp"
+                    android:layout_marginTop="25dp"
+                    android:background="#E2E2E2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/autosaveButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> addIncomeViewModel.incomeAutoSaveClick()}"
+
+                >
+                <ImageView
+                    android:id="@+id/img5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="15dp"
+                    android:layout_marginStart="25dp"
+                    android:src="@drawable/autosave_icon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/title5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="11dp"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:text="บันทึกอัตโนมัติ"
+                    android:textColor="#292D33"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img5"
+                    app:layout_constraintStart_toEndOf="@+id/img5"
+                    app:layout_constraintTop_toTopOf="@+id/img5" />
+
+                <TextView
+                    android:id="@+id/textTime5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:paddingVertical="20dp"
+                    android:text="เลือก"
+                    android:textColor="#292D33"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img5"
+                    app:layout_constraintEnd_toStartOf="@+id/detail5"
+                    app:layout_constraintTop_toTopOf="@+id/img5" />
+                <ImageView
+                    android:id="@+id/detail5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="23dp"
+                    android:src="@drawable/path"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <Button
             android:id="@+id/buttonAddIncome"
@@ -115,6 +454,7 @@
             android:text="@string/save"
             android:textColor="@color/white"
             android:textSize="22sp"
+            android:onClick="@{() -> addIncomeViewModel.incomeSaveClick()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

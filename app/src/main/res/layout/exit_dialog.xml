@@ -54,7 +54,7 @@
                     android:id="@+id/textView28"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="@string/submit"
+                    android:text="@string/ok"
                     android:gravity="center"
                     android:fontFamily="@font/sukhumvit_set_text"
                     android:textSize="16sp"

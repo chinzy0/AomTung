@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class IncomeViewModel : ViewModel() {
 
@@ -47,14 +48,14 @@ class IncomeViewModel : ViewModel() {
 
     private fun getCurrentMonth(): String {
         val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("MMMM")
+        val dateFormat = SimpleDateFormat("MMMM", Locale("th","TH"))
         return dateFormat.format(calendar.time)
 
     }
 
     private fun getCurrentYear(): String {
         val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("yyyy")
+        val dateFormat = SimpleDateFormat("yyyy",Locale("en","EN"))
         return dateFormat.format(calendar.time)
 
     }

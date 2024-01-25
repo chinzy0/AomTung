@@ -21,14 +21,18 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 import com.money.moneyx.R
-import com.money.moneyx.login.loginScreen.DataOTP
+import com.money.moneyx.main.addListPage.addIncome.GetAllTypeIncome
+import com.money.moneyx.main.addListPage.addIncome.GetAllTypeIncomeData
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+//private lateinit var selectTypeDialogAdapter: SelectTypeDialogAdapter
 fun showExitDialog(mContext: Activity, onClickDialog: MutableLiveData<String>) {
     val dialog = Dialog(mContext)
     dialog.setCanceledOnTouchOutside(false)
@@ -42,11 +46,11 @@ fun showExitDialog(mContext: Activity, onClickDialog: MutableLiveData<String>) {
 
 
     dialog.show()
-    var cancel = dialog.findViewById<ConstraintLayout>(R.id.cancle_exit_button)
+    val cancel = dialog.findViewById<ConstraintLayout>(R.id.cancle_exit_button)
     cancel.setOnClickListener {
         dialog.dismiss()
     }
-    var exit = dialog.findViewById<ConstraintLayout>(R.id.confirm_exit_button)
+    val exit = dialog.findViewById<ConstraintLayout>(R.id.confirm_exit_button)
     exit.setOnClickListener {
         onClickDialog.value = "confirm"
 
@@ -64,9 +68,9 @@ fun wrongOtpDialog(mContext: Activity, message: String) {
     )
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     dialog.show()
-    var textMessage = dialog.findViewById<TextView>(R.id.textWrongOTP)
+    val textMessage = dialog.findViewById<TextView>(R.id.textWrongOTP)
     textMessage.text = message
-    var ok = dialog.findViewById<TextView>(R.id.okDialog)
+    val ok = dialog.findViewById<TextView>(R.id.okDialog)
     ok.setOnClickListener {
         dialog.dismiss()
     }
@@ -124,7 +128,7 @@ fun dropdownHomePage(mContext: Activity, onClickDialog: MutableLiveData<Pair<Str
     }
 }
 
-fun note(mContext: Activity) {
+fun note(mContext: Activity,noteText: (String) -> Unit) {
     //โน๊ต
     val dialog = Dialog(mContext)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -137,9 +141,9 @@ fun note(mContext: Activity) {
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     dialog.window?.setGravity(Gravity.BOTTOM)
 
-    var note = dialog.findViewById<EditText>(R.id.textNote)
-    var counter = dialog.findViewById<TextView>(R.id.textCount)
-    var button = dialog.findViewById<Button>(R.id.buttonSave)
+    val note = dialog.findViewById<EditText>(R.id.textNote)
+    val counter = dialog.findViewById<TextView>(R.id.textCount)
+    val button = dialog.findViewById<Button>(R.id.buttonSave)
     val colorButtonEnable = ContextCompat.getColor(mContext, R.color.button)
     val colorButtonDisable = ContextCompat.getColor(mContext, R.color.button_disable)
 
@@ -147,9 +151,8 @@ fun note(mContext: Activity) {
     note.addTextChangedListener(object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            val remainingCharacters = (50 - s?.length!!) ?: 0
+            val remainingCharacters = (50 - s?.length!!)
             counter?.text = remainingCharacters.toString()
-            Log.i("asdasda", s.toString())
             if (s.isNotEmpty()) {
                 button.isEnabled = true
                 button.backgroundTintList = ColorStateList.valueOf(colorButtonEnable)
@@ -162,11 +165,12 @@ fun note(mContext: Activity) {
         override fun afterTextChanged(s: Editable?) {}
     })
     button.setOnClickListener {
+        noteText(note.text.toString())
         dialog.dismiss()
     }
 }
 
-fun dateTime(mContext: Activity) {
+fun dateTime(mContext: Activity, onDateSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
@@ -178,11 +182,10 @@ fun dateTime(mContext: Activity) {
         { _, selectedYear, selectedMonth, selectedDay ->
             val selectedDate = Calendar.getInstance()
             selectedDate.set(selectedYear, selectedMonth, selectedDay)
-            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val formattedDate = dateFormat.format(selectedDate.time)
             Log.i("formattedDate", formattedDate)
-
-
+            onDateSelected(formattedDate)
         },
         year,
         month,
@@ -191,9 +194,9 @@ fun dateTime(mContext: Activity) {
     datePickerDialog.show()
 }
 
-fun showTimePicker(mContext: Activity) {
-    val calendar = Calendar.getInstance()
 
+fun showTimePicker(mContext: Activity,onTimeSelected: (String) -> Unit) {
+    val calendar = Calendar.getInstance()
     val inflater = LayoutInflater.from(mContext)
     val view = inflater.inflate(R.layout.time_picker_dialog, null)
 
@@ -223,7 +226,7 @@ fun showTimePicker(mContext: Activity) {
         val timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault())
         val formattedTime = timeFormat.format(selectedTime.time)
         Log.i("formattedTime", formattedTime)
-
+        onTimeSelected(formattedTime)
 
     }
 
@@ -235,8 +238,13 @@ fun showTimePicker(mContext: Activity) {
     builder.show()
 }
 
-fun selectType(mContext: Activity) {
+fun selectType(
+    mContext: Activity,
+    modelData: GetAllTypeIncome?,
+    onTypeSelected: (String) -> Unit
+) {
     val dialog = Dialog(mContext)
+    val selectDialogRCV = dialog.findViewById<RecyclerView>(R.id.RcvListMenuSelect)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(R.layout.select_type_dialog)
     dialog.show()
@@ -247,19 +255,20 @@ fun selectType(mContext: Activity) {
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     dialog.window?.setGravity(Gravity.BOTTOM)
 
-    var necessaryExpenses = dialog.findViewById<TextView>(R.id.necessary_expenses)
-    var unnecessaryExpenses = dialog.findViewById<TextView>(R.id.Unnecessary_expenses)
+    val selectTypeDialogAdapter = SelectTypeDialogAdapter(modelData!!.data){
 
-    necessaryExpenses.setOnClickListener {
-        dialog.dismiss()
+    }
+    selectDialogRCV.apply {
+//        layoutManager = LinearLayoutManager(context)
+//        adapter = selectTypeDialogAdapter
+//        selectTypeDialogAdapter.notifyDataSetChanged()
     }
 
-    unnecessaryExpenses.setOnClickListener {
-        dialog.dismiss()
-    }
+
+
 }
 
-fun autoSave(mContext: Activity) {
+fun autoSave(mContext: Activity,onAutoSaveSelected: (String) -> Unit) {
     val dialog = Dialog(mContext)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(R.layout.autosave_dailog)
@@ -271,31 +280,36 @@ fun autoSave(mContext: Activity) {
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     dialog.window?.setGravity(Gravity.BOTTOM)
 
-    var none = dialog.findViewById<TextView>(R.id.none)
-    var everyday = dialog.findViewById<TextView>(R.id.everyday)
-    var every_week = dialog.findViewById<TextView>(R.id.every_week)
-    var every_month = dialog.findViewById<TextView>(R.id.every_month)
-    var every_3month = dialog.findViewById<TextView>(R.id.every_3month)
+    val none = dialog.findViewById<TextView>(R.id.none)
+    val everyday = dialog.findViewById<TextView>(R.id.everyday)
+    val every_week = dialog.findViewById<TextView>(R.id.every_week)
+    val every_month = dialog.findViewById<TextView>(R.id.every_month)
+    val every_3month = dialog.findViewById<TextView>(R.id.every_3month)
 
 
     none.setOnClickListener {
+        onAutoSaveSelected("ไม่มี")
         dialog.dismiss()
     }
     everyday.setOnClickListener {
+        onAutoSaveSelected("ทุกวัน")
         dialog.dismiss()
     }
     every_week.setOnClickListener {
+        onAutoSaveSelected("ทุกสัปดาห์")
         dialog.dismiss()
     }
     every_month.setOnClickListener {
+        onAutoSaveSelected("ทุกเดือน")
         dialog.dismiss()
     }
     every_3month.setOnClickListener {
+        onAutoSaveSelected("ทุก 3 เดือน")
         dialog.dismiss()
     }
 }
 
-fun dialogOtp(mContext: Activity, data: DataOTP, callback: (String) -> Unit) {
+fun dialogOtp(mContext: Activity, data: String, callback: (String) -> Unit) {
 
     val dialog = Dialog(mContext)
     dialog.setCanceledOnTouchOutside(false)
@@ -307,10 +321,10 @@ fun dialogOtp(mContext: Activity, data: DataOTP, callback: (String) -> Unit) {
     )
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     val otp = dialog.findViewById<TextView>(R.id.textOTP)
-    otp.text = data.codeotp
+    otp.text = data
     val ok = dialog.findViewById<TextView>(R.id.okOtp)
     ok.setOnClickListener {
-        callback.invoke(data.codeotp)
+        callback.invoke(data)
         dialog.dismiss()
     }
     dialog.show()
