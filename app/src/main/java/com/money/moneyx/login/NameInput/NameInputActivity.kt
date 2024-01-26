@@ -63,7 +63,7 @@ class NameInputActivity : AppCompatActivity() {
                                 AVLoading.stopAnimLoading()
                                 if (member.success) {
                                     val intent = Intent(this, HomeActivity::class.java)
-                                    preferences.saveString("idmember", member.data.idmember.toString())
+                                    preferences.saveInt("idmember", member.data.idmember)
                                     preferences.saveString("phone", phoneNumber)
                                     preferences.saveString("username", member.data.username)
                                     preferences.saveString("image", member.data.image)
@@ -86,7 +86,7 @@ class NameInputActivity : AppCompatActivity() {
                             viewModel.memberLogin(phone = phoneNumber, password = password) { member ->
                                 if (member.success) {
                                     val intent = Intent(this, HomeActivity::class.java)
-                                    preferences.saveString("idmember", member.data.idmember.toString())
+                                    preferences.saveInt("idmember", member.data.idmember)
                                     preferences.saveString("phone", phoneNumber)
                                     preferences.saveString("username", member.data.username)
                                     preferences.saveString("image", member.data.image)

@@ -121,7 +121,7 @@ class ConfirmResetPincodeActivity : AppCompatActivity() {
                 binding.PinView.text?.clear()
                 listKeyboard.clear()
                 keyboardAdapter.notifyDataSetChanged()
-                preferences.saveString("idmember", member.data.idmember.toString())
+                preferences.saveInt("idmember", member.data.idmember)
                 preferences.saveString("phone", phonenumber)
                 preferences.saveString("username", member.data.username)
                 preferences.saveString("image", member.data.image)

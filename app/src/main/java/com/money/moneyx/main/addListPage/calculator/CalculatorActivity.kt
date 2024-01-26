@@ -19,6 +19,7 @@ import java.math.RoundingMode
 class CalculatorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCalculatorBinding
     private lateinit var viewModel: ReportViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCalculatorBinding.inflate(layoutInflater)
@@ -69,17 +70,17 @@ class CalculatorActivity : AppCompatActivity() {
                 "onBack" -> {
                     onBackPressed()
                 }
-
                 "btn" -> {
                     val status =  intent.getStringExtra("status")
                     onEqualButtonClick()
+                    val finalResult = evaluateExpression(binding.textTv.text.toString())
+                    val resultToSend = if (finalResult.toDouble() < 0) 0.0 else finalResult.toDouble()
                     if (status != "true") {
-                        intent.putExtra("number", binding.textTv.text.toString())
+                        intent.putExtra("number", resultToSend.toString())
                         setResult(Activity.RESULT_OK, intent)
                         finish()
-
                     } else {
-                        intent.putExtra("number",binding.textTv.text.toString())
+                        intent.putExtra("number", resultToSend.toString())
                         setResult(Activity.RESULT_OK, intent)
                         finish()
                     }
@@ -138,12 +139,15 @@ class CalculatorActivity : AppCompatActivity() {
         try {
             val result = ExpressionBuilder(expression).build().evaluate()
             val roundedResult = BigDecimal(result).setScale(decimalPlaces, RoundingMode.HALF_UP).toDouble()
+            val finalResult = if (roundedResult < 0) 0.0 else roundedResult
             return roundedResult.toString()
         } catch (e: Exception) {
             Log.e("CalculatorActivity", "Error in calculation: ${e.message}")
             return "0"
         }
     }
+
+
 
 
 

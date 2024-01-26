@@ -48,7 +48,6 @@ class AddIncomeAdapter(
 
         holder.itemView.setOnClickListener{
             callback.invoke(Pair(addIncomeModel[position].title,""))
-
         }
     }
 

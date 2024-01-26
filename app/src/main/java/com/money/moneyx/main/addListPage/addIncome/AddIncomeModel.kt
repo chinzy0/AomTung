@@ -20,12 +20,11 @@ data class GetAllTypeIncome(
 @Parcelize
 
 data class GetAllTypeIncomeData(
-    val id: String,
+    val id: Int,
     val type: String
 ): Parcelable
 
 @Parcelize
-
 data class GetAllCategoryincome(
     val `data`: List<GetAllCategoryincomeData>,
     val message: String,
@@ -56,3 +55,13 @@ data class ListScheduleAutoData(
     val frequency: String,
     val id: Int
 ): Parcelable
+
+data class CreateListIncome(
+    val amount: Int,
+    val auto_schedule: Int,
+    val dateCreated: Int,
+    val description: String,
+    val idcategory: Int,
+    val idmember: Int,
+    val idtype: Int
+)

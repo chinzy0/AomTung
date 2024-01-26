@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class ExpendsViewModel : ViewModel() {
 
@@ -17,7 +18,7 @@ class ExpendsViewModel : ViewModel() {
 
     private fun getCurrentMonth(): String {
         val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("MMMM")
+        val dateFormat = SimpleDateFormat("MMMM", Locale("th","TH"))
         return dateFormat.format(calendar.time)
 
     }

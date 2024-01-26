@@ -1,22 +1,16 @@
 package com.money.moneyx.main.addListPage.category
 
 import android.app.Activity
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.money.moneyx.R
 import com.money.moneyx.databinding.ActivityCategoryIncomeBinding
-import com.money.moneyx.login.otpScreen.OtpScreenActivity
-import com.money.moneyx.main.addListPage.addIncome.AddIncomeFragment
-import kotlin.math.log
+import com.money.moneyx.main.homeScreen.HomeActivity
 
 class CategoryIncomeActivity : AppCompatActivity() {
     private lateinit var binding : ActivityCategoryIncomeBinding
     private lateinit var categoryAdapter: CategoryAdapter
-    private var categoryModel = ArrayList<CategoryModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,27 +19,11 @@ class CategoryIncomeActivity : AppCompatActivity() {
         binding.imageView6.setOnClickListener {
             onBackPressed()
         }
-
-        mockUp()
         addAdapter()
 
 
+    }
 
-    }
-    private fun mockUp(){
-        categoryModel.add(CategoryModel(R.drawable.salary_cat,"เงินเดือน"))
-        categoryModel.add(CategoryModel(R.drawable.extraincome_cat,"รายได้พิเศษ"))
-        categoryModel.add(CategoryModel(R.drawable.business_cat,"รายได้จากธุรกิจ"))
-        categoryModel.add(CategoryModel(R.drawable.transactions_cat,"การทำธุรกรรม"))
-        categoryModel.add(CategoryModel(R.drawable.rent_cat,"ค่าเช่า"))
-        categoryModel.add(CategoryModel(R.drawable.family_cat,"ครอบครัวช่วยเหลือ"))
-        categoryModel.add(CategoryModel(R.drawable.snack_cat,"ค่าขนม"))
-        categoryModel.add(CategoryModel(R.drawable.bonus_cat,"ค่าล่วงเวลา & โบนัส"))
-        categoryModel.add(CategoryModel(R.drawable.asset_cat,"สินทรัพย์"))
-        categoryModel.add(CategoryModel(R.drawable.gift_cat,"ของขวัญ"))
-        categoryModel.add(CategoryModel(R.drawable.interest_cat,"ดอกเบี้ย/เงินปันผล"))
-        categoryModel.add(CategoryModel(R.drawable.other_cat,"อื่นๆ"))
-    }
 
     override fun onBackPressed() {
         finish()
@@ -53,47 +31,71 @@ class CategoryIncomeActivity : AppCompatActivity() {
     }
 
     private fun addAdapter(){
-        categoryAdapter = CategoryAdapter(categoryModel) {
-            when(it) {
+        val myList: List<Pair<Int, String>> = listOf(
+            Pair(R.drawable.salary_cat, "salary_cat"),
+            Pair(R.drawable.extraincome_cat, "extraincome_cat"),
+            Pair(R.drawable.business_cat, "business_cat"),
+            Pair(R.drawable.transactions_cat, "transactions_cat"),
+            Pair(R.drawable.rent_cat, "rent_cat"),
+            Pair(R.drawable.family_cat, "family_cat"),
+            Pair(R.drawable.snack_cat, "snack_cat"),
+            Pair(R.drawable.bonus_cat, "bonus_cat"),
+            Pair(R.drawable.asset_cat, "asset_cat"),
+            Pair(R.drawable.gift_cat, "gift_cat"),
+            Pair(R.drawable.interest_cat, "interest_cat"),
+            Pair(R.drawable.other_cat, "orther_cat"),
+
+            )
+
+        categoryAdapter = CategoryAdapter(HomeActivity.getAllCategoryincome!!.data, myList) {
+            when(it.first) {
                 "เงินเดือน" -> {
-                    putCategory(it)
+                    putCategory(it.first,it.second)
                 }
                 "รายได้พิเศษ" -> {
-                    putCategory(it)
+                    putCategory(it.first, it.second)
                 }
                 "รายได้จากธุรกิจ" -> {
-                    putCategory(it)
+                    putCategory(it.first, it.second)
+
                 }
                 "การทำธุรกรรม" -> {
-                    putCategory(it)
+                    putCategory(it.first, it.second)
+
                 }
                 "ค่าเช่า" -> {
-                    putCategory(it)
+                    putCategory(it.first, it.second)
+
                 }
                 "ครอบครัวช่วยเหลือ" -> {
-                    putCategory(it)
+                    putCategory(it.first, it.second)
+
                 }
                 "ค่าขนม" -> {
-                    putCategory(it)
+                    putCategory(it.first, it.second)
+
                 }
-                "ค่าล่วงเวลา & โบนัส" -> {
-                    putCategory(it)
+                "ค่าล่วงเวลา&โบนัส" -> {
+                    putCategory(it.first, it.second)
                 }
                 "สินทรัพย์" -> {
-                    putCategory(it)
+                    putCategory(it.first, it.second)
+
                 }
                 "ของขวัญ" -> {
-                    putCategory(it)
+                    putCategory(it.first, it.second)
+
                 }
                 "ดอกเบี้ย/เงินปันผล" -> {
-                    putCategory(it)
+                    putCategory(it.first, it.second)
+
                 }
                 "อื่นๆ" -> {
-                    putCategory(it)
+                    putCategory(it.first, it.second)
+
                 }
             }
         }
-
 
         binding.RcvCategory.apply {
             layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
@@ -101,8 +103,9 @@ class CategoryIncomeActivity : AppCompatActivity() {
             categoryAdapter.notifyDataSetChanged()
         }
     }
-    private fun putCategory(selectedCategory: String) {
+    private fun putCategory(selectedCategory: String, categoryId: Int) {
         intent.putExtra("Category", selectedCategory)
+        intent.putExtra("Category_Id", categoryId)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }

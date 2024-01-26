@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -14,6 +15,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.NumberPicker
@@ -26,7 +28,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 import com.money.moneyx.R
 import com.money.moneyx.main.addListPage.addIncome.GetAllTypeIncome
-import com.money.moneyx.main.addListPage.addIncome.GetAllTypeIncomeData
+import com.money.moneyx.main.addListPage.addIncome.ListScheduleAuto
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -128,7 +130,7 @@ fun dropdownHomePage(mContext: Activity, onClickDialog: MutableLiveData<Pair<Str
     }
 }
 
-fun note(mContext: Activity,noteText: (String) -> Unit) {
+fun note(mContext: Activity, noted: String, noteText: (Any) -> Unit) {
     //โน๊ต
     val dialog = Dialog(mContext)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -140,32 +142,25 @@ fun note(mContext: Activity,noteText: (String) -> Unit) {
     )
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     dialog.window?.setGravity(Gravity.BOTTOM)
-
+    dialog.setCanceledOnTouchOutside(false)
     val note = dialog.findViewById<EditText>(R.id.textNote)
     val counter = dialog.findViewById<TextView>(R.id.textCount)
     val button = dialog.findViewById<Button>(R.id.buttonSave)
-    val colorButtonEnable = ContextCompat.getColor(mContext, R.color.button)
-    val colorButtonDisable = ContextCompat.getColor(mContext, R.color.button_disable)
-
-
+    note.setText(noted)
     note.addTextChangedListener(object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val remainingCharacters = (50 - s?.length!!)
             counter?.text = remainingCharacters.toString()
-            if (s.isNotEmpty()) {
-                button.isEnabled = true
-                button.backgroundTintList = ColorStateList.valueOf(colorButtonEnable)
-            } else {
-                button.isEnabled = false
-                button.backgroundTintList = ColorStateList.valueOf(colorButtonDisable)
-            }
         }
-
         override fun afterTextChanged(s: Editable?) {}
     })
     button.setOnClickListener {
         noteText(note.text.toString())
+        //ปิดคีย์บอร์ด
+        val inputMethodManager = mContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val windowToken = dialog.currentFocus?.windowToken ?: button.windowToken
+        inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
         dialog.dismiss()
     }
 }
@@ -223,7 +218,7 @@ fun showTimePicker(mContext: Activity,onTimeSelected: (String) -> Unit) {
         selectedTime.set(Calendar.HOUR_OF_DAY, selectedHour)
         selectedTime.set(Calendar.MINUTE, selectedMinute)
 
-        val timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault())
+        val timeFormat = SimpleDateFormat("HH:mm")
         val formattedTime = timeFormat.format(selectedTime.time)
         Log.i("formattedTime", formattedTime)
         onTimeSelected(formattedTime)
@@ -239,12 +234,51 @@ fun showTimePicker(mContext: Activity,onTimeSelected: (String) -> Unit) {
 }
 
 fun selectType(
+    mContext: Activity, modelData: GetAllTypeIncome?,
+    onTypeSelected: (Pair<String,Int>) -> Unit) {
+    val dialog = Dialog(mContext)
+
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(R.layout.select_type_dialog)
+    dialog.show()
+
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    )
+    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window?.setGravity(Gravity.BOTTOM)
+
+
+    val selectTypeDialogAdapter = SelectTypeDialogAdapter(modelData!!.data){
+       model ->
+        when(model.first) {
+            "รายรับแน่นอน" -> {
+                onTypeSelected(Pair(model.first,model.second))
+                dialog.dismiss()
+            }
+            "รายรับไม่แน่นอน" -> {
+                onTypeSelected(Pair(model.first,model.second,))
+                dialog.dismiss()
+            }
+        }
+
+    }
+    val selectDialogRCV = dialog.findViewById<RecyclerView>(R.id.RcvListMenuSelect) ?: RecyclerView(mContext)
+    selectDialogRCV.apply {
+        layoutManager = LinearLayoutManager(context)
+        adapter = selectTypeDialogAdapter
+        selectTypeDialogAdapter.notifyDataSetChanged()
+    }
+}
+
+fun autoSave(
     mContext: Activity,
-    modelData: GetAllTypeIncome?,
-    onTypeSelected: (String) -> Unit
+    modelData: ListScheduleAuto?,
+    onAutoSaveSelected: (Pair<String,Int>) -> Unit
 ) {
     val dialog = Dialog(mContext)
-    val selectDialogRCV = dialog.findViewById<RecyclerView>(R.id.RcvListMenuSelect)
+
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(R.layout.select_type_dialog)
     dialog.show()
@@ -255,57 +289,35 @@ fun selectType(
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     dialog.window?.setGravity(Gravity.BOTTOM)
 
-    val selectTypeDialogAdapter = SelectTypeDialogAdapter(modelData!!.data){
-
+    val selectAutoSaveDialogAdapter = SelectAutoSaveDialogAdapter(modelData!!.data){ model ->
+        when(model.first) {
+            "ไม่มี" -> {
+                onAutoSaveSelected(Pair(model.first,model.second))
+                dialog.dismiss()
+            }
+            "ทุกวัน" -> {
+                onAutoSaveSelected(Pair(model.first,model.second))
+                dialog.dismiss()
+            }
+            "ทุกสัปดาห์" -> {
+                onAutoSaveSelected(Pair(model.first,model.second))
+                dialog.dismiss()
+            }
+            "ทุกเดือน" -> {
+                onAutoSaveSelected(Pair(model.first,model.second))
+                dialog.dismiss()
+            }
+            "ทุก3เดือน" -> {
+                onAutoSaveSelected(Pair(model.first,model.second))
+                dialog.dismiss()
+            }
+        }
     }
+    val selectDialogRCV = dialog.findViewById<RecyclerView>(R.id.RcvListMenuSelect) ?: RecyclerView(mContext)
     selectDialogRCV.apply {
-//        layoutManager = LinearLayoutManager(context)
-//        adapter = selectTypeDialogAdapter
-//        selectTypeDialogAdapter.notifyDataSetChanged()
-    }
-
-
-
-}
-
-fun autoSave(mContext: Activity,onAutoSaveSelected: (String) -> Unit) {
-    val dialog = Dialog(mContext)
-    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-    dialog.setContentView(R.layout.autosave_dailog)
-    dialog.show()
-    dialog.window?.setLayout(
-        ViewGroup.LayoutParams.MATCH_PARENT,
-        ViewGroup.LayoutParams.WRAP_CONTENT
-    )
-    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-    dialog.window?.setGravity(Gravity.BOTTOM)
-
-    val none = dialog.findViewById<TextView>(R.id.none)
-    val everyday = dialog.findViewById<TextView>(R.id.everyday)
-    val every_week = dialog.findViewById<TextView>(R.id.every_week)
-    val every_month = dialog.findViewById<TextView>(R.id.every_month)
-    val every_3month = dialog.findViewById<TextView>(R.id.every_3month)
-
-
-    none.setOnClickListener {
-        onAutoSaveSelected("ไม่มี")
-        dialog.dismiss()
-    }
-    everyday.setOnClickListener {
-        onAutoSaveSelected("ทุกวัน")
-        dialog.dismiss()
-    }
-    every_week.setOnClickListener {
-        onAutoSaveSelected("ทุกสัปดาห์")
-        dialog.dismiss()
-    }
-    every_month.setOnClickListener {
-        onAutoSaveSelected("ทุกเดือน")
-        dialog.dismiss()
-    }
-    every_3month.setOnClickListener {
-        onAutoSaveSelected("ทุก 3 เดือน")
-        dialog.dismiss()
+        layoutManager = LinearLayoutManager(context)
+        adapter = selectAutoSaveDialogAdapter
+        selectAutoSaveDialogAdapter.notifyDataSetChanged()
     }
 }
 
