@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    android:layout_marginHorizontal="45dp"
+    android:background="@drawable/border_stroke_black">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+
+
+        >
+
+
+        <TextView
+            android:id="@+id/textAlertAddlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="กรุณากรอกข้อมูลให้ครบถ้วน"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:layout_marginTop="65dp"
+            />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:layout_marginBottom="50dp"
+            >
+
+            <TextView
+                android:id="@+id/addlistOkButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingHorizontal="45dp"
+                android:paddingVertical="5dp"
+                android:text="@string/okay"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:background="@drawable/border_radius"
+                android:backgroundTint="@color/button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

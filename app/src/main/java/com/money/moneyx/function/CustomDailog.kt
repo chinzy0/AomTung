@@ -13,6 +13,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
@@ -55,7 +56,6 @@ fun showExitDialog(mContext: Activity, onClickDialog: MutableLiveData<String>) {
     val exit = dialog.findViewById<ConstraintLayout>(R.id.confirm_exit_button)
     exit.setOnClickListener {
         onClickDialog.value = "confirm"
-
     }
 }
 
@@ -77,6 +77,23 @@ fun wrongOtpDialog(mContext: Activity, message: String) {
         dialog.dismiss()
     }
 }
+fun addListAlertDialog(mContext: Activity) {
+    val dialog = Dialog(mContext)
+    dialog.setCanceledOnTouchOutside(false)
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(R.layout.addlist_alert)
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    )
+    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.show()
+    val ok = dialog.findViewById<TextView>(R.id.addlistOkButton)
+    ok.setOnClickListener {
+        dialog.dismiss()
+    }
+}
+
 
 
 fun dropdownHomePage(mContext: Activity, onClickDialog: MutableLiveData<Pair<String, String>>) {

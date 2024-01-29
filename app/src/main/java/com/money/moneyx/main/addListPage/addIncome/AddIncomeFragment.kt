@@ -16,11 +16,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
 import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.FragmentAddIncomeBinding
+import com.money.moneyx.function.addListAlertDialog
 import com.money.moneyx.function.autoSave
 import com.money.moneyx.function.dateTime
+import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.function.note
 import com.money.moneyx.function.selectType
 import com.money.moneyx.function.showTimePicker
@@ -29,7 +32,9 @@ import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
 import com.money.moneyx.main.addListPage.category.CategoryIncomeActivity
 import com.money.moneyx.main.homeScreen.HomeActivity
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 
 class AddIncomeFragment : Fragment() {
@@ -41,7 +46,8 @@ class AddIncomeFragment : Fragment() {
     private var idMember = 0
     private var description = ""
     private var dateTimeSelected : Long = 0
-    private var dateTimeNow = getCurrentUnixTimestamp()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -60,7 +66,7 @@ class AddIncomeFragment : Fragment() {
         setEventClick()
         changeColorBtn()
         setDateTime()
-
+        loadingScreen(requireActivity())
 
 
         return binding.root
@@ -121,21 +127,39 @@ class AddIncomeFragment : Fragment() {
                         autoSaveID = autoSaved.second
                     }
                 }
-                "incomeSaveClick" -> {
+                "incomeSaveClickButton" -> {
                     dateTimeSelected = convertDateTimeToUnixTimestamp(binding.textDate.text.toString(), binding.textTime.text.toString())
-                        viewModel.createListIncome(amount = binding.textResult.text.toString().toDoubleOrNull(),
-                            auto_schedule = autoSaveID, dateCreated = dateTimeSelected , description = binding.textTime44.text.toString(),
-                            idcategory = categoryId, idmember = idMember, idtype = typeID
-                        ) {
+                    if (typeID == 0 || categoryId == 0){
+                        addListAlertDialog(requireActivity())
+                    }else{
+                        AVLoading.startAnimLoading()
+                        viewModel.createListIncome(
+                            idmember = idMember,
+                            idtype = typeID,
+                            idcategory = categoryId,
+                            description = description,
+                            dateCreated = dateTimeSelected,
+                            auto_schedule = autoSaveID,
+                            amount = binding.textResult.text.toString().toDouble()
+                        ) { model ->
+                            AVLoading.stopAnimLoading()
                             val intent = Intent(requireActivity(), HomeActivity::class.java)
                             startActivity(intent)
+                            handleIncomeSaveResponse(model)
                         }
-
-
+                    }
                 }
             }
         })
     }
+    private fun handleIncomeSaveResponse(model: CreateListIncome) {
+        if (model.success) {
+            Log.i("asdoipsandaposd", model.message)
+        } else {
+            Log.i("asdoipsandaposd", model.status.toString())
+        }
+    }
+
     private fun setDateTime(){
         binding.textTime.text = viewModel.time
         binding.textDate.text = viewModel.date
@@ -195,16 +219,20 @@ class AddIncomeFragment : Fragment() {
     }
 
     private fun getCurrentUnixTimestamp(): Long {
-        return System.currentTimeMillis()
+        val currentTimeMillis = System.currentTimeMillis()
+        return currentTimeMillis / 1000
     }
     private fun convertDateTimeToUnixTimestamp(formattedDate: String, formattedTime: String): Long {
-        val dateTimeString = "$formattedDate $formattedTime"
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        val dateTimeString = "$formattedDate $formattedTime:00"
+
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
+
 
         try {
             val date = dateFormat.parse(dateTimeString)
             return date?.time ?: 0L
         } catch (e: Exception) {
+
             e.printStackTrace()
         }
 

@@ -4,7 +4,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
-import com.money.moneyx.login.loginScreen.MemberLogin
+import com.money.moneyx.login.loginScreen.CreateAccount
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -50,7 +50,7 @@ class AddIncomeViewModel : ViewModel() {
         onClick.value = "incomeAutoSaveClick"
     }
     fun incomeSaveClick() {
-        onClick.value = "incomeSaveClick"
+        onClick.value = "incomeSaveClickButton"
     }
 
     private fun getCurrentDate(): String {
@@ -66,61 +66,24 @@ class AddIncomeViewModel : ViewModel() {
         return dateFormat.format(calendar.time)
     }
 
-//    fun createListIncome(
-//        amount: Double?,
-//        auto_schedule: Int,
-//        dateCreated: Long,
-//        description: String,
-//        idcategory: Int,
-//        idmember: Int,
-//        idtype: Int,
-//        param: (Any) -> Unit
-//    ) {
-//        val jsonContent = JSONObject()
-//            .put("description", description)
-//            .put("amount", amount)
-//            .put("idmember", idmember)
-//            .put("dateCreated", dateCreated)
-//            .put("idcategory", idcategory)
-//            .put("idtype", idtype)
-//            .put("auto_schedule",auto_schedule).toString()
-//
-//        val client = OkHttpClient()
-//        val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
-//        val request = Request.Builder()
-//            .url("http://zaserzafear.thddns.net:9973/api/Incomes/CreateListIncome")
-//            .post(requestBody)
-//            .build()
-//
-//        client.newCall(request).enqueue(object : Callback {
-//            override fun onResponse(call: Call, response: Response) {
-//                if (response.isSuccessful) {
-//                    val responseBody = response.body?.string()
-//
-//                }
-//            }
-//            override fun onFailure(call: Call, e: IOException) {
-//                e.printStackTrace()
-//            }
-//        })
-//    }
-
     fun createListIncome(
-        amount: Double?,
-                    auto_schedule: Int,
-                    dateCreated: Long,
-                    description: String,
-                    idcategory: Int,
-                    idmember: Int,
-                    idtype: Int,clickCallback: ((CreateListIncome) -> Unit)) {
-        val jsonContent = JSONObject()
-            .put("description", description)
-            .put("amount", amount)
-            .put("idmember", idmember)
-            .put("dateCreated", dateCreated)
-            .put("idcategory", idcategory)
-            .put("idtype", idtype)
-            .put("auto_schedule",auto_schedule).toString()
+        description: String,
+        amount: Double,
+        idmember: Int,
+        dateCreated: Long,
+        idcategory: Int,
+        idtype: Int,
+        auto_schedule: Int,
+        clickCallback: ((CreateListIncome) -> Unit)) {
+        val jsonContent = JSONObject().apply {
+            put("description", description)
+            put("amount", amount)
+            put("idmember", idmember)
+            put("dateCreated", dateCreated)
+            put("idcategory", idcategory)
+            put("idtype", idtype)
+            put("auto_schedule", auto_schedule)
+        }.toString()
 
 
         val client = OkHttpClient()
@@ -143,7 +106,6 @@ class AddIncomeViewModel : ViewModel() {
             }
         })
     }
-
 
 
 }

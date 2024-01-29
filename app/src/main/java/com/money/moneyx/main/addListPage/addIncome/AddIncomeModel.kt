@@ -56,12 +56,17 @@ data class ListScheduleAutoData(
     val id: Int
 ): Parcelable
 
+
+@Parcelize
 data class CreateListIncome(
-    val amount: Int,
-    val auto_schedule: Int,
-    val dateCreated: Int,
-    val description: String,
-    val idcategory: Int,
-    val idmember: Int,
-    val idtype: Int
-)
+    val `data`: CreateListIncomeData,
+    val message: String,
+    val status: Int,
+    val success: Boolean
+): Parcelable
+@Parcelize
+data class CreateListIncomeData(
+    val create_success: Boolean
+): Parcelable
+
+
