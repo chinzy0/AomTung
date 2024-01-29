@@ -32,3 +32,17 @@ data class GetAllCategoryExpensesData(
     val id: Int,
     val image: String
 ): Parcelable
+
+
+@Parcelize
+data class CreateListExpenses(
+    val `data`: CreateListExpensesData,
+    val message: String,
+    val status: Int,
+    val success: Boolean
+): Parcelable
+
+@Parcelize
+data class CreateListExpensesData(
+    val createSuccess: Boolean
+): Parcelable

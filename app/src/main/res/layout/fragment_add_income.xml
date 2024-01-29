@@ -196,6 +196,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
                 <TextView
                     android:id="@+id/title2"
                     android:layout_width="wrap_content"
@@ -208,6 +209,18 @@
                     app:layout_constraintBottom_toBottomOf="@+id/img2"
                     app:layout_constraintStart_toEndOf="@+id/img2"
                     app:layout_constraintTop_toTopOf="@+id/img2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:text=" *"
+                    android:textColor="@color/red"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/title2"
+                    app:layout_constraintStart_toEndOf="@+id/title2"
+                    app:layout_constraintTop_toTopOf="@+id/title2"
+                    ></TextView>
 
                 <TextView
                     android:id="@+id/textTime2"
@@ -275,6 +288,18 @@
                     app:layout_constraintBottom_toBottomOf="@+id/img3"
                     app:layout_constraintStart_toEndOf="@+id/img3"
                     app:layout_constraintTop_toTopOf="@+id/img3" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:text=" *"
+                    android:textColor="@color/red"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/title3"
+                    app:layout_constraintStart_toEndOf="@+id/title3"
+                    app:layout_constraintTop_toTopOf="@+id/title3"
+                    ></TextView>
 
                 <TextView
                     android:id="@+id/textTime3"

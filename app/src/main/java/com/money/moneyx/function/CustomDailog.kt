@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.Editable
@@ -13,7 +12,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
@@ -22,15 +20,15 @@ import android.widget.EditText
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
+import androidx.core.view.size
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import com.money.moneyx.R
+import com.money.moneyx.main.addListPage.addExpends.GetAllTypeExpenses
 import com.money.moneyx.main.addListPage.addIncome.GetAllTypeIncome
 import com.money.moneyx.main.addListPage.addIncome.ListScheduleAuto
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -96,7 +94,10 @@ fun addListAlertDialog(mContext: Activity) {
 
 
 
-fun dropdownHomePage(mContext: Activity, onClickDialog: MutableLiveData<Pair<String, String>>) {
+fun dropdownHomePage(
+    mContext: Activity,
+    onClickDialog: MutableLiveData<Pair<String, String>>,
+) {
     val dialog = Dialog(mContext)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(R.layout.dropdown_month)
@@ -118,9 +119,10 @@ fun dropdownHomePage(mContext: Activity, onClickDialog: MutableLiveData<Pair<Str
     monthPicker.maxValue = months.size - 1
     monthPicker.displayedValues = months
 
+
+
     val yearPicker = dialog.findViewById<NumberPicker>(R.id.yearPicker)
     val yearNow = Calendar.getInstance().get(Calendar.YEAR)
-
     yearPicker.minValue = yearNow - 100
     yearPicker.maxValue = yearNow + 100
     yearPicker.displayedValues
@@ -137,10 +139,12 @@ fun dropdownHomePage(mContext: Activity, onClickDialog: MutableLiveData<Pair<Str
     submit.setOnClickListener {
         val selectedMonthYear = Calendar.getInstance()
         selectedMonthYear.set(Calendar.MONTH, monthPicker.value)
-        selectedMonthYear.set(Calendar.YEAR, yearPicker.value)
+        selectedMonthYear.set(Calendar.MONTH, monthPicker.value)
         val dateFormat = SimpleDateFormat(" MMMM-yyyy", Locale.getDefault())
+        val monthFormat = SimpleDateFormat(" MM", Locale.getDefault())
         val formattedMonthYear = dateFormat.format(selectedMonthYear.time)
-        Log.i("dropdownHomePage", formattedMonthYear)
+        val formattedMonth = monthFormat.format(selectedMonthYear.time)
+        Log.i("formattedMonth", formattedMonth)
         onClickDialog.value = Pair(months[monthPicker.value], yearPicker.value.toString())
 
         dialog.dismiss()
@@ -191,6 +195,29 @@ fun dateTime(mContext: Activity, onDateSelected: (String) -> Unit) {
     val datePickerDialog = DatePickerDialog(
         mContext,
         R.style.DialogTheme,
+        { _, selectedYear, selectedMonth, selectedDay ->
+            val selectedDate = Calendar.getInstance()
+            selectedDate.set(selectedYear, selectedMonth, selectedDay)
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val formattedDate = dateFormat.format(selectedDate.time)
+            Log.i("formattedDate", formattedDate)
+            onDateSelected(formattedDate)
+        },
+        year,
+        month,
+        dayOfMonth
+    )
+    datePickerDialog.show()
+}
+fun dateTimeExpends(mContext: Activity, onDateSelected: (String) -> Unit) {
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+
+    val datePickerDialog = DatePickerDialog(
+        mContext,
+        R.style.DialogThemeEx,
         { _, selectedYear, selectedMonth, selectedDay ->
             val selectedDate = Calendar.getInstance()
             selectedDate.set(selectedYear, selectedMonth, selectedDay)
@@ -275,6 +302,45 @@ fun selectType(
                 dialog.dismiss()
             }
             "รายรับไม่แน่นอน" -> {
+                onTypeSelected(Pair(model.first,model.second,))
+                dialog.dismiss()
+            }
+        }
+
+    }
+    val selectDialogRCV = dialog.findViewById<RecyclerView>(R.id.RcvListMenuSelect) ?: RecyclerView(mContext)
+    selectDialogRCV.apply {
+        layoutManager = LinearLayoutManager(context)
+        adapter = selectTypeDialogAdapter
+        selectTypeDialogAdapter.notifyDataSetChanged()
+    }
+}
+
+fun selectTypeExpends(
+    mContext: Activity, modelData: GetAllTypeExpenses?,
+    onTypeSelected: (Pair<String,Int>) -> Unit) {
+    val dialog = Dialog(mContext)
+
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(R.layout.select_type_dialog)
+    dialog.show()
+
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    )
+    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window?.setGravity(Gravity.BOTTOM)
+
+
+    val selectTypeDialogAdapter = SelectTypeExpendsDialogAdapter(modelData!!.data){
+            model ->
+        when(model.first) {
+            "รายจ่ายจำเป็น" -> {
+                onTypeSelected(Pair(model.first,model.second))
+                dialog.dismiss()
+            }
+            "รายจ่ายไม่จำเป็น" -> {
                 onTypeSelected(Pair(model.first,model.second,))
                 dialog.dismiss()
             }

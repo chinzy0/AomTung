@@ -7,12 +7,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.money.moneyx.R
 import com.money.moneyx.databinding.ListDailogBinding
+import com.money.moneyx.main.addListPage.addExpends.GetAllCategoryExpensesData
+import com.money.moneyx.main.addListPage.addExpends.GetAllTypeExpensesData
 import com.money.moneyx.main.addListPage.addIncome.GetAllTypeIncomeData
 import com.money.moneyx.main.addListPage.addIncome.ListScheduleAutoData
 
 class SelectTypeDialogAdapter(
     private val getAllTypeIncomeData: List<GetAllTypeIncomeData>,
     private val callback: (Pair<String,Int>) -> Unit) : RecyclerView.Adapter<SelectTypeViewAdapter>(){
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectTypeViewAdapter {
       val menu : ListDailogBinding = DataBindingUtil.inflate(
@@ -32,7 +35,6 @@ class SelectTypeDialogAdapter(
             callback.invoke(Pair(getAllTypeIncomeData[position].type,getAllTypeIncomeData[position].id))
         }
     }
-
 }
 class SelectTypeViewAdapter (internal val binding: ListDailogBinding) :
     RecyclerView.ViewHolder(binding.root)
@@ -58,8 +60,36 @@ class SelectAutoSaveDialogAdapter(
             callback.invoke(Pair(listScheduleAutoData[position].frequency,listScheduleAutoData[position].id))
         }
     }
-
-
 }
 class SelectAutoSaveViewAdapter (internal val binding: ListDailogBinding) :
+    RecyclerView.ViewHolder(binding.root)
+
+
+class SelectTypeExpendsDialogAdapter(
+    private val getAllCategoryExpensesData: List<GetAllTypeExpensesData>,
+    private val callback: (Pair<String,Int>) -> Unit) : RecyclerView.Adapter<SelectTypeExpendsViewAdapter>(){
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectTypeExpendsViewAdapter {
+        val menu : ListDailogBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            R.layout.list_dailog,
+            parent,
+            false
+        )
+        return SelectTypeExpendsViewAdapter(menu)
+    }
+
+    override fun onBindViewHolder(holder: SelectTypeExpendsViewAdapter, position: Int) {
+        holder.binding.listMenuDialog.text = getAllCategoryExpensesData[position].type
+
+        holder.binding.listMenuDialog.setOnClickListener {
+            callback.invoke(Pair(getAllCategoryExpensesData[position].type,getAllCategoryExpensesData[position].id))
+        }
+    }
+
+    override fun getItemCount() = getAllCategoryExpensesData.size
+
+}
+class SelectTypeExpendsViewAdapter (internal val binding: ListDailogBinding) :
     RecyclerView.ViewHolder(binding.root)

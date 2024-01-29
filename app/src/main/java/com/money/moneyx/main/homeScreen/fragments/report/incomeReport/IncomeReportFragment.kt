@@ -1,6 +1,7 @@
 package com.money.moneyx.main.homeScreen.fragments.report.incomeReport
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +15,18 @@ import com.money.moneyx.R
 import com.money.moneyx.databinding.FragmentIncomeReportBinding
 import com.money.moneyx.function.dropdownHomePage
 import ir.mahozad.android.PieChart
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 
 class IncomeReportFragment : Fragment() {
     private lateinit var binding: FragmentIncomeReportBinding
     private lateinit var incomeAdapter: IncomeReportAdapter
     private lateinit var viewModel: IncomeViewModel
+    private var startDate = 0L
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,14 +43,12 @@ class IncomeReportFragment : Fragment() {
         viewModel = ViewModelProvider(this)[IncomeViewModel::class.java]
         binding.incomeViewModel = viewModel
 
-        viewModel.addIncomeModel()
         adapter()
         chart()
         setMonth()
         setYear()
         setEventClick()
         setView()
-
 
         return binding.root
     }
@@ -96,6 +101,7 @@ class IncomeReportFragment : Fragment() {
         viewModel.onClick.observe(requireActivity(), Observer {
             when (it) {
                 "showDropdown" -> dropdownHomePage(requireActivity(), viewModel.onClickDialog)
+
             }
         })
     }
@@ -104,8 +110,26 @@ class IncomeReportFragment : Fragment() {
         viewModel.onClickDialog.observe(requireActivity(), Observer {
             binding.textMonth.text = it.first
             binding.textYear.text = it.second
+
         })
     }
 
+
+    private fun convertDateTimeToUnixTimestamp(formattedMonth: String, formattedYear: String): Long {
+        val dateTimeString = "$formattedMonth $formattedYear"
+
+        val dateFormat = SimpleDateFormat("01/MM/yyyy 00:00:00", Locale.getDefault())
+
+
+        try {
+            val date = dateFormat.parse(dateTimeString)
+            return date?.time!! / 1000L
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+        }
+
+        return 0L
+    }
 
 }

@@ -44,7 +44,6 @@ class CategoryIncomeActivity : AppCompatActivity() {
             Pair(R.drawable.gift_cat, "gift_cat"),
             Pair(R.drawable.interest_cat, "interest_cat"),
             Pair(R.drawable.other_cat, "orther_cat"),
-
             )
 
         categoryAdapter = CategoryAdapter(HomeActivity.getAllCategoryincome!!.data, myList) {

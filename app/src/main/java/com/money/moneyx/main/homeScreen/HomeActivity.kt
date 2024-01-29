@@ -45,7 +45,7 @@ class HomeActivity : AppCompatActivity() {
         changePage()
         viewModel.getAllCategoryincome  { Categoryincome -> getAllCategoryincome = Categoryincome }
         viewModel.getAllTypeIncome  { TypeIncome -> getAllTypeIncomeData = TypeIncome }
-        viewModel.getAllTypeExpenses  { TypeExpenses -> }
+        viewModel.getAllTypeExpenses  { TypeExpenses -> getAllTypeExpenses = TypeExpenses}
         viewModel.getAllCategoryExpenses  { CategoryExpenses ->  getAllCategoryExpenses = CategoryExpenses}
         viewModel.listScheduleAuto  { ScheduleAuto -> listScheduleAuto = ScheduleAuto }
 

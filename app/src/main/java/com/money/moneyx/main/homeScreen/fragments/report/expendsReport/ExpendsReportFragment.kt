@@ -1,7 +1,6 @@
 package com.money.moneyx.main.homeScreen.fragments.report.expendsReport
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +13,6 @@ import com.money.moneyx.R
 import com.money.moneyx.databinding.FragmentExpendsReportBinding
 import com.money.moneyx.function.dropdownHomePage
 import ir.mahozad.android.PieChart
-import java.text.SimpleDateFormat
-import java.util.Calendar
 
 
 class ExpendsReportFragment : Fragment() {
@@ -72,7 +69,10 @@ class ExpendsReportFragment : Fragment() {
     private fun setEventClick() {
         viewModel.onClick.observe(requireActivity(), Observer {
             when (it) {
-                "showDropdown" -> dropdownHomePage(requireActivity(),viewModel.onClickDialog)
+                "showDropdown" -> dropdownHomePage(
+                    requireActivity(),
+                    viewModel.onClickDialog,
+                )
             }
         })
 
