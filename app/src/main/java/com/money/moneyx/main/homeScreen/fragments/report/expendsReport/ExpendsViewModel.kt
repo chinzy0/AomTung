@@ -8,7 +8,7 @@ import java.util.Locale
 
 class ExpendsViewModel : ViewModel() {
 
-    val onClickDialog = MutableLiveData<Pair<String, String>>()
+    val onClickDialog = MutableLiveData<Triple<String, String,String>>()
     val onClick = MutableLiveData<String>()
     val currentMonthExpends = getCurrentMonth()
     val currentYearExpends = getCurrentYear()

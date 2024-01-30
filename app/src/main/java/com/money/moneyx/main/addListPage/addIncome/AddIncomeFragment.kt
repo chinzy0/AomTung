@@ -27,25 +27,24 @@ import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.function.note
 import com.money.moneyx.function.selectType
 import com.money.moneyx.function.showTimePicker
-import com.money.moneyx.main.addListPage.AddListScreenActivity
 import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
 import com.money.moneyx.main.addListPage.category.CategoryIncomeActivity
 import com.money.moneyx.main.homeScreen.HomeActivity
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
-import java.util.TimeZone
 
 
 class AddIncomeFragment : Fragment() {
     private lateinit var binding: FragmentAddIncomeBinding
     private lateinit var viewModel: AddIncomeViewModel
     private var typeID = 0
+    private var result = 0.0
     private var autoSaveID = 1
     private var categoryId = 0
     private var idMember = 0
     private var description = ""
     private var dateTimeSelected: Long = 0
+    private var noteText = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,7 +88,8 @@ class AddIncomeFragment : Fragment() {
                     dateTime(requireActivity()) { formattedDate ->
                         binding.textDate.text = formattedDate
                         dateTimeSelected = convertDateTimeToUnixTimestamp(
-                            formattedDate, binding.textTime.text.toString())
+                            formattedDate, binding.textTime.text.toString()
+                        )
                     }
                 }
 
@@ -116,16 +116,23 @@ class AddIncomeFragment : Fragment() {
                 }
 
                 "incomeNoteClick" -> {
-                    note(requireActivity(), noted = binding.textTime44.text.toString()) { text ->
+                    note(requireActivity(), noted = noteText, page = "income") { text ->
                         if (text.toString().isNotEmpty()) {
                             binding.textTime4.visibility = View.GONE
                             binding.textTime44.visibility = View.VISIBLE
-                            binding.textTime44.text = text.toString()
+                            if (text.toString().length > 15) {
+                                val truncatedText = text.toString().substring(0, 15) + "..."
+                                binding.textTime44.text = truncatedText
+                            } else {
+                                binding.textTime44.text = text.toString()
+                            }
+                            noteText = text.toString()
                             description = text.toString()
                         } else {
                             binding.textTime44.text = ""
                             binding.textTime4.visibility = View.VISIBLE
                             binding.textTime44.visibility = View.GONE
+                            noteText = ""
                         }
                     }
                 }
@@ -153,7 +160,7 @@ class AddIncomeFragment : Fragment() {
                             description = description,
                             dateCreated = dateTimeSelected,
                             auto_schedule = autoSaveID,
-                            amount = binding.textResult.text.toString().toDouble()
+                            amount = result
                         ) { model ->
                             AVLoading.stopAnimLoading()
                             if (model.success) {
@@ -162,7 +169,6 @@ class AddIncomeFragment : Fragment() {
                             } else {
 
                             }
-
                         }
                     }
                 }
@@ -206,18 +212,15 @@ class AddIncomeFragment : Fragment() {
 
     private fun changeColorBtn() {
         binding.textResult.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                val resultValue = s.toString().toDoubleOrNull() ?: 0.0
+                val resultValue = s.toString().toDouble()
                 if (resultValue > 0) {
                     val buttonColor = ContextCompat.getColor(requireContext(), R.color.income)
                     binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
                     binding.buttonAddIncome.isEnabled = true
+                    result = resultValue
                 } else {
                     val buttonColor =
                         ContextCompat.getColor(requireContext(), R.color.button_disable)
@@ -232,10 +235,7 @@ class AddIncomeFragment : Fragment() {
 
     private fun convertDateTimeToUnixTimestamp(formattedDate: String, formattedTime: String): Long {
         val dateTimeString = "$formattedDate $formattedTime:00"
-
         val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
-
-
         try {
             val date = dateFormat.parse(dateTimeString)
             return date?.time!! / 1000L
@@ -243,7 +243,6 @@ class AddIncomeFragment : Fragment() {
 
             e.printStackTrace()
         }
-
         return 0L
     }
 

@@ -48,7 +48,7 @@ class AddExpendsFragment : Fragment() {
     private var idMember = 0
     private var description = ""
     private var dateTimeSelected: Long = 0
-
+    private var noteText = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,16 +116,23 @@ class AddExpendsFragment : Fragment() {
                 }
 
                 "expendsNoteClick" -> {
-                    note(requireActivity(), noted = binding.textTime44.text.toString()) { text ->
+                    note(requireActivity(), noted = binding.textTime44.text.toString(), page = "expends") { text ->
                         if (text.toString().isNotEmpty()) {
                             binding.textTime4.visibility = View.GONE
                             binding.textTime44.visibility = View.VISIBLE
-                            binding.textTime44.text = text.toString()
+                            if (text.toString().length > 15){
+                                val truncatedText = text.toString().substring(0, 15)+ "..."
+                                binding.textTime44.text = truncatedText
+                            }else{
+                                binding.textTime44.text = text.toString()
+                            }
+                            noteText = text.toString()
                             description = text.toString()
                         } else {
                             binding.textTime44.text = ""
                             binding.textTime4.visibility = View.VISIBLE
                             binding.textTime44.visibility = View.GONE
+                            noteText = ""
                         }
                     }
                 }

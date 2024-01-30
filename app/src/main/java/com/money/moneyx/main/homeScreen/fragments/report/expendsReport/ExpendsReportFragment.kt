@@ -12,10 +12,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.money.moneyx.R
 import com.money.moneyx.databinding.FragmentExpendsReportBinding
 import com.money.moneyx.function.dropdownHomePage
+import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.ReportMonthExpenses
 import ir.mahozad.android.PieChart
 
 
-class ExpendsReportFragment : Fragment() {
+class ExpendsReportFragment(reportMonthListExpenses: List<ReportMonthExpenses>) : Fragment() {
     private lateinit var binding: FragmentExpendsReportBinding
     private lateinit var viewModel: ExpendsViewModel
 
@@ -69,10 +70,7 @@ class ExpendsReportFragment : Fragment() {
     private fun setEventClick() {
         viewModel.onClick.observe(requireActivity(), Observer {
             when (it) {
-                "showDropdown" -> dropdownHomePage(
-                    requireActivity(),
-                    viewModel.onClickDialog,
-                )
+                "showDropdown" -> dropdownHomePage(requireActivity(), viewModel.onClickDialog, "expends",)
             }
         })
 

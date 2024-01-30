@@ -159,10 +159,8 @@ class CalculatorActivity : AppCompatActivity() {
 
     private fun onOperationButtonClick(operation: String) {
         val currentText = binding.textTv.text.toString()
-
         val lastCharIsOperator = currentText.isNotEmpty() && "+-*/".contains(currentText.last())
         if (lastCharIsOperator && !operation.isDigitsOnly()) {
-
             return
         }
 

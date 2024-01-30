@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.Editable
@@ -20,11 +21,10 @@ import android.widget.EditText
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.size
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
 import com.money.moneyx.R
 import com.money.moneyx.main.addListPage.addExpends.GetAllTypeExpenses
 import com.money.moneyx.main.addListPage.addIncome.GetAllTypeIncome
@@ -33,7 +33,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-//private lateinit var selectTypeDialogAdapter: SelectTypeDialogAdapter
+
 fun showExitDialog(mContext: Activity, onClickDialog: MutableLiveData<String>) {
     val dialog = Dialog(mContext)
     dialog.setCanceledOnTouchOutside(false)
@@ -94,9 +94,12 @@ fun addListAlertDialog(mContext: Activity) {
 
 
 
+
+
 fun dropdownHomePage(
     mContext: Activity,
-    onClickDialog: MutableLiveData<Pair<String, String>>,
+    onClickDialog: MutableLiveData<Triple<String, String, String>>,
+    page: String,
 ) {
     val dialog = Dialog(mContext)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -134,8 +137,18 @@ fun dropdownHomePage(
     monthPicker.value = currentMonth
     yearPicker.value = currentYear
 
-
     val submit = dialog.findViewById<ConstraintLayout>(R.id.buttonSubmitMonthYear)
+
+    val income = R.color.income
+    val expends = R.color.expends
+    if (page=="income"){
+        val resolvedColor = ContextCompat.getColor(mContext, income)
+        submit.backgroundTintList = ColorStateList.valueOf(resolvedColor)
+    }else{
+        val resolvedColor = ContextCompat.getColor(mContext, expends)
+        submit.backgroundTintList = ColorStateList.valueOf(resolvedColor)
+    }
+
     submit.setOnClickListener {
         val selectedMonthYear = Calendar.getInstance()
         selectedMonthYear.set(Calendar.MONTH, monthPicker.value)
@@ -145,13 +158,13 @@ fun dropdownHomePage(
         val formattedMonthYear = dateFormat.format(selectedMonthYear.time)
         val formattedMonth = monthFormat.format(selectedMonthYear.time)
         Log.i("formattedMonth", formattedMonth)
-        onClickDialog.value = Pair(months[monthPicker.value], yearPicker.value.toString())
+        onClickDialog.value = Triple(months[monthPicker.value], yearPicker.value.toString(),formattedMonth.toString())
 
         dialog.dismiss()
     }
 }
 
-fun note(mContext: Activity, noted: String, noteText: (Any) -> Unit) {
+fun note(mContext: Activity, noted: String,page :String ,noteText: (Any) -> Unit) {
     //โน๊ต
     val dialog = Dialog(mContext)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -165,17 +178,28 @@ fun note(mContext: Activity, noted: String, noteText: (Any) -> Unit) {
     dialog.window?.setGravity(Gravity.BOTTOM)
     dialog.setCanceledOnTouchOutside(false)
     val note = dialog.findViewById<EditText>(R.id.textNote)
-    val counter = dialog.findViewById<TextView>(R.id.textCount)
-    val button = dialog.findViewById<Button>(R.id.buttonSave)
-    note.setText(noted)
+    val allowedChars = "ก-๙a-zA-Z"
     note.addTextChangedListener(object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            val remainingCharacters = (50 - s?.length!!)
-            counter?.text = remainingCharacters.toString()
+            val enteredText = s.toString()
+
         }
         override fun afterTextChanged(s: Editable?) {}
     })
+    val counter = dialog.findViewById<TextView>(R.id.textCount)
+    val button = dialog.findViewById<Button>(R.id.buttonSave)
+
+    val income = R.color.income
+    val expends = R.color.expends
+    if (page=="income"){
+        val resolvedColor = ContextCompat.getColor(mContext, income)
+        button.backgroundTintList = ColorStateList.valueOf(resolvedColor)
+    }else{
+        val resolvedColor = ContextCompat.getColor(mContext, expends)
+        button.backgroundTintList = ColorStateList.valueOf(resolvedColor)
+    }
+    note.setText(noted)
     button.setOnClickListener {
         noteText(note.text.toString())
         //ปิดคีย์บอร์ด
@@ -185,6 +209,9 @@ fun note(mContext: Activity, noted: String, noteText: (Any) -> Unit) {
         dialog.dismiss()
     }
 }
+
+
+
 
 fun dateTime(mContext: Activity, onDateSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()

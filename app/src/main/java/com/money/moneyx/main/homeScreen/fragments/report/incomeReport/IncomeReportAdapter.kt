@@ -8,7 +8,7 @@ import com.money.moneyx.R
 import com.money.moneyx.databinding.PastprogramBinding
 
 class IncomeReportAdapter(
-    private val incomeReportModel: ArrayList<IncomeReportModel>,
+    private val incomeReportModel:  List<ReportMonthIncome>,
     function: () -> Unit
 ): RecyclerView.Adapter<IncomeViewAdapter>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IncomeViewAdapter {
@@ -24,10 +24,10 @@ class IncomeReportAdapter(
     override fun getItemCount() = incomeReportModel.size
 
     override fun onBindViewHolder(holder: IncomeViewAdapter, position: Int) {
-        holder.binding.textIncomeType.text = incomeReportModel[position].incomeType
-        holder.binding.textCategory.text = incomeReportModel[position].category
-        holder.binding.textDate.text = incomeReportModel[position].date
-        holder.binding.textMoney.text = incomeReportModel[position].money
+        holder.binding.textIncomeType.text = incomeReportModel[position].report_List[position].type_data
+        holder.binding.textCategory.text = incomeReportModel[position].report_List[position].type_data
+        holder.binding.textDate.text = incomeReportModel[position].report_List[position].type_data
+        holder.binding.textMoney.text = incomeReportModel[position].report_List[position].type_data
 
 
     }

@@ -1,9 +1,17 @@
 package com.money.moneyx.main.addListPage.addIncome
 
+import android.app.Activity
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.view.ViewGroup
+import android.view.Window
+import android.widget.TextView
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
+import com.money.moneyx.R
 import com.money.moneyx.login.loginScreen.CreateAccount
 import okhttp3.Call
 import okhttp3.Callback
@@ -106,6 +114,7 @@ class AddIncomeViewModel : ViewModel() {
             }
         })
     }
+
 
 
 }

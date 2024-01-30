@@ -1,7 +1,9 @@
 package com.money.moneyx.main.homeScreen.fragments.report.incomeReport
 
 import android.app.Activity
+import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.money.moneyx.data.Preference
@@ -19,11 +21,13 @@ import java.util.Locale
 
 class IncomeViewModel : ViewModel() {
 
-    val onClickDialog = MutableLiveData<Pair<String, String>>()
+    val onClickDialog = MutableLiveData<Triple<String,String,String>>()
     val onClick = MutableLiveData<String>()
-    var incomeModel = ArrayList<IncomeReportModel>()
+    var incomeModel = ArrayList<ReportMonthIncome>()
     val currentMonthIncome = getCurrentMonth()
     val currentYearIncome = getCurrentYear()
+    val startTimestamp = ObservableField("")
+    val endTimestamp = ObservableField("")
 
 
 
@@ -50,7 +54,7 @@ class IncomeViewModel : ViewModel() {
         val jsonContent = JSONObject()
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("{{base_url}}/api/Report/GetListReportMonth?datatype=income&idmember={$idMember}&start_timestamp={}&end_timestamp={}")
+            .url("http://zaserzafear.thddns.net:9973/api/Report/GetListReportMonth?datatype=income&idmember=${idMember}&start_timestamp=${startTimestamp.get().toString()}&end_timestamp=${endTimestamp.get().toString()}")
             .get()
             .build()
 
@@ -67,22 +71,7 @@ class IncomeViewModel : ViewModel() {
             }
         })
     }
-    private fun convertDateTimeToUnixTimestamp(formattedDate: String, formattedTime: String): Long {
-        val dateTimeString = "$formattedDate $formattedTime:00"
 
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
-
-
-        try {
-            val date = dateFormat.parse(dateTimeString)
-            return date?.time!! / 1000L
-        } catch (e: Exception) {
-
-            e.printStackTrace()
-        }
-
-        return 0L
-    }
 
 
 }
