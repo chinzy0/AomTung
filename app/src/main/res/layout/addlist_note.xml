@@ -101,6 +101,7 @@
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/borderNote"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/border_radius"

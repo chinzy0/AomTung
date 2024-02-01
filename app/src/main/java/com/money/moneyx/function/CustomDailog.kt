@@ -188,15 +188,18 @@ fun note(mContext: Activity, noted: String,page :String ,noteText: (Any) -> Unit
     })
 
     val button = dialog.findViewById<Button>(R.id.buttonSave)
+    val border = dialog.findViewById<ConstraintLayout>(R.id.borderNote)
 
     val income = R.color.income
     val expends = R.color.expends
     if (page=="income"){
         val resolvedColor = ContextCompat.getColor(mContext, income)
         button.backgroundTintList = ColorStateList.valueOf(resolvedColor)
+        border.backgroundTintList = ColorStateList.valueOf(resolvedColor)
     }else{
         val resolvedColor = ContextCompat.getColor(mContext, expends)
         button.backgroundTintList = ColorStateList.valueOf(resolvedColor)
+        border.backgroundTintList = ColorStateList.valueOf(resolvedColor)
     }
     note.setText(noted)
     button.setOnClickListener {

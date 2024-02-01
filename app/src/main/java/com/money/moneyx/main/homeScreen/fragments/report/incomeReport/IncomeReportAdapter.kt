@@ -74,11 +74,16 @@ class ExpendsReportAdapter(
         holder.binding.textDate.text = convertTimeStampToFormattedDateTime(expendsReportAdapter[position].timestamp)
         holder.binding.textMoney.text = expendsReportAdapter[position].amount
         holder.binding.textPlus.text = expendsReportAdapter[position].symbol_math
-        if (expendsReportAdapter[position].type_name == "รายรับไม่แน่นอน") {
-            holder.binding.textIncomeType.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.income_uncertainText))
-            holder.binding.textSymbol.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.income_uncertainText))
-            holder.binding.textMoney.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.income_uncertainText))
-            holder.binding.textPlus.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.income_uncertainText))
+        if (expendsReportAdapter[position].type_name == "รายจ่ายไม่จำเป็น") {
+            holder.binding.textIncomeType.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
+            holder.binding.textSymbol.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
+            holder.binding.textMoney.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
+            holder.binding.textPlus.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
+        }else{
+            holder.binding.textIncomeType.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_2))
+            holder.binding.textSymbol.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_2))
+            holder.binding.textMoney.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_2))
+            holder.binding.textPlus.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_2))
         }
     }
 
