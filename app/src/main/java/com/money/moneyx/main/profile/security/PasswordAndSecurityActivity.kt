@@ -63,7 +63,6 @@ class PasswordAndSecurityActivity : AppCompatActivity() {
                 sharePreferences.saveString("FINGERPRINT","ON")
             }else{
                 sharePreferences.saveString("FINGERPRINT","OFF")
-
             }
         }
 

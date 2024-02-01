@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.iamauttamai.avloading.ui.AVLoading
@@ -27,9 +28,13 @@ import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.function.note
 import com.money.moneyx.function.selectType
 import com.money.moneyx.function.showTimePicker
+import com.money.moneyx.main.addListPage.AddListScreenActivity
 import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
 import com.money.moneyx.main.addListPage.category.CategoryIncomeActivity
 import com.money.moneyx.main.homeScreen.HomeActivity
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -212,20 +217,32 @@ class AddIncomeFragment : Fragment() {
 
     private fun changeColorBtn() {
         binding.textResult.addTextChangedListener(object : TextWatcher {
+            private val decimalFormat = DecimalFormat("#.##")
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                val resultValue = s.toString().toDouble()
-                if (resultValue > 0) {
-                    val buttonColor = ContextCompat.getColor(requireContext(), R.color.income)
-                    binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
-                    binding.buttonAddIncome.isEnabled = true
-                    result = resultValue
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.toString() != "") {
+                    AddListScreenActivity.textResult.value = s.toString()
                 } else {
-                    val buttonColor =
-                        ContextCompat.getColor(requireContext(), R.color.button_disable)
-                    binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
-                    binding.buttonAddIncome.isEnabled = false
+                    AddListScreenActivity.textResult.value = s.toString()
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {
+                try {
+                    var resultValue = s.toString().toDouble()
+                    resultValue = BigDecimal(resultValue).setScale(2, RoundingMode.HALF_EVEN).toDouble()
+
+                    if (resultValue > 0) {
+                        val buttonColor = ContextCompat.getColor(requireContext(), R.color.income)
+                        binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                        binding.buttonAddIncome.isEnabled = true
+                        result = resultValue
+                    } else {
+                        val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
+                        binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                        binding.buttonAddIncome.isEnabled = false
+                    }
+                } catch (e: NumberFormatException) {
+
                 }
             }
 

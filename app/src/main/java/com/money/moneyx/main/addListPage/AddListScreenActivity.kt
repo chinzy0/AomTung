@@ -1,14 +1,21 @@
 package com.money.moneyx.main.addListPage
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.money.moneyx.R
 import com.money.moneyx.data.ViewPagerAdapter
 import com.money.moneyx.databinding.ActivityAddListScreenBinding
+import com.money.moneyx.function.dialogOtp
+import com.money.moneyx.function.showExitDialog
 import com.money.moneyx.main.addListPage.addExpends.AddExpendsFragment
 import com.money.moneyx.main.addListPage.addIncome.AddIncomeFragment
 
@@ -16,7 +23,9 @@ class AddListScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddListScreenBinding
     private val fragment = ArrayList<Fragment>()
     private lateinit var  mPageAdapter: ViewPagerAdapter
-
+    companion object {
+        val textResult = MutableLiveData<String>()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddListScreenBinding.inflate(layoutInflater)
@@ -64,8 +73,9 @@ class AddListScreenActivity : AppCompatActivity() {
     }
 
     private fun onBack(){
+
         binding.appbarAddListPage.imageView6.setOnClickListener{
-            onBackPressed()
+                onBackPressed()
         }
     }
 }

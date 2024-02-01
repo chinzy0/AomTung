@@ -123,7 +123,6 @@ fun dropdownHomePage(
     monthPicker.displayedValues = months
 
 
-
     val yearPicker = dialog.findViewById<NumberPicker>(R.id.yearPicker)
     val yearNow = Calendar.getInstance().get(Calendar.YEAR)
     yearPicker.minValue = yearNow - 100
@@ -151,14 +150,14 @@ fun dropdownHomePage(
 
     submit.setOnClickListener {
         val selectedMonthYear = Calendar.getInstance()
-        selectedMonthYear.set(Calendar.MONTH, monthPicker.value)
-        selectedMonthYear.set(Calendar.MONTH, monthPicker.value)
-        val dateFormat = SimpleDateFormat(" MMMM-yyyy", Locale.getDefault())
-        val monthFormat = SimpleDateFormat(" MM", Locale.getDefault())
+        selectedMonthYear.set(Calendar.MONTH, monthPicker.value  )
+        Log.i("qweoqeqwesaxda",selectedMonthYear.toString())
+        val dateFormat = SimpleDateFormat("MMMM-yyyy", Locale.getDefault())
+        val monthFormat = SimpleDateFormat("MM", Locale.getDefault())
         val formattedMonthYear = dateFormat.format(selectedMonthYear.time)
         val formattedMonth = monthFormat.format(selectedMonthYear.time)
-        Log.i("formattedMonth", formattedMonth)
-        onClickDialog.value = Triple(months[monthPicker.value], yearPicker.value.toString(),formattedMonth.toString())
+        var x = monthPicker.value + 1
+        onClickDialog.value = Triple(months[monthPicker.value], yearPicker.value.toString(),x.toString())
 
         dialog.dismiss()
     }
@@ -174,20 +173,20 @@ fun note(mContext: Activity, noted: String,page :String ,noteText: (Any) -> Unit
         ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.WRAP_CONTENT
     )
+    val counter = dialog.findViewById<TextView>(R.id.textCount)
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     dialog.window?.setGravity(Gravity.BOTTOM)
     dialog.setCanceledOnTouchOutside(false)
     val note = dialog.findViewById<EditText>(R.id.textNote)
-    val allowedChars = "ก-๙a-zA-Z"
     note.addTextChangedListener(object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            val enteredText = s.toString()
-
+            val remainingCharacters = (50 - s?.length!!)
+            counter?.text = remainingCharacters.toString()
         }
         override fun afterTextChanged(s: Editable?) {}
     })
-    val counter = dialog.findViewById<TextView>(R.id.textCount)
+
     val button = dialog.findViewById<Button>(R.id.buttonSave)
 
     val income = R.color.income
@@ -450,4 +449,26 @@ fun dialogOtp(mContext: Activity, data: String, callback: (String) -> Unit) {
         dialog.dismiss()
     }
     dialog.show()
+}
+fun showConfirmOnBack(mContext: Activity, onClickDialog: MutableLiveData<String>) {
+    val dialog = Dialog(mContext)
+    dialog.setCanceledOnTouchOutside(false)
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(R.layout.exit_dialog)
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    )
+    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+
+    dialog.show()
+    val cancel = dialog.findViewById<ConstraintLayout>(R.id.cancle_exit_button)
+    cancel.setOnClickListener {
+        dialog.dismiss()
+    }
+    val exit = dialog.findViewById<ConstraintLayout>(R.id.confirm_exit_button)
+    exit.setOnClickListener {
+        onClickDialog.value = "confirm"
+    }
 }

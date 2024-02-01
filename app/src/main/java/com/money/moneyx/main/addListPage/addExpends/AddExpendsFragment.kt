@@ -35,6 +35,9 @@ import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
 import com.money.moneyx.main.addListPage.category.CategoryExpendsActivity
 import com.money.moneyx.main.addListPage.category.CategoryIncomeActivity
 import com.money.moneyx.main.homeScreen.HomeActivity
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -49,6 +52,7 @@ class AddExpendsFragment : Fragment() {
     private var description = ""
     private var dateTimeSelected: Long = 0
     private var noteText = ""
+    private var result = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,14 +120,14 @@ class AddExpendsFragment : Fragment() {
                 }
 
                 "expendsNoteClick" -> {
-                    note(requireActivity(), noted = binding.textTime44.text.toString(), page = "expends") { text ->
+                    note(requireActivity(), noted = noteText, page = "expends") { text ->
                         if (text.toString().isNotEmpty()) {
                             binding.textTime4.visibility = View.GONE
                             binding.textTime44.visibility = View.VISIBLE
-                            if (text.toString().length > 15){
-                                val truncatedText = text.toString().substring(0, 15)+ "..."
+                            if (text.toString().length > 15) {
+                                val truncatedText = text.toString().substring(0, 15) + "..."
                                 binding.textTime44.text = truncatedText
-                            }else{
+                            } else {
                                 binding.textTime44.text = text.toString()
                             }
                             noteText = text.toString()
@@ -160,7 +164,7 @@ class AddExpendsFragment : Fragment() {
                             description = description,
                             dateCreated = dateTimeSelected,
                             auto_schedule = autoSaveID,
-                            amount = binding.textTv.text.toString().toDouble()
+                            amount = result
                         ) { model ->
                             if (model.success) {
                                 AVLoading.stopAnimLoading()
@@ -208,29 +212,31 @@ class AddExpendsFragment : Fragment() {
 
     private fun changeColorBtn() {
         binding.textTv.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
+            private val decimalFormat = DecimalFormat("#.##")
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                val resultValue = s.toString().toDoubleOrNull() ?: 0.0
-                if (resultValue > 0) {
-                    val buttonColor = ContextCompat.getColor(requireContext(), R.color.button)
-                    binding.buttonAddExpends.backgroundTintList =
-                        ColorStateList.valueOf(buttonColor)
-                    binding.buttonAddExpends.isEnabled = true
-                } else {
-                    val buttonColor =
-                        ContextCompat.getColor(requireContext(), R.color.button_disable)
-                    binding.buttonAddExpends.backgroundTintList =
-                        ColorStateList.valueOf(buttonColor)
-                    binding.buttonAddExpends.isEnabled = false
+                try {
+                    var resultValue = s.toString().toDouble()
+                    resultValue = BigDecimal(resultValue).setScale(2, RoundingMode.HALF_EVEN).toDouble()
+
+                    if (resultValue > 0) {
+                        val buttonColor = ContextCompat.getColor(requireContext(), R.color.expends)
+                        binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                        binding.buttonAddExpends.isEnabled = true
+                        result = resultValue
+                    } else {
+                        val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
+                        binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                        binding.buttonAddExpends.isEnabled = false
+                    }
+                } catch (e: NumberFormatException) {
+
                 }
             }
 
         })
+
     }
 
 

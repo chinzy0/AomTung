@@ -1,6 +1,7 @@
 package com.money.moneyx.main.homeScreen.fragments.report.incomeReport
 
 import android.app.Activity
+import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -23,11 +24,12 @@ class IncomeViewModel : ViewModel() {
 
     val onClickDialog = MutableLiveData<Triple<String,String,String>>()
     val onClick = MutableLiveData<String>()
-    var incomeModel = ArrayList<ReportMonthIncome>()
+    var incomeModel = ArrayList<Report>()
     val currentMonthIncome = getCurrentMonth()
     val currentYearIncome = getCurrentYear()
-    val startTimestamp = ObservableField("")
+    var startTimestamp = ObservableField("")
     val endTimestamp = ObservableField("")
+    val xxxxxx = ObservableField("")
 
 
 
@@ -48,16 +50,16 @@ class IncomeViewModel : ViewModel() {
         return dateFormat.format(calendar.time)
     }
 
-    fun reportMonth(mContext: Activity,clickCallback: ((ReportMonth) -> Unit)) {
+    fun  reportMonth(mContext: Activity,clickCallback: ((ReportMonth) -> Unit)) {
         val preferences = Preference.getInstance(mContext)
         val idMember = preferences.getInt("idmember", 0)
+        Log.i("idmember",idMember.toString())
         val jsonContent = JSONObject()
         val client = OkHttpClient()
         val request = Request.Builder()
             .url("http://zaserzafear.thddns.net:9973/api/Report/GetListReportMonth?datatype=income&idmember=${idMember}&start_timestamp=${startTimestamp.get().toString()}&end_timestamp=${endTimestamp.get().toString()}")
             .get()
             .build()
-
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {

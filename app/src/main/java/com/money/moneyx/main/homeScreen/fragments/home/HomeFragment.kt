@@ -8,24 +8,33 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
 import com.money.moneyx.data.ViewPagerAdapter
 import com.money.moneyx.databinding.FragmentHomeBinding
+import com.money.moneyx.function.ApiReport
 import com.money.moneyx.main.homeScreen.HomeViewModel
 import com.money.moneyx.main.homeScreen.fragments.report.expendsReport.ExpendsReportFragment
 import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.IncomeReportFragment
 import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.ReportMonth
+import java.time.LocalDateTime
+import java.time.YearMonth
 
 
-class HomeFragment constructor(private val reportMonth: ReportMonth?) : Fragment() {
+class HomeFragment() : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val fragment = ArrayList<Fragment>()
     private lateinit var mPageAdapter: ViewPagerAdapter
     private lateinit var viewModel: HomeViewModel
 
+    companion object {
+        val summary = MutableLiveData<Triple<String, String, String>>()
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,47 +56,87 @@ class HomeFragment constructor(private val reportMonth: ReportMonth?) : Fragment
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         binding.homeViewModel = viewModel
 
-
-
-        reportMonth?.data?.map { map ->
-            binding.textBalance.text = map.totalBalance
-            binding.textIncomeTotal.text = map.totalIncome
-            binding.textExpendsTotal.text = map.totalExpenses
-        }
-
-
-
-        fragmentSetup()
-        swapTab()
+        setAPI()
         changeColor()
 
+        summary.observe(requireActivity(), Observer {
+            binding.textBalance.text = it.first
+            binding.textIncomeTotal.text = it.second
+            binding.textExpendsTotal.text = it.third
+        })
 
         return binding.root
-
-
     }
 
-    private fun fragmentSetup() {
-        reportMonth?.data?.map { map ->
-            val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
-            fragment.clear()
-            fragment.add(IncomeReportFragment(map.report_month_list_income))
-            fragment.add(ExpendsReportFragment(map.report_month_list_Expenses))
+    private fun setAPI() {
+        val currentDateTime = LocalDateTime.now()
+        val lastDayOfMonth = YearMonth.from(currentDateTime).atEndOfMonth()
 
-            mPageAdapter = ViewPagerAdapter(fragmentManager, lifecycle, fragment)
-
-
-            binding.report.adapter = mPageAdapter
-            binding.report.isUserInputEnabled = false
+        if (ApiReport.report.isNullOrEmpty()) {
+            ApiReport.startDateTime = viewModel.convertDateTimeToUnixTimestamp(
+                currentDateTime.monthValue.toString(),
+                currentDateTime.year.toString()
+            ).toString()
+            ApiReport.endDateTime =
+                viewModel.convertEndDateTimeToUnixTimestamp(lastDayOfMonth.toString()).toString()
+        } else {
+            ApiReport.startDateTime = ApiReport.startDateTime
+            ApiReport.endDateTime = ApiReport.endDateTime
         }
 
+
+        AVLoading.startAnimLoading()
+        viewModel.reportMonth(
+            requireActivity(),
+            ApiReport.startDateTime,
+            ApiReport.endDateTime
+        ) { model ->
+            activity?.runOnUiThread{
+                AVLoading.stopAnimLoading()
+                if (model.success) {
+                    model.data.map { map ->
+                        {
+                            binding.textBalance.text = map.totalBalance
+                            binding.textIncomeTotal.text = map.totalIncome
+                            binding.textExpendsTotal.text = map.totalExpenses
+                        }
+                    }
+                    fragmentSetup(model)
+
+                } else {
+
+                }
+            }
+        }
+    }
+
+
+    private fun fragmentSetup(reportMonth: ReportMonth) {
+
+        activity?.runOnUiThread {
+            reportMonth.data.map { map ->
+                val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
+                fragment.clear()
+
+                fragment.add(IncomeReportFragment(map.report_month_list_income))
+                fragment.add(ExpendsReportFragment(map.report_month_list_Expenses))
+
+                mPageAdapter = ViewPagerAdapter(fragmentManager, lifecycle, fragment)
+                binding.report.adapter = mPageAdapter
+                binding.report.isUserInputEnabled = false
+
+                swapTab()
+            }
+        }
     }
 
     private fun swapTab() {
-        val tabTitles = listOf("รายรับ", "รายจ่าย")
-        TabLayoutMediator(binding.tabLayout, binding.report) { tab, position ->
-            tab.text = tabTitles[position]
-        }.attach()
+        activity?.runOnUiThread {
+            val tabTitles = listOf("รายรับ", "รายจ่าย")
+            TabLayoutMediator(binding.tabLayout, binding.report) { tab, position ->
+                tab.text = tabTitles[position]
+            }.attach()
+        }
     }
 
     private fun changeColor() {
@@ -100,11 +149,8 @@ class HomeFragment constructor(private val reportMonth: ReportMonth?) : Fragment
                 }
             }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
     }
 

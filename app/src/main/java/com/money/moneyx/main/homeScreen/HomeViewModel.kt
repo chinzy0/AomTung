@@ -2,6 +2,7 @@ package com.money.moneyx.main.homeScreen
 
 import android.app.Activity
 import androidx.databinding.ObservableField
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
@@ -19,6 +20,8 @@ import okhttp3.Request
 import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class HomeViewModel : ViewModel() {
 
@@ -27,6 +30,32 @@ class HomeViewModel : ViewModel() {
     val startTimestamp = ObservableField("")
     val endTimestamp = ObservableField("")
     var reportMonth: ReportMonth? = null
+
+
+    fun convertDateTimeToUnixTimestamp(formattedMonth: String, formattedYear: String): Long {
+        val dateTimeString = "01/$formattedMonth/$formattedYear 00:00:01"
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
+        try {
+            val date = dateFormat.parse(dateTimeString)
+            return date?.time!! / 1000L
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return 0L
+    }
+
+    fun convertEndDateTimeToUnixTimestamp(formattedMonthYear: String): Long {
+        val dateTimeString = "$formattedMonthYear 23:59:59"
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        try {
+            val date = dateFormat.parse(dateTimeString)
+            return date?.time!! / 1000L
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return 0L
+    }
+
     fun getAllTypeIncome(clickCallback: ((GetAllTypeIncome) -> Unit)) {
         val jsonContent = JSONObject()
         val client = OkHttpClient()
@@ -147,16 +176,20 @@ class HomeViewModel : ViewModel() {
         })
     }
 
-    fun reportMonth(mContext: Activity, clickCallback: ((ReportMonth) -> Unit)) {
+    fun reportMonth(
+        mContext: Activity,
+        startTimestamp: String?,
+        endTimestamp: String?,
+        clickCallback: ((ReportMonth) -> Unit)
+    ) {
         val preferences = Preference.getInstance(mContext)
         val idMember = preferences.getInt("idmember", 0)
-        val jsonContent = JSONObject()
         val client = OkHttpClient()
         val request = Request.Builder()
             .url(
                 "http://zaserzafear.thddns.net:9973/api/Report/GetListReportMonth?datatype=income&idmember=${idMember}&start_timestamp=${
-                    startTimestamp.get().toString()
-                }&end_timestamp=${endTimestamp.get().toString()}"
+                    startTimestamp
+                }&end_timestamp=${endTimestamp}"
             )
             .get()
             .build()

@@ -5,6 +5,8 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
@@ -28,7 +30,7 @@ import java.time.YearMonth
 import java.util.Locale
 
 class HomeActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityHomeBinding
+    private lateinit var binding: ActivityHomeBinding
     private lateinit var viewModel: HomeViewModel
     private var positionClick = ""
 
@@ -40,6 +42,7 @@ class HomeActivity : AppCompatActivity() {
         var getAllCategoryExpenses: GetAllCategoryExpenses? = null
         var listScheduleAuto: ListScheduleAuto? = null
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,42 +56,28 @@ class HomeActivity : AppCompatActivity() {
         changePage()
 
 
-        viewModel.getAllCategoryincome  { Categoryincome -> getAllCategoryincome = Categoryincome }
-        viewModel.getAllTypeIncome  { TypeIncome -> getAllTypeIncomeData = TypeIncome }
-        viewModel.getAllTypeExpenses  { TypeExpenses -> getAllTypeExpenses = TypeExpenses}
-        viewModel.getAllCategoryExpenses  { CategoryExpenses ->  getAllCategoryExpenses = CategoryExpenses}
-        viewModel.listScheduleAuto  { ScheduleAuto -> listScheduleAuto = ScheduleAuto }
-
-
-        val currentDateTime = LocalDateTime.now()
-        val lastDayOfMonth = YearMonth.from(currentDateTime).atEndOfMonth()
-        viewModel.startTimestamp.set(convertDateTimeToUnixTimestamp(currentDateTime.monthValue.toString(),currentDateTime.year.toString()).toString())
-        viewModel.endTimestamp.set(convertEndDateTimeToUnixTimestamp(lastDayOfMonth.toString()).toString())
-
-        AVLoading.startAnimLoading()
-        viewModel.reportMonth(this){model ->
-            AVLoading.stopAnimLoading()
-            if (model.success){
-                viewModel.reportMonth = model
-                if (positionClick == "ProfilePage"){
-                    replaceFragment(ProfileFragment())
-                    binding.bottomNavigationView.selectedItemId = R.id.icon_profile
-                }else{
-                    replaceFragment(HomeFragment(viewModel.reportMonth))
-                }
-            }else{
-
-            }
+        viewModel.getAllCategoryincome { Categoryincome -> getAllCategoryincome = Categoryincome }
+        viewModel.getAllTypeIncome { TypeIncome -> getAllTypeIncomeData = TypeIncome }
+        viewModel.getAllTypeExpenses { TypeExpenses -> getAllTypeExpenses = TypeExpenses }
+        viewModel.getAllCategoryExpenses { CategoryExpenses ->
+            getAllCategoryExpenses = CategoryExpenses
         }
+        viewModel.listScheduleAuto { ScheduleAuto -> listScheduleAuto = ScheduleAuto }
 
     }
 
-    private fun changePage(){
+    private fun changePage() {
+        if (positionClick == "ProfilePage") {
+            replaceFragment(ProfileFragment())
+            binding.bottomNavigationView.selectedItemId = R.id.icon_profile
+        } else {
+            replaceFragment(HomeFragment())
+        }
 
         binding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
 
             val fragment = when (menuItem.itemId) {
-                R.id.icon_home -> HomeFragment(viewModel.reportMonth)
+                R.id.icon_home -> HomeFragment()
                 R.id.icon_income -> IncomeExpendsFragment()
                 R.id.icon_autosave -> AutoSaveFragment()
                 R.id.icon_profile -> ProfileFragment()
@@ -105,35 +94,15 @@ class HomeActivity : AppCompatActivity() {
 
 
     }
-    private fun replaceFragment(fragment: Fragment){
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.frame_layout,fragment)
-        fragmentTransaction.commit()
+
+    private fun replaceFragment(fragment: Fragment) {
+        runOnUiThread {
+            val fragmentManager = supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.replace(R.id.frame_layout, fragment)
+            fragmentTransaction.commit()
+        }
     }
 
-    private fun convertDateTimeToUnixTimestamp(formattedMonth: String, formattedYear: String): Long {
-        val dateTimeString = "01/$formattedMonth/$formattedYear 00:00:01"
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
-        try {
-            val date = dateFormat.parse(dateTimeString)
-            return date?.time!! / 1000L
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return 0L
-    }
-
-    private fun convertEndDateTimeToUnixTimestamp(formattedMonthYear: String): Long {
-        val dateTimeString = "$formattedMonthYear 23:59:59"
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        try {
-            val date = dateFormat.parse(dateTimeString)
-            return date?.time!! / 1000L
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return 0L
-    }
 
 }
