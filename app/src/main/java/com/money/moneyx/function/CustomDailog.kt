@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -195,11 +196,11 @@ fun note(mContext: Activity, noted: String,page :String ,noteText: (Any) -> Unit
     if (page=="income"){
         val resolvedColor = ContextCompat.getColor(mContext, income)
         button.backgroundTintList = ColorStateList.valueOf(resolvedColor)
-        border.backgroundTintList = ColorStateList.valueOf(resolvedColor)
+        border.setBackgroundResource(R.drawable.note_income)
     }else{
         val resolvedColor = ContextCompat.getColor(mContext, expends)
         button.backgroundTintList = ColorStateList.valueOf(resolvedColor)
-        border.backgroundTintList = ColorStateList.valueOf(resolvedColor)
+
     }
     note.setText(noted)
     button.setOnClickListener {
@@ -454,24 +455,32 @@ fun dialogOtp(mContext: Activity, data: String, callback: (String) -> Unit) {
     dialog.show()
 }
 fun showConfirmOnBack(mContext: Activity, onClickDialog: MutableLiveData<String>) {
+    if (mContext.isFinishing || mContext.isDestroyed) {
+        return
+    }
+
     val dialog = Dialog(mContext)
     dialog.setCanceledOnTouchOutside(false)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-    dialog.setContentView(R.layout.exit_dialog)
+    dialog.setContentView(R.layout.dialog_on_back)
     dialog.window?.setLayout(
         ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.WRAP_CONTENT
     )
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-
-    dialog.show()
-    val cancel = dialog.findViewById<ConstraintLayout>(R.id.cancle_exit_button)
+    val cancel = dialog.findViewById<ConstraintLayout>(R.id.cancel_onback_button)
     cancel.setOnClickListener {
         dialog.dismiss()
     }
-    val exit = dialog.findViewById<ConstraintLayout>(R.id.confirm_exit_button)
-    exit.setOnClickListener {
+
+    val confirm = dialog.findViewById<ConstraintLayout>(R.id.confirm_onback_button)
+    confirm.setOnClickListener {
         onClickDialog.value = "confirm"
+        dialog.dismiss()
+    }
+    // Show the dialog only if the activity is still valid
+    if (!mContext.isFinishing && !mContext.isDestroyed) {
+        dialog.show()
     }
 }
+

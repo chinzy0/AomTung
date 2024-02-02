@@ -1,8 +1,11 @@
 package com.money.moneyx.main.addListPage.addExpends
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,6 +14,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -30,6 +35,7 @@ import com.money.moneyx.function.note
 import com.money.moneyx.function.selectType
 import com.money.moneyx.function.selectTypeExpends
 import com.money.moneyx.function.showTimePicker
+import com.money.moneyx.main.addListPage.AddListScreenActivity
 import com.money.moneyx.main.addListPage.addIncome.AddIncomeAdapter
 import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
 import com.money.moneyx.main.addListPage.category.CategoryExpendsActivity
@@ -168,8 +174,7 @@ class AddExpendsFragment : Fragment() {
                         ) { model ->
                             if (model.success) {
                                 AVLoading.stopAnimLoading()
-                                val intent = Intent(requireActivity(), HomeActivity::class.java)
-                                startActivity(intent)
+                                activity?.runOnUiThread { showSuccessDialog() }
                             } else {
 
                             }
@@ -214,7 +219,13 @@ class AddExpendsFragment : Fragment() {
         binding.textTv.addTextChangedListener(object : TextWatcher {
             private val decimalFormat = DecimalFormat("#.##")
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.toString() != "") {
+                    AddListScreenActivity.textResult.value = s.toString()
+                } else {
+                    AddListScreenActivity.textResult.value = s.toString()
+                }
+            }
             override fun afterTextChanged(s: Editable?) {
                 try {
                     var resultValue = s.toString().toDouble()
@@ -260,6 +271,27 @@ class AddExpendsFragment : Fragment() {
     private fun setDateTime() {
         binding.textTime.text = viewModel.time
         binding.textDate.text = viewModel.date
+
+    }
+    private fun showSuccessDialog() {
+        val dialog = Dialog(requireActivity())
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.add_success_dialog)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
+        val ok = dialog.findViewById<TextView>(R.id.addListSuccessButton)
+        val expends = R.color.expends
+        val resolvedColor = ContextCompat.getColor(requireActivity(), expends)
+        ok.backgroundTintList = ColorStateList.valueOf(resolvedColor)
+        ok.setOnClickListener {
+            val intent = Intent(requireActivity(), HomeActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 

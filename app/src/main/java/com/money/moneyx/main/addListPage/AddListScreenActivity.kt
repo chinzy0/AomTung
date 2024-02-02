@@ -1,10 +1,14 @@
 package com.money.moneyx.main.addListPage
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
@@ -14,8 +18,12 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.money.moneyx.R
 import com.money.moneyx.data.ViewPagerAdapter
 import com.money.moneyx.databinding.ActivityAddListScreenBinding
+import com.money.moneyx.databinding.FragmentAddIncomeBinding
 import com.money.moneyx.function.dialogOtp
+import com.money.moneyx.function.showConfirmOnBack
 import com.money.moneyx.function.showExitDialog
+import com.money.moneyx.function.wrongOtpDialog
+import com.money.moneyx.login.loginScreen.LoginActivity
 import com.money.moneyx.main.addListPage.addExpends.AddExpendsFragment
 import com.money.moneyx.main.addListPage.addIncome.AddIncomeFragment
 
@@ -23,6 +31,7 @@ class AddListScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddListScreenBinding
     private val fragment = ArrayList<Fragment>()
     private lateinit var  mPageAdapter: ViewPagerAdapter
+    private val onClickDialog = MutableLiveData<String>()
     companion object {
         val textResult = MutableLiveData<String>()
     }
@@ -36,7 +45,7 @@ class AddListScreenActivity : AppCompatActivity() {
         changeTab()
         changeColorTab()
         onBack()
-
+        setEventClick()
 
     }
     private fun changeTab(){
@@ -72,10 +81,27 @@ class AddListScreenActivity : AppCompatActivity() {
         binding.ListAddPage.isUserInputEnabled = false
     }
 
-    private fun onBack(){
-
-        binding.appbarAddListPage.imageView6.setOnClickListener{
+    private fun onBack() {
+        binding.appbarAddListPage.imageView6.setOnClickListener {
+            if (textResult.value != null && textResult.value!!.isNotEmpty()) {
+                showConfirmOnBack(this,onClickDialog)
+            } else {
                 onBackPressed()
+            }
         }
     }
+
+    private fun setEventClick() {
+        onClickDialog.observe(this, Observer {
+            when (it) {
+                "confirm" -> {
+                    onBackPressed()
+                }
+            }
+        })
+
+    }
+
+
+
 }

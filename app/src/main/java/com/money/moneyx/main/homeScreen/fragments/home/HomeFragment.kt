@@ -86,27 +86,17 @@ class HomeFragment() : Fragment() {
 
 
         AVLoading.startAnimLoading()
-        viewModel.reportMonth(
-            requireActivity(),
-            ApiReport.startDateTime,
-            ApiReport.endDateTime
-        ) { model ->
-            activity?.runOnUiThread{
-                AVLoading.stopAnimLoading()
-                if (model.success) {
-                    model.data.map { map ->
-                        {
-                            binding.textBalance.text = map.totalBalance
-                            binding.textIncomeTotal.text = map.totalIncome
-                            binding.textExpendsTotal.text = map.totalExpenses
-                        }
-                    }
-                    fragmentSetup(model)
-
-                } else {
-
+        viewModel.reportMonth(requireActivity(),ApiReport.startDateTime,ApiReport.endDateTime) { model ->
+            AVLoading.stopAnimLoading()
+            viewModel.reportMonth = model
+            model.data.map { data ->
+                activity?.runOnUiThread{
+                    summary.value = Triple(data.totalBalance, data.totalIncome, data.totalExpenses)
                 }
+
             }
+            fragmentSetup(model)
+
         }
     }
 

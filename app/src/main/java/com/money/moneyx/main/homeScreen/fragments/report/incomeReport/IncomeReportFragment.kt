@@ -28,11 +28,7 @@ import java.time.ZoneId
 import java.util.Locale
 
 
-class IncomeReportFragment(
-    private val reportMonthListIncome: List<ReportMonthIncome>?,
-
-    ) :
-    Fragment() {
+class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIncome>?, ) : Fragment() {
     private lateinit var binding: FragmentIncomeReportBinding
     private lateinit var incomeAdapter: IncomeReportAdapter
     private lateinit var viewModel: IncomeViewModel
@@ -54,6 +50,7 @@ class IncomeReportFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setView()
+
         homeFragment = requireActivity().supportFragmentManager.findFragmentByTag("HomeFragmentTag") as? HomeFragment
     }
 
@@ -145,8 +142,6 @@ class IncomeReportFragment(
 
     private fun setView() {
         viewModel.onClickDialog.observe(requireActivity(), Observer {
-
-
             binding.textMonth.text = it.first
             binding.textYear.text = it.second
             unixTime = convertDateTimeToUnixTimestamp(it.third, it.second)
@@ -155,7 +150,6 @@ class IncomeReportFragment(
             val newStart = convertDateTimeToUnixTimestamp(it.third, it.second).toString()
             val newEnd = convertEndDateTimeToUnixTimestamp(lastDayOfMonth.toString()).toString()
             viewModel.incomeModel.clear()
-
             callYourApiFunction(newStart, newEnd)
         })
     }
@@ -169,11 +163,17 @@ class IncomeReportFragment(
             viewModelHome.reportMonth = model
             model.data.map { data ->
                 activity?.runOnUiThread{
-                    HomeFragment.summary.value =
-                        Triple(data.totalBalance, data.totalIncome, data.totalExpenses)
+                    HomeFragment.summary.value = Triple(data.totalBalance, data.totalIncome, data.totalExpenses)
                 }
                 data.report_month_list_income.map { reportMonthIncome ->
+                    val total = reportMonthIncome.total_Income_Certain.toFloat() + reportMonthIncome.total_Income_Uncertain.toFloat()
+                    incomeCertain = reportMonthIncome.total_Income_Certain.toDouble()
+                    incomeUnCertain = reportMonthIncome.total_Income_Uncertain.toDouble()
+                    incomeCertainGraph = (incomeCertain / total * 100) * 0.01
+                    incomeUnCertainGraph = (incomeUnCertain / total * 100) * 0.01
+                    chart()
                     viewModel.incomeModel.addAll(reportMonthIncome.report_List)
+
                 }
             }
             adapter()

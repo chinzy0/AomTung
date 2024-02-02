@@ -30,7 +30,9 @@ import java.time.ZoneId
 import java.util.Locale
 
 
-class ExpendsReportFragment(private val reportMonthListExpenses: List<ReportMonthExpenses>?) : Fragment() {
+class ExpendsReportFragment(
+    private val reportMonthListExpenses: List<ReportMonthExpenses>?,
+) : Fragment() {
     private lateinit var binding: FragmentExpendsReportBinding
     private lateinit var expendsReportAdapter: ExpendsReportAdapter
     private lateinit var viewModel: ExpendsViewModel
@@ -55,7 +57,8 @@ class ExpendsReportFragment(private val reportMonthListExpenses: List<ReportMont
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_expends_report,container,false)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_expends_report, container, false)
         viewModel = ViewModelProvider(this)[ExpendsViewModel::class.java]
         viewModelHome = ViewModelProvider(this)[HomeViewModel::class.java]
         binding.expendsViewModel = viewModel
@@ -73,7 +76,8 @@ class ExpendsReportFragment(private val reportMonthListExpenses: List<ReportMont
     private fun setData() {
         viewModel.expendsModel.clear()
         reportMonthListExpenses!!.map {
-            val total = it.total_Expenses_Necessary.toFloat() + it.total_Expenses_Unnecessary.toFloat()
+            val total =
+                it.total_Expenses_Necessary.toFloat() + it.total_Expenses_Unnecessary.toFloat()
             expensesNecessary = it.total_Expenses_Necessary.toDouble()
             expensesUnNecessary = it.total_Expenses_Unnecessary.toDouble()
             expensesUnNecessaryGraph = (expensesUnNecessary / total * 100) * 0.01
@@ -83,7 +87,7 @@ class ExpendsReportFragment(private val reportMonthListExpenses: List<ReportMont
         adapter()
     }
 
-    private fun chart(){
+    private fun chart() {
         val pieChart = binding.pieChartExpends
         val color1 = ContextCompat.getColor(requireContext(), R.color.expends_chart_1)
         val color2 = ContextCompat.getColor(requireContext(), R.color.expends_chart_2)
@@ -91,7 +95,12 @@ class ExpendsReportFragment(private val reportMonthListExpenses: List<ReportMont
         pieChart.apply {
             slices = listOf(
                 PieChart.Slice(expensesNecessaryGraph.toFloat(), color2, legend = "รายจ่ายจำเป็น"),
-                PieChart.Slice(expensesUnNecessaryGraph.toFloat(), color1, legend = "รายจ่ายไม่จำเป็น"))
+                PieChart.Slice(
+                    expensesUnNecessaryGraph.toFloat(),
+                    color1,
+                    legend = "รายจ่ายไม่จำเป็น"
+                )
+            )
 
         }
     }
@@ -99,11 +108,16 @@ class ExpendsReportFragment(private val reportMonthListExpenses: List<ReportMont
     private fun setEventClick() {
         viewModel.onClick.observe(requireActivity(), Observer {
             when (it) {
-                "showDropdown" -> dropdownHomePage(requireActivity(), viewModel.onClickDialog, "expends",)
+                "showDropdown" -> dropdownHomePage(
+                    requireActivity(),
+                    viewModel.onClickDialog,
+                    "expends",
+                )
             }
         })
 
     }
+
     private fun adapter() {
         activity?.runOnUiThread {
             expendsReportAdapter = ExpendsReportAdapter(viewModel.expendsModel) {
@@ -126,10 +140,12 @@ class ExpendsReportFragment(private val reportMonthListExpenses: List<ReportMont
         }
 
     }
+
     private fun setMonthYear() {
         binding.textMonth.text = viewModel.currentMonthExpends
         binding.textYear.text = viewModel.currentYearExpends
     }
+
     private fun setView() {
         viewModel.onClickDialog.observe(requireActivity(), Observer {
             binding.textMonth.text = it.first
@@ -176,6 +192,7 @@ class ExpendsReportFragment(private val reportMonthListExpenses: List<ReportMont
         }
         return 0L
     }
+
     private fun callYourApiFunction(newStart: String, newEnd: String) {
         ApiReport.startDateTime = newStart
         ApiReport.endDateTime = newEnd
@@ -186,19 +203,25 @@ class ExpendsReportFragment(private val reportMonthListExpenses: List<ReportMont
             AVLoading.stopAnimLoading()
             viewModelHome.reportMonth = model
             model.data.map { data ->
-                activity?.runOnUiThread{
+                activity?.runOnUiThread {
                     HomeFragment.summary.value =
                         Triple(data.totalBalance, data.totalIncome, data.totalExpenses)
                 }
-                data.report_month_list_income.map { reportMonthIncome ->
-                    viewModel.expendsModel.addAll(reportMonthIncome.report_List)
+                data.report_month_list_Expenses.map { reportMonthExpends ->
+                    val total =
+                        reportMonthExpends.total_Expenses_Necessary.toFloat() + reportMonthExpends.total_Expenses_Unnecessary.toFloat()
+                    expensesNecessary = reportMonthExpends.total_Expenses_Necessary.toDouble()
+                    expensesUnNecessary = reportMonthExpends.total_Expenses_Unnecessary.toDouble()
+                    expensesNecessaryGraph = (expensesNecessary / total * 100) * 0.01
+                    expensesUnNecessaryGraph = (expensesUnNecessary / total * 100) * 0.01
+                    chart()
+                    viewModel.expendsModel.addAll(reportMonthExpends.report_List)
                 }
             }
             adapter()
 
         }
-        val intent = Intent(requireActivity(), HomeActivity::class.java)
-        startActivity(intent)
+
     }
 
 

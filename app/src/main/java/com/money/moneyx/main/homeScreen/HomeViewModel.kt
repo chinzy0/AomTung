@@ -33,7 +33,7 @@ class HomeViewModel : ViewModel() {
 
 
     fun convertDateTimeToUnixTimestamp(formattedMonth: String, formattedYear: String): Long {
-        val dateTimeString = "01/$formattedMonth/$formattedYear 00:00:01"
+        val dateTimeString = "01/$formattedMonth/$formattedYear 07:00:00"
         val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
         try {
             val date = dateFormat.parse(dateTimeString)

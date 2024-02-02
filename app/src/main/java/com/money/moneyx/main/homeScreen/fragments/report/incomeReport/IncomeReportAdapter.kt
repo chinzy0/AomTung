@@ -55,25 +55,26 @@ class IncomeViewAdapter (internal val binding: PastprogramBinding):
 class ExpendsReportAdapter(
     private val expendsReportAdapter: ArrayList<Report>,
     function: () -> Unit
-): RecyclerView.Adapter<expendsReportViewAdapter>(){
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): expendsReportViewAdapter {
+): RecyclerView.Adapter<ExpendsReportViewAdapter>(){
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpendsReportViewAdapter {
         val listPast : PastprogramBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
             R.layout.pastprogram,
             parent,
             false
         )
-        return expendsReportViewAdapter(listPast)
+        return ExpendsReportViewAdapter(listPast)
     }
 
     override fun getItemCount()=expendsReportAdapter.size
 
-    override fun onBindViewHolder(holder: expendsReportViewAdapter, position: Int) {
+    override fun onBindViewHolder(holder: ExpendsReportViewAdapter, position: Int) {
         holder.binding.textIncomeType.text = expendsReportAdapter[position].type_name
         holder.binding.textCategory.text = expendsReportAdapter[position].category_name
         holder.binding.textDate.text = convertTimeStampToFormattedDateTime(expendsReportAdapter[position].timestamp)
         holder.binding.textMoney.text = expendsReportAdapter[position].amount
         holder.binding.textPlus.text = expendsReportAdapter[position].symbol_math
+
         if (expendsReportAdapter[position].type_name == "รายจ่ายไม่จำเป็น") {
             holder.binding.textIncomeType.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
             holder.binding.textSymbol.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
@@ -90,9 +91,7 @@ class ExpendsReportAdapter(
 
 }
 
-class expendsReportViewAdapter  (internal val binding: PastprogramBinding):
+class ExpendsReportViewAdapter (internal val binding: PastprogramBinding):
     RecyclerView.ViewHolder(binding.root)
-
-
 
 

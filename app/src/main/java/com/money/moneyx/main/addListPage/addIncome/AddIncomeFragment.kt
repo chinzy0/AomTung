@@ -1,8 +1,11 @@
 package com.money.moneyx.main.addListPage.addIncome
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,7 +13,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -27,6 +33,7 @@ import com.money.moneyx.function.dateTime
 import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.function.note
 import com.money.moneyx.function.selectType
+import com.money.moneyx.function.showExitDialog
 import com.money.moneyx.function.showTimePicker
 import com.money.moneyx.main.addListPage.AddListScreenActivity
 import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
@@ -169,8 +176,7 @@ class AddIncomeFragment : Fragment() {
                         ) { model ->
                             AVLoading.stopAnimLoading()
                             if (model.success) {
-                                val intent = Intent(requireActivity(), HomeActivity::class.java)
-                                startActivity(intent)
+                                activity?.runOnUiThread { showSuccessDialog() }
                             } else {
 
                             }
@@ -226,19 +232,24 @@ class AddIncomeFragment : Fragment() {
                     AddListScreenActivity.textResult.value = s.toString()
                 }
             }
+
             override fun afterTextChanged(s: Editable?) {
                 try {
                     var resultValue = s.toString().toDouble()
-                    resultValue = BigDecimal(resultValue).setScale(2, RoundingMode.HALF_EVEN).toDouble()
+                    resultValue =
+                        BigDecimal(resultValue).setScale(2, RoundingMode.HALF_EVEN).toDouble()
 
                     if (resultValue > 0) {
                         val buttonColor = ContextCompat.getColor(requireContext(), R.color.income)
-                        binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                        binding.buttonAddIncome.backgroundTintList =
+                            ColorStateList.valueOf(buttonColor)
                         binding.buttonAddIncome.isEnabled = true
                         result = resultValue
                     } else {
-                        val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
-                        binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                        val buttonColor =
+                            ContextCompat.getColor(requireContext(), R.color.button_disable)
+                        binding.buttonAddIncome.backgroundTintList =
+                            ColorStateList.valueOf(buttonColor)
                         binding.buttonAddIncome.isEnabled = false
                     }
                 } catch (e: NumberFormatException) {
@@ -261,6 +272,25 @@ class AddIncomeFragment : Fragment() {
             e.printStackTrace()
         }
         return 0L
+    }
+
+    private fun showSuccessDialog() {
+        val dialog = Dialog(requireActivity())
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.add_success_dialog)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
+        val ok = dialog.findViewById<TextView>(R.id.addListSuccessButton)
+        ok.setOnClickListener {
+            val intent = Intent(requireActivity(), HomeActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
 
