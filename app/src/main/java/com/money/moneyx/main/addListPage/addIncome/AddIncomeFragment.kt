@@ -15,6 +15,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -33,8 +35,10 @@ import com.money.moneyx.function.dateTime
 import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.function.note
 import com.money.moneyx.function.selectType
+import com.money.moneyx.function.showConfirmOnBack
 import com.money.moneyx.function.showExitDialog
 import com.money.moneyx.function.showTimePicker
+import com.money.moneyx.login.forgotPassword.ConfirmResetPincodeActivity
 import com.money.moneyx.main.addListPage.AddListScreenActivity
 import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
 import com.money.moneyx.main.addListPage.category.CategoryIncomeActivity
@@ -49,6 +53,7 @@ import java.util.Locale
 class AddIncomeFragment : Fragment() {
     private lateinit var binding: FragmentAddIncomeBinding
     private lateinit var viewModel: AddIncomeViewModel
+    private val onClickDialog = MutableLiveData<String>()
     private var typeID = 0
     private var result = 0.0
     private var autoSaveID = 1
@@ -62,6 +67,8 @@ class AddIncomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -86,7 +93,6 @@ class AddIncomeFragment : Fragment() {
 
 
     private fun setEventClick() {
-
         viewModel.onClick.observe(requireActivity(), Observer {
             when (it) {
                 "calculateClick" -> {
@@ -226,7 +232,7 @@ class AddIncomeFragment : Fragment() {
             private val decimalFormat = DecimalFormat("#.##")
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.toString() != "") {
+                if (s.toString().isEmpty()) {
                     AddListScreenActivity.textResult.value = s.toString()
                 } else {
                     AddListScreenActivity.textResult.value = s.toString()
