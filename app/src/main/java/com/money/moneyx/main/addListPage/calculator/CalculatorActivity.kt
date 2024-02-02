@@ -71,21 +71,19 @@ class CalculatorActivity : AppCompatActivity() {
                     onBackPressed()
                 }
                 "btn" -> {
-                    val status =  intent.getStringExtra("status")
+                    val status = intent.getStringExtra("status")
                     onEqualButtonClick()
                     val finalResult = evaluateExpression(binding.textTv.text.toString())
-                    val resultToSend = if (finalResult.toDouble() < 0) 0.0 else finalResult.toDouble()
-                    if (status != "true") {
-                        intent.putExtra("number", resultToSend.toString())
-                        setResult(Activity.RESULT_OK, intent)
-                        finish()
-                    } else {
-                        intent.putExtra("number", resultToSend.toString())
-                        setResult(Activity.RESULT_OK, intent)
-                        finish()
-                    }
+                    val resultToSend = finalResult.toDouble().coerceAtLeast(0.0).coerceAtMost(9999999999.99)
 
+                    val formattedResult = String.format("%.2f", resultToSend)
+
+                    intent.putExtra("number", formattedResult)
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
                 }
+
+
             }
         })
     }
@@ -126,21 +124,24 @@ class CalculatorActivity : AppCompatActivity() {
             val expression = binding.textTv.text.toString()
 
             if (expression.isNotEmpty()) {
-                val result = evaluateExpression(expression)
+                val result = evaluateExpression(expression, decimalPlaces = 2)
                 binding.textTv.text.clear()
-                binding.textTv.append(result.toString())
+                binding.textTv.append(result)
             }
         } catch (e: Exception) {
             Log.e("CalculatorActivity", "Error in calculation: ${e.message}")
         }
     }
 
+
     private fun evaluateExpression(expression: String, decimalPlaces: Int = 2): String {
         try {
             val result = ExpressionBuilder(expression).build().evaluate()
             val roundedResult = BigDecimal(result).setScale(decimalPlaces, RoundingMode.HALF_UP).toDouble()
             val finalResult = if (roundedResult < 0) 0.0 else roundedResult
-            return roundedResult.toString()
+
+            // ใช้ String.format เพื่อรับจำนวนทศนิยมที่ต้องการแสดงผล
+            return String.format("%.${decimalPlaces}f", finalResult)
         } catch (e: Exception) {
             Log.e("CalculatorActivity", "Error in calculation: ${e.message}")
             return "0"
