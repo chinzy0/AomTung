@@ -93,14 +93,14 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="42dp"
+            android:layout_marginTop="30dp"
             android:layout_marginBottom="10dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/buttonAddIncome"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
-            tools:listitem="@layout/list_information" >
+            >
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -299,8 +299,9 @@
                     android:textSize="17sp"
                     app:layout_constraintBottom_toBottomOf="@+id/title3"
                     app:layout_constraintStart_toEndOf="@+id/title3"
-                    app:layout_constraintTop_toTopOf="@+id/title3"
-                    ></TextView>
+                    app:layout_constraintTop_toTopOf="@+id/title3">
+
+                </TextView>
 
                 <TextView
                     android:id="@+id/textTime3"
@@ -420,6 +421,7 @@
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/autosaveButton"
                 android:layout_width="match_parent"
@@ -475,6 +477,50 @@
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/deleteButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="invisible">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/underline12"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="18dp"
+                    android:background="#E2E2E2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"></androidx.constraintlayout.widget.ConstraintLayout>
+
+                <ImageView
+                    android:id="@+id/deleteImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="15dp"
+                    android:layout_marginStart="25dp"
+                    android:src="@drawable/del"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="11dp"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:text="ลบ"
+                    android:textColor="#292D33"
+                    android:textSize="17sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/deleteImg"
+                    app:layout_constraintStart_toEndOf="@+id/deleteImg"
+                    app:layout_constraintTop_toTopOf="@+id/deleteImg" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
 

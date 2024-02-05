@@ -14,7 +14,7 @@ import java.util.Locale
 
 class IncomeReportAdapter(
     private val incomeReportModel: ArrayList<Report>,
-    function: () -> Unit
+    private val callback: (Triple<Int,String,Report>) -> Unit
 ): RecyclerView.Adapter<IncomeViewAdapter>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IncomeViewAdapter {
         val listPast : PastprogramBinding = DataBindingUtil.inflate(
@@ -29,6 +29,7 @@ class IncomeReportAdapter(
     override fun getItemCount() = incomeReportModel.size
 
     override fun onBindViewHolder(holder: IncomeViewAdapter, position: Int) {
+
         holder.binding.textIncomeType.text = incomeReportModel[position].type_name
         holder.binding.textCategory.text = incomeReportModel[position].category_name
         holder.binding.textDate.text = convertTimeStampToFormattedDateTime(incomeReportModel[position].timestamp)
@@ -40,10 +41,13 @@ class IncomeReportAdapter(
             holder.binding.textMoney.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.income_uncertainText))
             holder.binding.textPlus.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.income_uncertainText))
         }
-
+        holder.itemView.setOnClickListener{
+            callback.invoke(Triple(incomeReportModel[position].transaction_id,incomeReportModel[position].amount,incomeReportModel[position]))
+        }
     }
 
 }
+
 private fun convertTimeStampToFormattedDateTime(timeStamp: Int): String {
     val date = Date(timeStamp * 1000L)
     val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
@@ -66,7 +70,7 @@ class ExpendsReportAdapter(
         return ExpendsReportViewAdapter(listPast)
     }
 
-    override fun getItemCount()=expendsReportAdapter.size
+    override fun getItemCount()= expendsReportAdapter.size
 
     override fun onBindViewHolder(holder: ExpendsReportViewAdapter, position: Int) {
         holder.binding.textIncomeType.text = expendsReportAdapter[position].type_name

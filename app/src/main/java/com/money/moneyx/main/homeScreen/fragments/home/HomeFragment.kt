@@ -107,7 +107,6 @@ class HomeFragment() : Fragment() {
             reportMonth.data.map { map ->
                 val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
                 fragment.clear()
-
                 fragment.add(IncomeReportFragment(map.report_month_list_income))
                 fragment.add(ExpendsReportFragment(map.report_month_list_Expenses))
 

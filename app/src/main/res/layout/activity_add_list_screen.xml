@@ -47,14 +47,18 @@
                 app:tabIndicatorColor="@null"
                 app:tabIndicatorGravity="stretch"
                 app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/white">
+                app:tabSelectedTextColor="@color/white"
+
+                >
 
                 <com.google.android.material.tabs.TabItem
+                    android:id="@+id/incomeTab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/income" />
 
                 <com.google.android.material.tabs.TabItem
+                    android:id="@+id/expendsTab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/expends" />

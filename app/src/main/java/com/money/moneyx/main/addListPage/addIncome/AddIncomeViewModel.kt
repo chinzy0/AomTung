@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.money.moneyx.R
 import com.money.moneyx.login.loginScreen.CreateAccount
+import com.money.moneyx.login.loginScreen.ForgotPassword
+import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.UpdateIncome
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -106,6 +108,46 @@ class AddIncomeViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     val responseBody = response.body?.string()
                     val apiResponse = Gson().fromJson(responseBody.toString(), CreateListIncome::class.java)
+                    clickCallback.invoke(apiResponse)
+                }
+            }
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+        })
+    }
+
+    fun updateIncome(
+        income_id: Int,
+        type_id: Int,
+        category_id: Int,
+        description: String,
+        amount : Double,
+        createdateTime : Int,
+        auto_schedule : Int,
+        clickCallback: ((UpdateIncome) -> Unit)) {
+        val jsonContent = JSONObject()
+            .put("income_id", income_id)
+            .put("type_id", type_id)
+            .put("category_id", category_id)
+            .put("description", description)
+            .put("amount", amount)
+            .put("createdateTime", createdateTime)
+            .put("auto_schedule", auto_schedule).toString()
+
+
+        val client = OkHttpClient()
+        val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url("http://zaserzafear.thddns.net:9973/api/Incomes/UpdateIncome")
+            .patch(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    val apiResponse = Gson().fromJson(responseBody.toString(), UpdateIncome::class.java)
                     clickCallback.invoke(apiResponse)
                 }
             }

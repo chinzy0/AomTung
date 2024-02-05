@@ -1,17 +1,8 @@
 package com.money.moneyx.main.addListPage
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
-import android.view.View
-import android.widget.EditText
-import android.widget.Toast
-import androidx.activity.addCallback
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
@@ -21,25 +12,22 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.money.moneyx.R
 import com.money.moneyx.data.ViewPagerAdapter
 import com.money.moneyx.databinding.ActivityAddListScreenBinding
-import com.money.moneyx.databinding.FragmentAddIncomeBinding
-import com.money.moneyx.function.dialogOtp
 import com.money.moneyx.function.showConfirmOnBack
-import com.money.moneyx.function.showExitDialog
-import com.money.moneyx.function.wrongOtpDialog
-import com.money.moneyx.login.loginScreen.LoginActivity
 import com.money.moneyx.main.addListPage.addExpends.AddExpendsFragment
 import com.money.moneyx.main.addListPage.addIncome.AddIncomeFragment
+import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.Report
 
 class AddListScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddListScreenBinding
     private val fragment = ArrayList<Fragment>()
     private lateinit var  mPageAdapter: ViewPagerAdapter
     private val onClickDialog = MutableLiveData<String>()
+    private var edit = ""
+    private var editIncome: Report? = null
+
     companion object {
         val textResult = MutableLiveData<String>()
     }
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,18 +35,32 @@ class AddListScreenActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
+        checkAddress()
         tabLayout()
         changeTab()
         changeColorTab()
         onBack()
         setEventClick()
 
-
+        Log.i("asdkalmdksadasd",edit)
     }
+
+    private fun checkAddress() {
+        edit = intent.getStringExtra("edit").toString()
+        editIncome = intent.getParcelableExtra("modelIncomeEdit")
+        if (edit == "null"){
+            binding.appbarAddListPage.textView9.text = "เพิ่มรายการ"
+            binding.tabLayoutListAdd.isEnabled = true
+        }else{
+            binding.appbarAddListPage.textView9.text = "แก้ไข"
+            binding.tabLayoutListAdd.isEnabled = false
+        }
+    }
+
     private fun changeTab(){
         val tabTitles = listOf("รายรับ", "รายจ่าย")
-        TabLayoutMediator(binding.tabLayoutListAdd, binding.ListAddPage) { tab, position ->
-            tab.text = tabTitles[position]
+        TabLayoutMediator(binding.tabLayoutListAdd, binding.ListAddPage)
+        { tab, position -> tab.text = tabTitles[position]
         }.attach()
 
     }
@@ -72,16 +74,14 @@ class AddListScreenActivity : AppCompatActivity() {
                     binding.tabLayoutListAdd.setSelectedTabIndicatorColor(resources.getColor(R.color.income))
                 }
             }
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-            }
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
     }
     private fun tabLayout(){
         val fragmentManager: FragmentManager = supportFragmentManager
         fragment.clear()
-        fragment.add(AddIncomeFragment())
+        fragment.add(AddIncomeFragment(editIncome))
         fragment.add(AddExpendsFragment())
         mPageAdapter = ViewPagerAdapter(fragmentManager, lifecycle, fragment)
         binding.ListAddPage.adapter = mPageAdapter
@@ -102,6 +102,7 @@ class AddListScreenActivity : AppCompatActivity() {
         onClickDialog.observe(this, Observer {
             when (it) {
                 "confirm" -> {
+                    textResult.value = ""
                     onBackPressed()
                 }
             }

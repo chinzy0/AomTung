@@ -15,14 +15,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.iamauttamai.avloading.ui.AVLoading
@@ -35,25 +31,27 @@ import com.money.moneyx.function.dateTime
 import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.function.note
 import com.money.moneyx.function.selectType
-import com.money.moneyx.function.showConfirmOnBack
-import com.money.moneyx.function.showExitDialog
 import com.money.moneyx.function.showTimePicker
-import com.money.moneyx.login.forgotPassword.ConfirmResetPincodeActivity
 import com.money.moneyx.main.addListPage.AddListScreenActivity
 import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
 import com.money.moneyx.main.addListPage.category.CategoryIncomeActivity
 import com.money.moneyx.main.homeScreen.HomeActivity
+import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.Report
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.YearMonth
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 
-class AddIncomeFragment : Fragment() {
+class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
     private lateinit var binding: FragmentAddIncomeBinding
     private lateinit var viewModel: AddIncomeViewModel
-    private val onClickDialog = MutableLiveData<String>()
     private var typeID = 0
     private var result = 0.0
     private var autoSaveID = 1
@@ -62,6 +60,8 @@ class AddIncomeFragment : Fragment() {
     private var description = ""
     private var dateTimeSelected: Long = 0
     private var noteText = ""
+    private var incomeID = 0
+    private var edit = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,14 +81,65 @@ class AddIncomeFragment : Fragment() {
         idMember = preferences.getInt("idmember", 0)
         Log.i("idMember", idMember.toString())
 
+
+
+        editIncomeData()
         setEventClick()
         changeColorBtn()
         setDateTime()
         loadingScreen(requireActivity())
 
 
+
+
+
         return binding.root
 
+    }
+
+    private fun editIncomeData() {
+        editIncome?.let { data ->
+            result = editIncome.amount.toDouble()
+            categoryId = editIncome.category_id
+            typeID = editIncome.type_id
+            description = data.description
+            autoSaveID = editIncome.save_auto_id
+            categoryId = editIncome.category_id
+            description = editIncome.description
+            incomeID = editIncome.transaction_id
+            binding.textResult.setText(result.toString())
+            binding.textTime2.text = data.type_name
+            binding.textTime3.text = data.category_name
+            binding.textTime44.text = data.description
+            binding.textTime5.text = data.save_auto_name
+            val localDateTime = unixTimestampToLocalDateTime(data.timestamp)
+            val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val formattedDate = localDateTime.format(dateFormat)
+            binding.textDate.text = formattedDate
+        }
+        if (editIncome != null) {
+            edit = true
+            if (description.isNotEmpty()) {
+                binding.textTime4.visibility = View.GONE
+                binding.textTime44.visibility = View.VISIBLE
+                if (description.length > 15) {
+                    val truncatedText = description.substring(0, 15) + "..."
+                    binding.textTime44.text = truncatedText
+                } else {
+                    binding.textTime44.text = description
+                }
+                noteText = description
+                description = description
+            } else {
+                binding.textTime44.text = ""
+                binding.textTime4.visibility = View.VISIBLE
+                binding.textTime44.visibility = View.GONE
+                noteText = ""
+            }
+            binding.deleteButton.visibility = View.VISIBLE
+        }else{
+            binding.deleteButton.visibility = View.GONE
+        }
     }
 
 
@@ -169,6 +220,23 @@ class AddIncomeFragment : Fragment() {
                     )
                     if (typeID == 0 || categoryId == 0) {
                         addListAlertDialog(requireActivity())
+                    }else if(edit) {
+                        AVLoading.startAnimLoading()
+                        viewModel.updateIncome(
+                            income_id = incomeID,
+                            type_id = typeID,
+                            category_id = categoryId,
+                            description = description,
+                            amount = result,
+                            createdateTime = dateTimeSelected.toInt(),
+                            auto_schedule = autoSaveID ){ updateIncome ->
+                            AVLoading.stopAnimLoading()
+                            if (updateIncome.data.is_Updated){
+                                activity?.runOnUiThread { showSuccessDialog() }
+                            }else{
+
+                            }
+                        }
                     } else {
                         AVLoading.startAnimLoading()
                         viewModel.createListIncome(
@@ -281,6 +349,7 @@ class AddIncomeFragment : Fragment() {
     }
 
     private fun showSuccessDialog() {
+
         val dialog = Dialog(requireActivity())
         dialog.setCanceledOnTouchOutside(false)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -292,11 +361,17 @@ class AddIncomeFragment : Fragment() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
         val ok = dialog.findViewById<TextView>(R.id.addListSuccessButton)
+        val text = dialog.findViewById<TextView>(R.id.textAlertAddlist)
+
         ok.setOnClickListener {
             val intent = Intent(requireActivity(), HomeActivity::class.java)
             startActivity(intent)
         }
+    }
 
+    private fun unixTimestampToLocalDateTime(unixTimestamp: Int): LocalDateTime {
+        val instant = Instant.ofEpochSecond(unixTimestamp.toLong())
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
     }
 
 

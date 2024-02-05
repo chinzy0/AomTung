@@ -32,7 +32,7 @@
                 android:layout_marginTop="118dp"
                 android:fontFamily="@font/sukhumvit_set_text"
                 android:text="@string/input_phone"
-                android:textColor="@color/letter"
+                android:textColor="@color/black"
                 android:textSize="25sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

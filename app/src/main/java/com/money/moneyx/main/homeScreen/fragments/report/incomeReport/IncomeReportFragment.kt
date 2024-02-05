@@ -1,5 +1,6 @@
 package com.money.moneyx.main.homeScreen.fragments.report.incomeReport
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import com.money.moneyx.R
 import com.money.moneyx.databinding.FragmentIncomeReportBinding
 import com.money.moneyx.function.dropdownHomePage
 import com.money.moneyx.function.loadingScreen
+import com.money.moneyx.main.addListPage.AddListScreenActivity
 import com.money.moneyx.main.homeScreen.HomeViewModel
 import com.money.moneyx.main.homeScreen.fragments.home.HomeFragment
 import ir.mahozad.android.PieChart
@@ -33,7 +35,6 @@ class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIn
     private lateinit var incomeAdapter: IncomeReportAdapter
     private lateinit var viewModel: IncomeViewModel
     private lateinit var viewModelHome: HomeViewModel
-    private var startDateTime = ""
     private var incomeCertain = 0.0
     private var incomeUnCertain = 0.0
     private var incomeCertainGraph = 0.0
@@ -103,7 +104,16 @@ class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIn
 
     private fun adapter() {
         activity?.runOnUiThread {
-            incomeAdapter = IncomeReportAdapter(viewModel.incomeModel) {
+            incomeAdapter = IncomeReportAdapter(viewModel.incomeModel) { model ->
+                when(model.first){
+                    model.first -> {
+                        var intent = Intent(requireActivity(),AddListScreenActivity:: class.java)
+                        intent.putExtra("edit", "editIncome")
+                        intent.putExtra("modelIncomeEdit", model.third)
+                        startActivity(intent)
+                    }
+
+                }
             }
             binding.RCVpastIncome.apply {
                 layoutManager = LinearLayoutManager(context)
