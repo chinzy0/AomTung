@@ -82,11 +82,10 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
         Log.i("idMember", idMember.toString())
 
 
-
+        setDateTime()
         editIncomeData()
         setEventClick()
         changeColorBtn()
-        setDateTime()
         loadingScreen(requireActivity())
 
 
@@ -107,15 +106,19 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
             categoryId = editIncome.category_id
             description = editIncome.description
             incomeID = editIncome.transaction_id
+            val localDateTime = unixTimestampToLocalDateTime(data.timestamp)
+            val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
+            val formattedDate = localDateTime.format(dateFormat)
+            val formattedTime = localDateTime.format(timeFormat)
+
             binding.textResult.setText(result.toString())
             binding.textTime2.text = data.type_name
             binding.textTime3.text = data.category_name
             binding.textTime44.text = data.description
             binding.textTime5.text = data.save_auto_name
-            val localDateTime = unixTimestampToLocalDateTime(data.timestamp)
-            val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-            val formattedDate = localDateTime.format(dateFormat)
             binding.textDate.text = formattedDate
+            binding.textTime.text = formattedTime
         }
         if (editIncome != null) {
             edit = true

@@ -57,8 +57,8 @@ class IncomeViewAdapter (internal val binding: PastprogramBinding):
     RecyclerView.ViewHolder(binding.root)
 
 class ExpendsReportAdapter(
-    private val expendsReportAdapter: ArrayList<Report>,
-    function: () -> Unit
+    private val expendsReportModel: ArrayList<Report>,
+    private val callback: (Triple<Int,String,Report>) -> Unit
 ): RecyclerView.Adapter<ExpendsReportViewAdapter>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpendsReportViewAdapter {
         val listPast : PastprogramBinding = DataBindingUtil.inflate(
@@ -70,16 +70,16 @@ class ExpendsReportAdapter(
         return ExpendsReportViewAdapter(listPast)
     }
 
-    override fun getItemCount()= expendsReportAdapter.size
+    override fun getItemCount()= expendsReportModel.size
 
     override fun onBindViewHolder(holder: ExpendsReportViewAdapter, position: Int) {
-        holder.binding.textIncomeType.text = expendsReportAdapter[position].type_name
-        holder.binding.textCategory.text = expendsReportAdapter[position].category_name
-        holder.binding.textDate.text = convertTimeStampToFormattedDateTime(expendsReportAdapter[position].timestamp)
-        holder.binding.textMoney.text = expendsReportAdapter[position].amount
-        holder.binding.textPlus.text = expendsReportAdapter[position].symbol_math
+        holder.binding.textIncomeType.text = expendsReportModel[position].type_name
+        holder.binding.textCategory.text = expendsReportModel[position].category_name
+        holder.binding.textDate.text = convertTimeStampToFormattedDateTime(expendsReportModel[position].timestamp)
+        holder.binding.textMoney.text = expendsReportModel[position].amount
+        holder.binding.textPlus.text = expendsReportModel[position].symbol_math
 
-        if (expendsReportAdapter[position].type_name == "รายจ่ายไม่จำเป็น") {
+        if (expendsReportModel[position].type_name == "รายจ่ายไม่จำเป็น") {
             holder.binding.textIncomeType.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
             holder.binding.textSymbol.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
             holder.binding.textMoney.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
@@ -89,6 +89,9 @@ class ExpendsReportAdapter(
             holder.binding.textSymbol.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_2))
             holder.binding.textMoney.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_2))
             holder.binding.textPlus.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_2))
+        }
+        holder.itemView.setOnClickListener{
+            callback.invoke(Triple(expendsReportModel[position].transaction_id,expendsReportModel[position].amount,expendsReportModel[position]))
         }
     }
 

@@ -46,3 +46,23 @@ data class CreateListExpenses(
 data class CreateListExpensesData(
     val createSuccess: Boolean
 ): Parcelable
+data class UpdateExpenses(
+    val `data`: UpdateExpensesData,
+    val message: String,
+    val status: Int,
+    val success: Boolean
+)
+
+data class UpdateExpensesData(
+    val amount: String,
+    val category_id: Int,
+    val category_name: String,
+    val createdateTime: Int,
+    val description: String,
+    val expenses_id: Int,
+    val is_Updated: Boolean,
+    val save_auto_id: Int,
+    val save_auto_name: String,
+    val type_id: Int,
+    val type_name: String
+)

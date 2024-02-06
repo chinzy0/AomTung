@@ -24,6 +24,7 @@ class AddListScreenActivity : AppCompatActivity() {
     private val onClickDialog = MutableLiveData<String>()
     private var edit = ""
     private var editIncome: Report? = null
+    private var editExpends: Report? = null
 
     companion object {
         val textResult = MutableLiveData<String>()
@@ -48,6 +49,7 @@ class AddListScreenActivity : AppCompatActivity() {
     private fun checkAddress() {
         edit = intent.getStringExtra("edit").toString()
         editIncome = intent.getParcelableExtra("modelIncomeEdit")
+        editExpends = intent.getParcelableExtra("modelExpense")
         if (edit == "null"){
             binding.appbarAddListPage.textView9.text = "เพิ่มรายการ"
             binding.tabLayoutListAdd.isEnabled = true
@@ -55,6 +57,13 @@ class AddListScreenActivity : AppCompatActivity() {
             binding.appbarAddListPage.textView9.text = "แก้ไข"
             binding.tabLayoutListAdd.isEnabled = false
         }
+
+        if (edit.equals("editExpense")){
+        binding.tabLayoutListAdd.selectTab(binding.tabLayoutListAdd.getTabAt(1))
+        }else if (edit.equals("editIncome")){
+
+        }
+//        binding.tabLayoutListAdd.selectTab(binding.tabLayoutListAdd.getTabAt(1))
     }
 
     private fun changeTab(){
@@ -82,10 +91,11 @@ class AddListScreenActivity : AppCompatActivity() {
         val fragmentManager: FragmentManager = supportFragmentManager
         fragment.clear()
         fragment.add(AddIncomeFragment(editIncome))
-        fragment.add(AddExpendsFragment())
+        fragment.add(AddExpendsFragment(editExpends))
         mPageAdapter = ViewPagerAdapter(fragmentManager, lifecycle, fragment)
         binding.ListAddPage.adapter = mPageAdapter
         binding.ListAddPage.isUserInputEnabled = false
+
     }
 
     private fun onBack() {

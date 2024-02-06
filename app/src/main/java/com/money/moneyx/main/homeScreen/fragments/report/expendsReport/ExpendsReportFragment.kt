@@ -16,6 +16,7 @@ import com.money.moneyx.R
 import com.money.moneyx.databinding.FragmentExpendsReportBinding
 import com.money.moneyx.function.ApiReport
 import com.money.moneyx.function.dropdownHomePage
+import com.money.moneyx.main.addListPage.AddListScreenActivity
 import com.money.moneyx.main.homeScreen.HomeActivity
 import com.money.moneyx.main.homeScreen.HomeViewModel
 import com.money.moneyx.main.homeScreen.fragments.home.HomeFragment
@@ -120,8 +121,15 @@ class ExpendsReportFragment(
 
     private fun adapter() {
         activity?.runOnUiThread {
-            expendsReportAdapter = ExpendsReportAdapter(viewModel.expendsModel) {
-
+            expendsReportAdapter = ExpendsReportAdapter(viewModel.expendsModel) { model ->
+                when(model.first){
+                    model.first -> {
+                        var intent = Intent(requireActivity(), AddListScreenActivity:: class.java)
+                        intent.putExtra("edit", "editExpense")
+                        intent.putExtra("modelIncomeEdit", model.third)
+                        startActivity(intent)
+                    }
+                }
             }
             binding.RCVpastIncome.apply {
                 layoutManager = LinearLayoutManager(context)

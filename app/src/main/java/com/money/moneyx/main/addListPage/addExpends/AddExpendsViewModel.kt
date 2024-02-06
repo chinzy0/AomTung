@@ -104,4 +104,43 @@ class AddExpendsViewModel : ViewModel() {
             }
         })
     }
+    fun updateExpenses(
+        income_id: Int,
+        type_id: Int,
+        category_id: Int,
+        description: String,
+        amount : Double,
+        createdateTime : Int,
+        auto_schedule : Int,
+        clickCallback: ((UpdateExpenses) -> Unit)) {
+        val jsonContent = JSONObject()
+            .put("income_id", income_id)
+            .put("type_id", type_id)
+            .put("category_id", category_id)
+            .put("description", description)
+            .put("amount", amount)
+            .put("createdateTime", createdateTime)
+            .put("auto_schedule", auto_schedule).toString()
+
+
+        val client = OkHttpClient()
+        val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url("http://zaserzafear.thddns.net:9973/api/Expenses/UpdateExpenses")
+            .patch(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    val apiResponse = Gson().fromJson(responseBody.toString(), UpdateExpenses::class.java)
+                    clickCallback.invoke(apiResponse)
+                }
+            }
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+        })
+    }
 }

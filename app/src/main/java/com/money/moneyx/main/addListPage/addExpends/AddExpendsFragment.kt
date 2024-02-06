@@ -21,34 +21,34 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
 import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.FragmentAddExpendsBinding
 import com.money.moneyx.function.addListAlertDialog
 import com.money.moneyx.function.autoSave
-import com.money.moneyx.function.dateTime
 import com.money.moneyx.function.dateTimeExpends
 import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.function.note
-import com.money.moneyx.function.selectType
 import com.money.moneyx.function.selectTypeExpends
 import com.money.moneyx.function.showTimePicker
 import com.money.moneyx.main.addListPage.AddListScreenActivity
-import com.money.moneyx.main.addListPage.addIncome.AddIncomeAdapter
 import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
 import com.money.moneyx.main.addListPage.category.CategoryExpendsActivity
-import com.money.moneyx.main.addListPage.category.CategoryIncomeActivity
 import com.money.moneyx.main.homeScreen.HomeActivity
+import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.Report
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 
-class AddExpendsFragment : Fragment() {
+class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
     private lateinit var binding: FragmentAddExpendsBinding
     private lateinit var viewModel: AddExpendsViewModel
     private var typeID = 0
@@ -57,8 +57,10 @@ class AddExpendsFragment : Fragment() {
     private var idMember = 0
     private var description = ""
     private var dateTimeSelected: Long = 0
+    private var expendsID = 0
     private var noteText = ""
     private var result = 0.0
+    private var edit = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,13 +78,64 @@ class AddExpendsFragment : Fragment() {
         idMember = preferences.getInt("idmember", 0)
         Log.i("idMember", idMember.toString())
 
+        setDateTime()
+        editIncomeData()
         setEventClick()
         changeColorBtn()
-        setDateTime()
         loadingScreen(requireActivity())
 
         return binding.root
     }
+
+    private fun editIncomeData() {
+        editExpends?.let { data ->
+            result = editExpends.amount.toDouble()
+            categoryId = editExpends.category_id
+            typeID = editExpends.type_id
+            description = data.description
+            autoSaveID = editExpends.save_auto_id
+            categoryId = editExpends.category_id
+            description = editExpends.description
+            expendsID = editExpends.transaction_id
+            val localDateTime = unixTimestampToLocalDateTime(data.timestamp)
+            val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
+            val formattedDate = localDateTime.format(dateFormat)
+            val formattedTime = localDateTime.format(timeFormat)
+
+            binding.textTv.setText(result.toString())
+            binding.textTime2.text = data.type_name
+            binding.textTime3.text = data.category_name
+            binding.textTime44.text = data.description
+            binding.textTime5.text = data.save_auto_name
+            binding.textDate.text = formattedDate
+            binding.textTime.text = formattedTime
+        }
+        if (editExpends != null) {
+            edit = true
+            if (description.isNotEmpty()) {
+                binding.textTime4.visibility = View.GONE
+                binding.textTime44.visibility = View.VISIBLE
+                if (description.length > 15) {
+                    val truncatedText = description.substring(0, 15) + "..."
+                    binding.textTime44.text = truncatedText
+                } else {
+                    binding.textTime44.text = description
+                }
+                noteText = description
+                description = description
+            } else {
+                binding.textTime44.text = ""
+                binding.textTime4.visibility = View.VISIBLE
+                binding.textTime44.visibility = View.GONE
+                noteText = ""
+            }
+            binding.deleteButton.visibility = View.VISIBLE
+        }else{
+            binding.deleteButton.visibility = View.GONE
+        }
+    }
+
 
     private fun setEventClick() {
         viewModel.onClick.observe(requireActivity(), Observer {
@@ -154,13 +207,30 @@ class AddExpendsFragment : Fragment() {
                     }
                 }
 
-                "expendsSaveClick" -> {
+                "incomeSaveClickButton" -> {
                     dateTimeSelected = convertDateTimeToUnixTimestamp(
                         binding.textDate.text.toString(),
                         binding.textTime.text.toString()
                     )
                     if (typeID == 0 || categoryId == 0) {
                         addListAlertDialog(requireActivity())
+                    }else if(edit) {
+                        AVLoading.startAnimLoading()
+                        viewModel.updateExpenses(
+                            income_id = expendsID,
+                            type_id = typeID,
+                            category_id = categoryId,
+                            description = description,
+                            amount = result,
+                            createdateTime = dateTimeSelected.toInt(),
+                            auto_schedule = autoSaveID ){ updateIncome ->
+                            AVLoading.stopAnimLoading()
+                            if (updateIncome.data.is_Updated){
+                                activity?.runOnUiThread { showSuccessDialog() }
+                            }else{
+
+                            }
+                        }
                     } else {
                         AVLoading.startAnimLoading()
                         viewModel.createListExpenses(
@@ -172,16 +242,16 @@ class AddExpendsFragment : Fragment() {
                             auto_schedule = autoSaveID,
                             amount = result
                         ) { model ->
+                            AVLoading.stopAnimLoading()
                             if (model.success) {
-                                AVLoading.stopAnimLoading()
                                 activity?.runOnUiThread { showSuccessDialog() }
                             } else {
 
                             }
-
                         }
                     }
                 }
+
             }
         })
     }
@@ -292,7 +362,11 @@ class AddExpendsFragment : Fragment() {
             val intent = Intent(requireActivity(), HomeActivity::class.java)
             startActivity(intent)
         }
+    }
 
+    private fun unixTimestampToLocalDateTime(unixTimestamp: Int): LocalDateTime {
+        val instant = Instant.ofEpochSecond(unixTimestamp.toLong())
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
     }
 
 
