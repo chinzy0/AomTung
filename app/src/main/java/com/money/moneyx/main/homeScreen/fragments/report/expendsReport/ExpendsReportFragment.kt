@@ -126,7 +126,7 @@ class ExpendsReportFragment(
                     model.first -> {
                         var intent = Intent(requireActivity(), AddListScreenActivity:: class.java)
                         intent.putExtra("edit", "editExpense")
-                        intent.putExtra("modelIncomeEdit", model.third)
+                        intent.putExtra("modelExpenseEdit", model.third)
                         startActivity(intent)
                     }
                 }

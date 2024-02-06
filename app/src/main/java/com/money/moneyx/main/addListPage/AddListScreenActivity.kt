@@ -15,12 +15,14 @@ import com.money.moneyx.databinding.ActivityAddListScreenBinding
 import com.money.moneyx.function.showConfirmOnBack
 import com.money.moneyx.main.addListPage.addExpends.AddExpendsFragment
 import com.money.moneyx.main.addListPage.addIncome.AddIncomeFragment
+import com.money.moneyx.main.homeScreen.fragments.report.expendsReport.ExpendsReportFragment
 import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.Report
+import java.text.FieldPosition
 
 class AddListScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddListScreenBinding
     private val fragment = ArrayList<Fragment>()
-    private lateinit var  mPageAdapter: ViewPagerAdapter
+    private lateinit var mPageAdapter: ViewPagerAdapter
     private val onClickDialog = MutableLiveData<String>()
     private var edit = ""
     private var editIncome: Report? = null
@@ -43,38 +45,30 @@ class AddListScreenActivity : AppCompatActivity() {
         onBack()
         setEventClick()
 
-        Log.i("asdkalmdksadasd",edit)
+        Log.i("asdkalmdksadasd", edit)
     }
 
     private fun checkAddress() {
         edit = intent.getStringExtra("edit").toString()
         editIncome = intent.getParcelableExtra("modelIncomeEdit")
-        editExpends = intent.getParcelableExtra("modelExpense")
-        if (edit == "null"){
+        editExpends = intent.getParcelableExtra("modelExpenseEdit")
+        if (edit == "null") {
             binding.appbarAddListPage.textView9.text = "เพิ่มรายการ"
-            binding.tabLayoutListAdd.isEnabled = true
-        }else{
+        } else {
             binding.appbarAddListPage.textView9.text = "แก้ไข"
-            binding.tabLayoutListAdd.isEnabled = false
         }
-
-        if (edit.equals("editExpense")){
-        binding.tabLayoutListAdd.selectTab(binding.tabLayoutListAdd.getTabAt(1))
-        }else if (edit.equals("editIncome")){
-
-        }
-//        binding.tabLayoutListAdd.selectTab(binding.tabLayoutListAdd.getTabAt(1))
     }
 
-    private fun changeTab(){
+    private fun changeTab() {
         val tabTitles = listOf("รายรับ", "รายจ่าย")
         TabLayoutMediator(binding.tabLayoutListAdd, binding.ListAddPage)
-        { tab, position -> tab.text = tabTitles[position]
+        { tab, position ->
+            tab.text = tabTitles[position]
         }.attach()
 
     }
 
-    private fun changeColorTab(){
+    private fun changeColorTab() {
         binding.tabLayoutListAdd.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab?.position == 1) {
@@ -83,11 +77,13 @@ class AddListScreenActivity : AppCompatActivity() {
                     binding.tabLayoutListAdd.setSelectedTabIndicatorColor(resources.getColor(R.color.income))
                 }
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
     }
-    private fun tabLayout(){
+
+    private fun tabLayout() {
         val fragmentManager: FragmentManager = supportFragmentManager
         fragment.clear()
         fragment.add(AddIncomeFragment(editIncome))
@@ -96,12 +92,19 @@ class AddListScreenActivity : AppCompatActivity() {
         binding.ListAddPage.adapter = mPageAdapter
         binding.ListAddPage.isUserInputEnabled = false
 
+        if (edit == "editExpense" ) {
+            binding.ListAddPage.currentItem = 1
+            binding.tabLayoutListAdd.setSelectedTabIndicatorColor(resources.getColor(R.color.expends))
+        }else{
+            binding.ListAddPage.currentItem = 0
+            binding.tabLayoutListAdd.setSelectedTabIndicatorColor(resources.getColor(R.color.income))
+        }
     }
 
     private fun onBack() {
         binding.appbarAddListPage.imageView6.setOnClickListener {
             if (textResult.value != null && textResult.value!!.isNotEmpty()) {
-                showConfirmOnBack(this,onClickDialog)
+                showConfirmOnBack(this, onClickDialog)
             } else {
                 onBackPressed()
             }
@@ -119,7 +122,6 @@ class AddListScreenActivity : AppCompatActivity() {
         })
 
     }
-
 
 
 }

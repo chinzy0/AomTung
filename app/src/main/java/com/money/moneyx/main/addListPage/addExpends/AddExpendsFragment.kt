@@ -88,6 +88,7 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
     }
 
     private fun editIncomeData() {
+        Log.i("asdasdasd1q23", editExpends.toString())
         editExpends?.let { data ->
             result = editExpends.amount.toDouble()
             categoryId = editExpends.category_id
@@ -206,8 +207,7 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
                         autoSaveID = autoSaved.second
                     }
                 }
-
-                "incomeSaveClickButton" -> {
+                "expendsSaveClick" -> {
                     dateTimeSelected = convertDateTimeToUnixTimestamp(
                         binding.textDate.text.toString(),
                         binding.textTime.text.toString()

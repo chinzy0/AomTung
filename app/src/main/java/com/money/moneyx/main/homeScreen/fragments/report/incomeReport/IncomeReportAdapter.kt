@@ -80,15 +80,15 @@ class ExpendsReportAdapter(
         holder.binding.textPlus.text = expendsReportModel[position].symbol_math
 
         if (expendsReportModel[position].type_name == "รายจ่ายไม่จำเป็น") {
-            holder.binding.textIncomeType.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
-            holder.binding.textSymbol.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
-            holder.binding.textMoney.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
-            holder.binding.textPlus.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_1))
+            holder.binding.textIncomeType.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter1))
+            holder.binding.textSymbol.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter1))
+            holder.binding.textMoney.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter1))
+            holder.binding.textPlus.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter1))
         }else{
-            holder.binding.textIncomeType.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_2))
-            holder.binding.textSymbol.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_2))
-            holder.binding.textMoney.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_2))
-            holder.binding.textPlus.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_chart_2))
+            holder.binding.textIncomeType.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter2))
+            holder.binding.textSymbol.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter2))
+            holder.binding.textMoney.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter2))
+            holder.binding.textPlus.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter2))
         }
         holder.itemView.setOnClickListener{
             callback.invoke(Triple(expendsReportModel[position].transaction_id,expendsReportModel[position].amount,expendsReportModel[position]))

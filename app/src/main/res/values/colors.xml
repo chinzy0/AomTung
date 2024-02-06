@@ -28,5 +28,7 @@
     <color name="income_chart_1">#B4E2F4</color>
     <color name="expends_chart_2">#F56C6C</color>
     <color name="expends_chart_1">#F8ED75</color>
+    <color name="expends_letter1">#E3C529</color>
+    <color name="expends_letter2">#E85757</color>
 
 </resources>
