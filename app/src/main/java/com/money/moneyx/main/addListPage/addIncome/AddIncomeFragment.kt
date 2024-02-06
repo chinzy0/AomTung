@@ -9,7 +9,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.iamauttamai.avloading.ui.AVLoading
@@ -31,6 +31,7 @@ import com.money.moneyx.function.dateTime
 import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.function.note
 import com.money.moneyx.function.selectType
+import com.money.moneyx.function.showConfirmDeleteDialog
 import com.money.moneyx.function.showTimePicker
 import com.money.moneyx.main.addListPage.AddListScreenActivity
 import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
@@ -43,7 +44,6 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.YearMonth
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -62,6 +62,8 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
     private var noteText = ""
     private var incomeID = 0
     private var edit = false
+    private val onClickDialog = MutableLiveData<String>()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,7 +81,6 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
         binding.addIncomeViewModel = viewModel
         val preferences = Preference.getInstance(requireActivity())
         idMember = preferences.getInt("idmember", 0)
-        Log.i("idMember", idMember.toString())
 
 
         setDateTime()
@@ -147,6 +148,21 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
 
 
     private fun setEventClick() {
+        onClickDialog.observe(requireActivity(), Observer {
+            when (it) {
+                "confirmDelete" -> {
+                    viewModel.deleteIncome(income_id = incomeID){ del ->
+                        if (del.success){
+                            val intent = Intent(requireActivity(), HomeActivity::class.java)
+                            startActivity(intent)
+                        }
+                    }
+
+
+                }
+            }
+        })
+
         viewModel.onClick.observe(requireActivity(), Observer {
             when (it) {
                 "calculateClick" -> {
@@ -208,14 +224,15 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
                         }
                     }
                 }
-
                 "incomeAutoSaveClick" -> {
                     autoSave(requireActivity(), HomeActivity.listScheduleAuto) { autoSaved ->
                         binding.textTime5.text = autoSaved.first
                         autoSaveID = autoSaved.second
                     }
                 }
-
+                "incomeDeleteClick" -> {
+                    showConfirmDeleteDialog(requireActivity(), onClickDialog)
+                }
                 "incomeSaveClickButton" -> {
                     dateTimeSelected = convertDateTimeToUnixTimestamp(
                         binding.textDate.text.toString(),
@@ -236,9 +253,7 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
                             AVLoading.stopAnimLoading()
                             if (updateIncome.data.is_Updated){
                                 activity?.runOnUiThread { showSuccessDialog() }
-                            }else{
-
-                            }
+                            }else{ }
                         }
                     } else {
                         AVLoading.startAnimLoading()
@@ -296,6 +311,9 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
     private fun selectCategory() {
         val intent = Intent(requireActivity(), CategoryIncomeActivity::class.java)
         getCategory.launch(intent)
+    }
+    private fun deleteIncome() {
+
     }
 
     private fun changeColorBtn() {

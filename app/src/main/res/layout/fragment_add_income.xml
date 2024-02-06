@@ -482,7 +482,9 @@
                 android:id="@+id/deleteButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="invisible">
+                android:visibility="gone"
+                android:onClick="@{() -> addIncomeViewModel.incomeDeleteClick()}"
+                >
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/underline12"
@@ -492,7 +494,9 @@
                     android:background="#E2E2E2"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"></androidx.constraintlayout.widget.ConstraintLayout>
+                    app:layout_constraintTop_toTopOf="parent">
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <ImageView
                     android:id="@+id/deleteImg"

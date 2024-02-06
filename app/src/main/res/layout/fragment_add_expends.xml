@@ -484,8 +484,8 @@
                 android:id="@+id/deleteButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:visibility="invisible">
+                android:onClick="@{() -> addExpendsViewModel.expendsDelClick()}"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/deleteImg"
@@ -531,6 +531,7 @@
             android:textColor="@color/white"
             android:textSize="22sp"
             android:onClick="@{() -> addExpendsViewModel.expendsSaveClick()}"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

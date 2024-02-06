@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:layout_marginHorizontal="45dp"
+    android:background="@drawable/border_stroke_black">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+
+        >
+
+
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="คุณต้องการลบรายการนี้หรือไม่ ?"
+            android:textColor="#292D33"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="80dp"
+
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="50dp"
+            android:orientation="horizontal">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/confirm_del_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border_radius"
+                android:backgroundTint="#81C8E4"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="9dp"
+                >
+                <TextView
+                    android:id="@+id/textView28"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/ok"
+                    android:gravity="center"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:paddingVertical="8dp"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cancle_del_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border_radius"
+                android:backgroundTint="#F49696"
+                android:layout_marginStart="9dp"
+                android:layout_marginEnd="50dp"
+                >
+                <TextView
+                    android:id="@+id/textView29"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/cancle"
+                    android:gravity="center"
+                    android:fontFamily="@font/sukhumvit_set_text"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:paddingVertical="8dp"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

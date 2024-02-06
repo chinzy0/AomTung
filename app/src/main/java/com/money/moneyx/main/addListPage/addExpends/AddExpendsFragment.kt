@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +18,8 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.iamauttamai.avloading.ui.AVLoading
@@ -31,6 +32,7 @@ import com.money.moneyx.function.dateTimeExpends
 import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.function.note
 import com.money.moneyx.function.selectTypeExpends
+import com.money.moneyx.function.showConfirmDeleteDialog
 import com.money.moneyx.function.showTimePicker
 import com.money.moneyx.main.addListPage.AddListScreenActivity
 import com.money.moneyx.main.addListPage.calculator.CalculatorActivity
@@ -61,6 +63,8 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
     private var noteText = ""
     private var result = 0.0
     private var edit = false
+    private val onClickDialog = MutableLiveData<String>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,7 +92,6 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
     }
 
     private fun editIncomeData() {
-        Log.i("asdasdasd1q23", editExpends.toString())
         editExpends?.let { data ->
             result = editExpends.amount.toDouble()
             categoryId = editExpends.category_id
@@ -132,13 +135,25 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
                 noteText = ""
             }
             binding.deleteButton.visibility = View.VISIBLE
-        }else{
+        } else {
             binding.deleteButton.visibility = View.GONE
         }
     }
 
 
     private fun setEventClick() {
+        onClickDialog.observe(requireActivity(), Observer {
+            when (it) {
+                "confirmDelete" -> {
+                    viewModel.deleteExpenses(expendsID) { del ->
+                        if (del.success) {
+                            val intent = Intent(requireActivity(), HomeActivity::class.java)
+                            startActivity(intent)
+                        }
+                    }
+                }
+            }
+        })
         viewModel.onClick.observe(requireActivity(), Observer {
             when (it) {
                 "expendsCalculateClick" -> {
@@ -207,6 +222,11 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
                         autoSaveID = autoSaved.second
                     }
                 }
+
+                "expendsDelClick" -> {
+                    showConfirmDeleteDialog(requireActivity(), onClickDialog)
+                }
+
                 "expendsSaveClick" -> {
                     dateTimeSelected = convertDateTimeToUnixTimestamp(
                         binding.textDate.text.toString(),
@@ -214,21 +234,21 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
                     )
                     if (typeID == 0 || categoryId == 0) {
                         addListAlertDialog(requireActivity())
-                    }else if(edit) {
+                    } else if (edit) {
                         AVLoading.startAnimLoading()
                         viewModel.updateExpenses(
-                            income_id = expendsID,
+                            expends_id = expendsID,
                             type_id = typeID,
                             category_id = categoryId,
                             description = description,
                             amount = result,
                             createdateTime = dateTimeSelected.toInt(),
-                            auto_schedule = autoSaveID ){ updateIncome ->
+                            auto_schedule = autoSaveID
+                        ) { updateExpends ->
                             AVLoading.stopAnimLoading()
-                            if (updateIncome.data.is_Updated){
+                            if (updateExpends.data.is_Updated) {
                                 activity?.runOnUiThread { showSuccessDialog() }
-                            }else{
-
+                            } else {
                             }
                         }
                     } else {
@@ -245,13 +265,13 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
                             AVLoading.stopAnimLoading()
                             if (model.success) {
                                 activity?.runOnUiThread { showSuccessDialog() }
+                                edit = false
                             } else {
 
                             }
                         }
                     }
                 }
-
             }
         })
     }
@@ -296,19 +316,24 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
                     AddListScreenActivity.textResult.value = s.toString()
                 }
             }
+
             override fun afterTextChanged(s: Editable?) {
                 try {
                     var resultValue = s.toString().toDouble()
-                    resultValue = BigDecimal(resultValue).setScale(2, RoundingMode.HALF_EVEN).toDouble()
+                    resultValue =
+                        BigDecimal(resultValue).setScale(2, RoundingMode.HALF_EVEN).toDouble()
 
                     if (resultValue > 0) {
                         val buttonColor = ContextCompat.getColor(requireContext(), R.color.expends)
-                        binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                        binding.buttonAddExpends.backgroundTintList =
+                            ColorStateList.valueOf(buttonColor)
                         binding.buttonAddExpends.isEnabled = true
                         result = resultValue
                     } else {
-                        val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
-                        binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                        val buttonColor =
+                            ContextCompat.getColor(requireContext(), R.color.button_disable)
+                        binding.buttonAddExpends.backgroundTintList =
+                            ColorStateList.valueOf(buttonColor)
                         binding.buttonAddExpends.isEnabled = false
                     }
                 } catch (e: NumberFormatException) {
@@ -343,6 +368,7 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
         binding.textDate.text = viewModel.date
 
     }
+
     private fun showSuccessDialog() {
         val dialog = Dialog(requireActivity())
         dialog.setCanceledOnTouchOutside(false)

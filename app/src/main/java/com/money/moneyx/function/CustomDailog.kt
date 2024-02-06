@@ -58,6 +58,29 @@ fun showExitDialog(mContext: Activity, onClickDialog: MutableLiveData<String>) {
     }
 }
 
+fun showConfirmDeleteDialog(mContext: Activity, onClickDialog: MutableLiveData<String>) {
+    val dialog = Dialog(mContext)
+    dialog.setCanceledOnTouchOutside(false)
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(R.layout.delete_dialog)
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    )
+    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+
+    dialog.show()
+    val cancel = dialog.findViewById<ConstraintLayout>(R.id.cancle_del_button)
+    cancel.setOnClickListener {
+        dialog.dismiss()
+    }
+    val exit = dialog.findViewById<ConstraintLayout>(R.id.confirm_del_button)
+    exit.setOnClickListener {
+        onClickDialog.value = "confirmDelete"
+    }
+}
+
 fun wrongOtpDialog(mContext: Activity, message: String) {
     val dialog = Dialog(mContext)
     dialog.setCanceledOnTouchOutside(false)

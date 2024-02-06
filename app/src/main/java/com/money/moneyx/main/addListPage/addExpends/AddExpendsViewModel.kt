@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.money.moneyx.R
 import com.money.moneyx.main.addListPage.addIncome.AddIncomeModel
 import com.money.moneyx.main.addListPage.addIncome.CreateListIncome
+import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.UpdateIncome
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -50,6 +51,9 @@ class AddExpendsViewModel : ViewModel() {
     }
     fun expendsSaveClick() {
         onClick.value = "expendsSaveClick"
+    }
+    fun expendsDelClick() {
+        onClick.value = "expendsDelClick"
     }
 
     private fun getCurrentDate(): String {
@@ -105,7 +109,7 @@ class AddExpendsViewModel : ViewModel() {
         })
     }
     fun updateExpenses(
-        income_id: Int,
+        expends_id: Int,
         type_id: Int,
         category_id: Int,
         description: String,
@@ -114,7 +118,7 @@ class AddExpendsViewModel : ViewModel() {
         auto_schedule : Int,
         clickCallback: ((UpdateExpenses) -> Unit)) {
         val jsonContent = JSONObject()
-            .put("income_id", income_id)
+            .put("expenses_id", expends_id)
             .put("type_id", type_id)
             .put("category_id", category_id)
             .put("description", description)
@@ -135,6 +139,33 @@ class AddExpendsViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     val responseBody = response.body?.string()
                     val apiResponse = Gson().fromJson(responseBody.toString(), UpdateExpenses::class.java)
+                    clickCallback.invoke(apiResponse)
+                }
+            }
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+        })
+    }
+
+    fun deleteExpenses(
+        expenses_id: Int,
+        clickCallback: ((UpdateIncome) -> Unit)) {
+        val jsonContent = JSONObject()
+            .put("income_id", expenses_id).toString()
+
+        val client = OkHttpClient()
+        val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url("http://zaserzafear.thddns.net:9973/api/Expenses/DeleteExpenses?id=${expenses_id}")
+            .delete(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    val apiResponse = Gson().fromJson(responseBody.toString(), UpdateIncome::class.java)
                     clickCallback.invoke(apiResponse)
                 }
             }

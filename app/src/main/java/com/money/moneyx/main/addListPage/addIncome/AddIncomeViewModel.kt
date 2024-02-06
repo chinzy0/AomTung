@@ -62,6 +62,9 @@ class AddIncomeViewModel : ViewModel() {
     fun incomeSaveClick() {
         onClick.value = "incomeSaveClickButton"
     }
+    fun incomeDeleteClick() {
+        onClick.value = "incomeDeleteClick"
+    }
 
     private fun getCurrentDate(): String {
         val calendar = Calendar.getInstance()
@@ -141,6 +144,33 @@ class AddIncomeViewModel : ViewModel() {
         val request = Request.Builder()
             .url("http://zaserzafear.thddns.net:9973/api/Incomes/UpdateIncome")
             .patch(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    val apiResponse = Gson().fromJson(responseBody.toString(), UpdateIncome::class.java)
+                    clickCallback.invoke(apiResponse)
+                }
+            }
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+        })
+    }
+
+    fun deleteIncome(
+        income_id: Int,
+        clickCallback: ((UpdateIncome) -> Unit)) {
+        val jsonContent = JSONObject()
+            .put("income_id", income_id).toString()
+
+        val client = OkHttpClient()
+        val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url("http://zaserzafear.thddns.net:9973/api/Incomes/DeleteIncome?id=${income_id}")
+            .delete(requestBody)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
