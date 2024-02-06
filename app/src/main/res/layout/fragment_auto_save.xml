@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="autoSaveViewModel"
+            type="com.money.moneyx.main.autoSave.AutoSaveViewModel"/>
     </data>
 
     <FrameLayout
@@ -39,29 +41,16 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/RcvAutoSave"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:background="#F4F4F4"
+                android:layout_marginHorizontal="10dp"
+                tools:listitem="@layout/list_autosave"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout13">
-
-                <TextView
-                    android:id="@+id/textView14"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Coming soon"
-                    android:textSize="18sp"
-                    android:fontFamily="@font/sukhumvit_set_text"
-                    android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout13"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

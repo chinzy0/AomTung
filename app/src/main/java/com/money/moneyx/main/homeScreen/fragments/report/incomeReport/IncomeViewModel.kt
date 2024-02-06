@@ -29,7 +29,6 @@ class IncomeViewModel : ViewModel() {
     val currentYearIncome = getCurrentYear()
     var startTimestamp = ObservableField("")
     val endTimestamp = ObservableField("")
-    val xxxxxx = ObservableField("")
 
 
 

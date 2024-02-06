@@ -41,7 +41,6 @@ data class GetAllCategoryincomeData(
 
 ): Parcelable
 @Parcelize
-
 data class ListScheduleAuto(
     val `data`: List<ListScheduleAutoData>,
     val message: String,

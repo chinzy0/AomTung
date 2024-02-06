@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
+import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.ActivityHomeBinding
 import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.main.addListPage.AddListScreenActivity
@@ -19,6 +20,7 @@ import com.money.moneyx.main.addListPage.addIncome.GetAllCategoryincome
 import com.money.moneyx.main.addListPage.addIncome.GetAllTypeIncome
 import com.money.moneyx.main.addListPage.addIncome.ListScheduleAuto
 import com.money.moneyx.main.autoSave.AutoSaveFragment
+import com.money.moneyx.main.autoSave.GetListAuto
 import com.money.moneyx.main.homeScreen.fragments.home.HomeFragment
 import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.ReportMonthExpenses
 import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.ReportMonthIncome
@@ -33,6 +35,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var viewModel: HomeViewModel
     private var positionClick = ""
+    private var idMember = 0
 
 
     companion object {
@@ -41,6 +44,7 @@ class HomeActivity : AppCompatActivity() {
         var getAllTypeExpenses: GetAllTypeExpenses? = null
         var getAllCategoryExpenses: GetAllCategoryExpenses? = null
         var listScheduleAuto: ListScheduleAuto? = null
+        var listAutoSave: GetListAuto? = null
     }
 
 
@@ -52,6 +56,8 @@ class HomeActivity : AppCompatActivity() {
         binding.homeViewModel = viewModel
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         positionClick = intent.getStringExtra("positionClick").toString()
+        val preferences = Preference.getInstance(this)
+        idMember = preferences.getInt("idmember", 0)
         loadingScreen(this)
         changePage()
 
@@ -59,10 +65,9 @@ class HomeActivity : AppCompatActivity() {
         viewModel.getAllCategoryincome { Categoryincome -> getAllCategoryincome = Categoryincome }
         viewModel.getAllTypeIncome { TypeIncome -> getAllTypeIncomeData = TypeIncome }
         viewModel.getAllTypeExpenses { TypeExpenses -> getAllTypeExpenses = TypeExpenses }
-        viewModel.getAllCategoryExpenses { CategoryExpenses ->
-            getAllCategoryExpenses = CategoryExpenses
-        }
+        viewModel.getAllCategoryExpenses { CategoryExpenses -> getAllCategoryExpenses = CategoryExpenses }
         viewModel.listScheduleAuto { ScheduleAuto -> listScheduleAuto = ScheduleAuto }
+        viewModel.getListAuto(idMember){ AutoSave -> listAutoSave = AutoSave }
 
     }
 

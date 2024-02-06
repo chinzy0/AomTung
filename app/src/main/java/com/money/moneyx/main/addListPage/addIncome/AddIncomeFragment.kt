@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -81,6 +82,7 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
         binding.addIncomeViewModel = viewModel
         val preferences = Preference.getInstance(requireActivity())
         idMember = preferences.getInt("idmember", 0)
+        Log.i("IdMember",idMember.toString())
 
 
         setDateTime()

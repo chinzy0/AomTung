@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/border_list_past"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/autoSaveType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/sukhumvit_set_text"
+                android:text="รายรับแน่นอน"
+                android:textColor="#064F6C"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/autoSaveCat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="เงินเดือน"
+                android:fontFamily="@font/sukhumvit_set_text"
+                android:textColor="#4C4C4C"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="@+id/autoSaveType"
+                app:layout_constraintTop_toBottomOf="@+id/autoSaveType" />
+
+            <TextView
+                android:id="@+id/textSym"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:fontFamily="@font/sukhumvit_set_text"
+                android:text="฿"
+                android:textColor="#064F6C"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="@+id/autoSaveType"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/autoSaveType" />
+
+            <TextView
+                android:id="@+id/textAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/sukhumvit_set_text"
+                android:text="5000"
+                android:textColor="#064F6C"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="@+id/autoSaveType"
+                app:layout_constraintEnd_toStartOf="@+id/textSym"
+                app:layout_constraintTop_toTopOf="@+id/autoSaveType" />
+
+            <TextView
+                android:id="@+id/textFrequency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ทุกเดือน"
+                android:fontFamily="@font/sukhumvit_set_text"
+                android:textColor="#064F6C"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/textSym"
+                app:layout_constraintTop_toBottomOf="@+id/textAmount" />
+
+            <TextView
+                android:id="@+id/dateAutoSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/sukhumvit_set_text"
+                android:text="22/12/2023 11:17"
+                android:textColor="#064F6C"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/textSym"
+                app:layout_constraintTop_toBottomOf="@+id/textFrequency" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
