@@ -14,6 +14,7 @@
     <color name="letter">#F97171</color>
     <color name="button">#FF8686</color>
     <color name="income">#81C8E4</color>
+    <color name="unselected_tab_color">#545F71</color>
     <color name="income_uncertainText">#6DBAD8</color>
     <color name="income_certainText">#064F6C</color>
     <color name="button_disable">#C4C4C4</color>

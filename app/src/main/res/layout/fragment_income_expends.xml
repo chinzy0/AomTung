@@ -31,38 +31,62 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sukhumvit_set_text"
-                    android:text="@string/fix"
+                    android:paddingTop="20dp"
+                    android:text="รายรับ - รายจ่าย"
                     android:textColor="@color/appbarListAdd"
                     android:textSize="24sp"
-                    android:paddingVertical="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="#F4F4F4"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout13">
-
-                <TextView
-                    android:id="@+id/textView14"
-                    android:layout_width="wrap_content"
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabLayoutIncomeExpends"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Coming soon"
-                    android:textSize="18sp"
-                    android:fontFamily="@font/sukhumvit_set_text"
-                    android:textColor="@color/black"
+                    app:layout_constraintTop_toBottomOf="@+id/textView9"
+                    app:tabIndicatorAnimationMode="linear"
+                    app:tabIndicatorColor="@color/income"
+                    app:tabMode="fixed"
+                    app:tabTextColor="@color/unselected_tab_color">
+
+                    <com.google.android.material.tabs.TabItem
+                        android:id="@+id/listPage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="รายการ"
+                        android:textSize="19sp" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:id="@+id/summary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="สรุปยอด"
+                        android:textSize="19sp" />
+
+                </com.google.android.material.tabs.TabLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E2E2E2"
+                    android:layout_marginBottom="10dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                     />
+                    app:layout_constraintTop_toBottomOf="@+id/tabLayoutIncomeExpends">
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/incomeExpendsPage"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout13" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

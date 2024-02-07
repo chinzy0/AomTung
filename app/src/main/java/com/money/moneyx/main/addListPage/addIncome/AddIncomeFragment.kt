@@ -2,6 +2,7 @@ package com.money.moneyx.main.addListPage.addIncome
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -14,9 +15,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -241,6 +244,15 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
                         binding.textTime.text.toString()
                     )
                     if (typeID == 0 || categoryId == 0) {
+                        if (typeID == 0 ){
+                            binding.textTime2.setTextColor(ContextCompat.getColor(binding.root.context, R.color.red))
+                        }else{
+                            binding.textTime2.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
+                        }
+                        if (categoryId == 0){ binding.textTime3.setTextColor(ContextCompat.getColor(binding.root.context, R.color.red))
+                        }else{
+                            binding.textTime3.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
+                        }
                         addListAlertDialog(requireActivity())
                     }else if(edit) {
                         AVLoading.startAnimLoading()
@@ -388,6 +400,7 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
 
         ok.setOnClickListener {
             val intent = Intent(requireActivity(), HomeActivity::class.java)
+            AddListScreenActivity.textResult.value = ""
             startActivity(intent)
         }
     }

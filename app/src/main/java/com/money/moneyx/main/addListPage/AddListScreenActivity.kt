@@ -77,7 +77,6 @@ class AddListScreenActivity : AppCompatActivity() {
                     binding.tabLayoutListAdd.setSelectedTabIndicatorColor(resources.getColor(R.color.income))
                 }
             }
-
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })

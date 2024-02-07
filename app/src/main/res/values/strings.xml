@@ -6,7 +6,7 @@
     <string name="submit">ยืนยัน</string>
     <string name="cancle">ยกเลิก</string>
     <string name="note">โน้ต</string>
-    <string name="complete">เสร็จสิิ้น</string>
+    <string name="complete">เสร็จสิ้น</string>
     <string name="note_hint">ไม่จำเป็นต้องระบุ</string>
     <string name="fingerprint">ลายนิ้วมือ</string>
     <string name="faceId">แสกนใบหน้า</string>

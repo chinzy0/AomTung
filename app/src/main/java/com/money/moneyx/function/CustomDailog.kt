@@ -1,5 +1,6 @@
 package com.money.moneyx.function
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
@@ -8,7 +9,6 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -19,10 +19,12 @@ import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -122,6 +124,8 @@ fun addListAlertDialog(mContext: Activity) {
 
 fun dropdownHomePage(
     mContext: Activity,
+    month : String,
+    year : String,
     onClickDialog: MutableLiveData<Triple<String, String, String>>,
     page: String,
 ) {
@@ -154,11 +158,10 @@ fun dropdownHomePage(
     yearPicker.displayedValues
 
 
-    val calendar = Calendar.getInstance()
-    val currentMonth = calendar.get(Calendar.MONTH)
-    val currentYear = calendar.get(Calendar.YEAR)
-    monthPicker.value = currentMonth
-    yearPicker.value = currentYear
+    val selectedMonthIndex = months.indexOf(month)
+    val selectedYear = year.toInt()
+    monthPicker.value = selectedMonthIndex
+    yearPicker.value = selectedYear
 
     val submit = dialog.findViewById<ConstraintLayout>(R.id.buttonSubmitMonthYear)
 
@@ -187,7 +190,8 @@ fun dropdownHomePage(
     }
 }
 
-fun note(mContext: Activity, noted: String,page :String ,noteText: (Any) -> Unit) {
+
+fun note(mContext: Activity, noted: String, page :String, noteText: (Any) -> Unit) {
     //โน๊ต
     val dialog = Dialog(mContext)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -200,7 +204,9 @@ fun note(mContext: Activity, noted: String,page :String ,noteText: (Any) -> Unit
     val counter = dialog.findViewById<TextView>(R.id.textCount)
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     dialog.window?.setGravity(Gravity.BOTTOM)
-    dialog.setCanceledOnTouchOutside(false)
+
+    dialog.setCanceledOnTouchOutside(true)
+
     val note = dialog.findViewById<EditText>(R.id.textNote)
     note.addTextChangedListener(object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -223,8 +229,10 @@ fun note(mContext: Activity, noted: String,page :String ,noteText: (Any) -> Unit
     }else{
         val resolvedColor = ContextCompat.getColor(mContext, expends)
         button.backgroundTintList = ColorStateList.valueOf(resolvedColor)
-
     }
+
+
+
     note.setText(noted)
     button.setOnClickListener {
         noteText(note.text.toString())
@@ -332,7 +340,8 @@ fun showTimePicker(mContext: Activity,onTimeSelected: (String) -> Unit) {
 
 fun selectType(
     mContext: Activity, modelData: GetAllTypeIncome?,
-    onTypeSelected: (Pair<String,Int>) -> Unit) {
+    onTypeSelected: (Pair<String, Int>) -> Unit,
+) {
     val dialog = Dialog(mContext)
 
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -355,7 +364,7 @@ fun selectType(
                 dialog.dismiss()
             }
             "รายรับไม่แน่นอน" -> {
-                onTypeSelected(Pair(model.first,model.second,))
+                onTypeSelected(Pair(model.first, model.second))
                 dialog.dismiss()
             }
         }
@@ -371,7 +380,8 @@ fun selectType(
 
 fun selectTypeExpends(
     mContext: Activity, modelData: GetAllTypeExpenses?,
-    onTypeSelected: (Pair<String,Int>) -> Unit) {
+    onTypeSelected: (Pair<String, Int>) -> Unit,
+) {
     val dialog = Dialog(mContext)
 
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -394,7 +404,7 @@ fun selectTypeExpends(
                 dialog.dismiss()
             }
             "รายจ่ายไม่จำเป็น" -> {
-                onTypeSelected(Pair(model.first,model.second,))
+                onTypeSelected(Pair(model.first, model.second))
                 dialog.dismiss()
             }
         }
@@ -411,7 +421,7 @@ fun selectTypeExpends(
 fun autoSave(
     mContext: Activity,
     modelData: ListScheduleAuto?,
-    onAutoSaveSelected: (Pair<String,Int>) -> Unit
+    onAutoSaveSelected: (Pair<String, Int>) -> Unit,
 ) {
     val dialog = Dialog(mContext)
 

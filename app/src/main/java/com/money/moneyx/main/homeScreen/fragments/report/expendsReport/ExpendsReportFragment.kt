@@ -111,8 +111,10 @@ class ExpendsReportFragment(
             when (it) {
                 "showDropdown" -> dropdownHomePage(
                     requireActivity(),
+                    month = binding.textMonth.text.toString(),
+                    year = binding.textYear.text.toString(),
                     viewModel.onClickDialog,
-                    "expends",
+                    page = "income"
                 )
             }
         })

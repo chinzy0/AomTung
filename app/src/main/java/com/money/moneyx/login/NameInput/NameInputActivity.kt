@@ -67,6 +67,7 @@ class NameInputActivity : AppCompatActivity() {
                                     preferences.saveString("phone", phoneNumber)
                                     preferences.saveString("username", member.data.username)
                                     preferences.saveString("image", member.data.image)
+                                    preferences.saveString("pincode", password)
                                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                                     startActivity(intent)
                                 } else {

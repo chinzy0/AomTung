@@ -233,6 +233,15 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
                         binding.textTime.text.toString()
                     )
                     if (typeID == 0 || categoryId == 0) {
+                        if (typeID == 0 ){
+                            binding.textTime2.setTextColor(ContextCompat.getColor(binding.root.context, R.color.red))
+                        }else{
+                            binding.textTime2.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
+                        }
+                        if (categoryId == 0){ binding.textTime3.setTextColor(ContextCompat.getColor(binding.root.context, R.color.red))
+                        }else{
+                            binding.textTime3.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
+                        }
                         addListAlertDialog(requireActivity())
                     } else if (edit) {
                         AVLoading.startAnimLoading()

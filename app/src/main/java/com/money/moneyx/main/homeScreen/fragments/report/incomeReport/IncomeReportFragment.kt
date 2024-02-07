@@ -143,6 +143,8 @@ class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIn
             when (it) {
                 "showDropdown" -> dropdownHomePage(
                     requireActivity(),
+                    month = binding.textMonth.text.toString(),
+                    year = binding.textYear.text.toString(),
                     viewModel.onClickDialog,
                     page = "income"
                 )
