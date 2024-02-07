@@ -28,6 +28,7 @@ import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.FragmentAddExpendsBinding
 import com.money.moneyx.function.addListAlertDialog
 import com.money.moneyx.function.autoSave
+import com.money.moneyx.function.dateTime
 import com.money.moneyx.function.dateTimeExpends
 import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.function.note
@@ -62,6 +63,7 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
     private var expendsID = 0
     private var noteText = ""
     private var result = 0.0
+    private var formatted = ""
     private var edit = false
     private val onClickDialog = MutableLiveData<String>()
 
@@ -81,6 +83,11 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
         val preferences = Preference.getInstance(requireActivity())
         idMember = preferences.getInt("idmember", 0)
         Log.i("idMember", idMember.toString())
+        val currentDateTime = LocalDateTime.now()
+        val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        formatted = currentDateTime.format(dateFormat)
+
+
 
         setDateTime()
         editIncomeData()
@@ -106,7 +113,9 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
             val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
             val formattedDate = localDateTime.format(dateFormat)
             val formattedTime = localDateTime.format(timeFormat)
-
+            if (formattedDate < formatted){
+                binding.autosaveButton.isEnabled = false
+            }
             binding.textTv.setText(result.toString())
             binding.textTime2.text = data.type_name
             binding.textTime3.text = data.category_name
@@ -163,15 +172,19 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
                 }
 
                 "expendsDateClick" -> {
-                    dateTimeExpends(requireActivity()) { formattedDate ->
+
+                    dateTime(requireActivity()) { formattedDate ->
                         binding.textDate.text = formattedDate
-                        dateTimeSelected = convertDateTimeToUnixTimestamp(
-                            formattedDate,
-                            binding.textTime.text.toString()
-                        )
+                        if (binding.textDate.text.toString() < formatted){
+                            binding.autosaveButton.isEnabled = false
+                            binding.textTime5.text = "ไม่มี"
+                            autoSaveID =1
+                        }else{
+                            binding.autosaveButton.isEnabled = true
+                        }
+                        dateTimeSelected = convertDateTimeToUnixTimestamp(formattedDate, binding.textTime.text.toString())
                     }
                 }
-
                 "expendsTimeClick" -> {
                     showTimePicker(requireActivity()) { formattedTime ->
                         binding.textTime.text = formattedTime
@@ -182,7 +195,6 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
 
                     }
                 }
-
                 "expendsTypeClick" -> {
                     selectTypeExpends(requireActivity(), HomeActivity.getAllTypeExpenses) { type ->
                         binding.textTime2.text = type.first

@@ -65,6 +65,7 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
     private var dateTimeSelected: Long = 0
     private var noteText = ""
     private var incomeID = 0
+    private var formatted = ""
     private var edit = false
     private val onClickDialog = MutableLiveData<String>()
 
@@ -87,6 +88,15 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
         idMember = preferences.getInt("idmember", 0)
         Log.i("IdMember",idMember.toString())
 
+        val currentDateTime = LocalDateTime.now()
+        val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        formatted = currentDateTime.format(dateFormat)
+
+        if (binding.textDate.text.toString()<formatted){
+            binding.autosaveButton.isEnabled = false
+            binding.textTime5.text = "ไม่มี"
+            autoSaveID = 1
+        }
 
         setDateTime()
         editIncomeData()
@@ -125,6 +135,37 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
             binding.textTime5.text = data.save_auto_name
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
+
+            binding.textDate.text = formattedDate
+            if (binding.textDate.text.toString() < formatted){
+                binding.autosaveButton.isEnabled = false
+                binding.textTime5.text = "ไม่มี"
+                val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                binding.textTime5.setTextColor(textColor)
+                binding.title5.setTextColor(textColor)
+                binding.img55.visibility = View.VISIBLE
+                binding.detail55.visibility = View.VISIBLE
+                autoSaveID = 1
+            }else{
+                val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
+                binding.textTime5.setTextColor(textColor)
+                binding.title5.setTextColor(textColor)
+                binding.autosaveButton.isEnabled = true
+                binding.img55.visibility = View.GONE
+                binding.detail55.visibility = View.GONE
+            }
+            if (editIncome.save_auto_id != 1){
+                binding.autosaveButton.isEnabled = false
+                binding.textDate.isEnabled = false
+                binding.textTime.isEnabled = false
+                val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                binding.textTime5.setTextColor(textColor)
+                binding.title5.setTextColor(textColor)
+                binding.img55.visibility = View.VISIBLE
+                binding.detail55.visibility = View.VISIBLE
+            }else{
+
+            }
         }
         if (editIncome != null) {
             edit = true
@@ -176,27 +217,35 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
                     intent.putExtra("resultIncome", binding.textResult.text.toString())
                     resultActivityAppointment.launch(intent)
                 }
-
                 "incomeDateClick" -> {
                     dateTime(requireActivity()) { formattedDate ->
                         binding.textDate.text = formattedDate
-                        dateTimeSelected = convertDateTimeToUnixTimestamp(
-                            formattedDate, binding.textTime.text.toString()
-                        )
+                        if (binding.textDate.text.toString() < formatted){
+                            binding.autosaveButton.isEnabled = false
+                            binding.textTime5.text = "ไม่มี"
+                            val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                            binding.textTime5.setTextColor(textColor)
+                            binding.title5.setTextColor(textColor)
+                            binding.img55.visibility = View.VISIBLE
+                            binding.detail55.visibility = View.VISIBLE
+                            autoSaveID = 1
+                        }else{
+                            val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
+                            binding.textTime5.setTextColor(textColor)
+                            binding.title5.setTextColor(textColor)
+                            binding.autosaveButton.isEnabled = true
+                            binding.img55.visibility = View.GONE
+                            binding.detail55.visibility = View.GONE
+                        }
+                        dateTimeSelected = convertDateTimeToUnixTimestamp(formattedDate, binding.textTime.text.toString())
                     }
                 }
-
                 "incomeTimeClick" -> {
                     showTimePicker(requireActivity()) { formattedTime ->
                         binding.textTime.text = formattedTime
-                        dateTimeSelected = convertDateTimeToUnixTimestamp(
-                            binding.textDate.text.toString(),
-                            formattedTime
-                        )
-
+                        dateTimeSelected = convertDateTimeToUnixTimestamp(binding.textDate.text.toString(), formattedTime)
                     }
                 }
-
                 "incomeTypeClick" -> {
                     selectType(requireActivity(), HomeActivity.getAllTypeIncomeData) { type ->
                         binding.textTime2.text = type.first
@@ -284,7 +333,6 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
                             if (model.success) {
                                 activity?.runOnUiThread { showSuccessDialog() }
                             } else {
-
                             }
                         }
                     }
@@ -326,10 +374,6 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
         val intent = Intent(requireActivity(), CategoryIncomeActivity::class.java)
         getCategory.launch(intent)
     }
-    private fun deleteIncome() {
-
-    }
-
     private fun changeColorBtn() {
         binding.textResult.addTextChangedListener(object : TextWatcher {
             private val decimalFormat = DecimalFormat("#.##")
@@ -341,13 +385,11 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
                     AddListScreenActivity.textResult.value = s.toString()
                 }
             }
-
             override fun afterTextChanged(s: Editable?) {
                 try {
                     var resultValue = s.toString().toDouble()
                     resultValue =
                         BigDecimal(resultValue).setScale(2, RoundingMode.HALF_EVEN).toDouble()
-
                     if (resultValue > 0) {
                         val buttonColor = ContextCompat.getColor(requireContext(), R.color.income)
                         binding.buttonAddIncome.backgroundTintList =

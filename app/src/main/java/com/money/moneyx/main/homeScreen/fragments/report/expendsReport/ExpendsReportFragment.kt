@@ -114,7 +114,7 @@ class ExpendsReportFragment(
                     month = binding.textMonth.text.toString(),
                     year = binding.textYear.text.toString(),
                     viewModel.onClickDialog,
-                    page = "income"
+                    page = "expends"
                 )
             }
         })
