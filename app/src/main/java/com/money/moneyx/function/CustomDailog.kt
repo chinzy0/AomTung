@@ -511,7 +511,7 @@ fun showConfirmOnBack(mContext: Activity, onClickDialog: MutableLiveData<String>
         onClickDialog.value = "confirm"
         dialog.dismiss()
     }
-    // Show the dialog only if the activity is still valid
+
     if (!mContext.isFinishing && !mContext.isDestroyed) {
         dialog.show()
     }

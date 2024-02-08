@@ -45,6 +45,7 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -65,6 +66,9 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
     private var result = 0.0
     private var formatted = ""
     private var edit = false
+    private lateinit var currentDate : LocalDate
+    private lateinit var listDate: LocalDate
+    private var formattedDate = ""
     private val onClickDialog = MutableLiveData<String>()
 
 
@@ -83,10 +87,8 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
         val preferences = Preference.getInstance(requireActivity())
         idMember = preferences.getInt("idmember", 0)
         Log.i("idMember", idMember.toString())
-        val currentDateTime = LocalDateTime.now()
-        val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        formatted = currentDateTime.format(dateFormat)
 
+        currentDate = LocalDate.now()
 
 
         setDateTime()
@@ -108,14 +110,14 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
             categoryId = editExpends.category_id
             description = editExpends.description
             expendsID = editExpends.transaction_id
+
             val localDateTime = unixTimestampToLocalDateTime(data.timestamp)
             val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            listDate = unixTimestampToLocalDate(data.timestamp)
             val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
-            val formattedDate = localDateTime.format(dateFormat)
+            formattedDate = localDateTime.format(dateFormat)
             val formattedTime = localDateTime.format(timeFormat)
-            if (formattedDate < formatted){
-                binding.autosaveButton.isEnabled = false
-            }
+
             binding.textTv.setText(result.toString())
             binding.textTime2.text = data.type_name
             binding.textTime3.text = data.category_name
@@ -142,6 +144,63 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
                 binding.textTime4.visibility = View.VISIBLE
                 binding.textTime44.visibility = View.GONE
                 noteText = ""
+            }
+            if (editExpends.save_auto_id != 1) {
+                binding.autosaveButton.isEnabled = false
+                binding.textDate.isEnabled = false
+                binding.textTime.isEnabled = false
+                val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                binding.textTime5.setTextColor(textColor)
+                binding.title5.setTextColor(textColor)
+                binding.textTime.setTextColor(textColor)
+                binding.textDate.setTextColor(textColor)
+                binding.title.setTextColor(textColor)
+                binding.img55.visibility = View.VISIBLE
+                binding.img11.visibility = View.VISIBLE
+                binding.detail55.visibility = View.VISIBLE
+                binding.detail11.visibility = View.VISIBLE
+                if (listDate.isBefore(currentDate)) {
+                    binding.autosaveButton.isEnabled = false
+                    val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                    binding.textTime5.setTextColor(textColor)
+                    binding.title5.setTextColor(textColor)
+                    binding.img55.visibility = View.VISIBLE
+                    binding.detail55.visibility = View.VISIBLE
+                    autoSaveID = 1
+                } else {
+                    val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
+                    binding.textTime5.setTextColor(textColor)
+                    binding.title5.setTextColor(textColor)
+                    binding.autosaveButton.isEnabled = true
+                    binding.img55.visibility = View.GONE
+                    binding.detail55.visibility = View.GONE
+                    binding.detail11.visibility = View.GONE
+                    binding.img11.visibility = View.GONE
+                    binding.textDate.isEnabled = true
+                    binding.textTime.isEnabled = true
+                    binding.textTime5.setTextColor(textColor)
+                    binding.title5.setTextColor(textColor)
+                    binding.textTime.setTextColor(textColor)
+                    binding.textDate.setTextColor(textColor)
+                    binding.title.setTextColor(textColor)
+                }
+            } else {
+                if (listDate.isBefore(currentDate)) {
+                    binding.autosaveButton.isEnabled = false
+                    val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                    binding.textTime5.setTextColor(textColor)
+                    binding.title5.setTextColor(textColor)
+                    binding.img55.visibility = View.VISIBLE
+                    binding.detail55.visibility = View.VISIBLE
+                    autoSaveID = 1
+                } else {
+                    val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
+                    binding.textTime5.setTextColor(textColor)
+                    binding.title5.setTextColor(textColor)
+                    binding.autosaveButton.isEnabled = true
+                    binding.img55.visibility = View.GONE
+                    binding.detail55.visibility = View.GONE
+                }
             }
             binding.deleteButton.visibility = View.VISIBLE
         } else {
@@ -170,19 +229,32 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
                     intent.putExtra("resultExpends", binding.textTv.text.toString())
                     resultActivityAppointment.launch(intent)
                 }
-
                 "expendsDateClick" -> {
-
-                    dateTime(requireActivity()) { formattedDate ->
+                    dateTimeExpends(requireActivity()) { formattedDate ->
+                        val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                        listDate = LocalDate.parse(formattedDate, dateFormat)
                         binding.textDate.text = formattedDate
-                        if (binding.textDate.text.toString() < formatted){
+                        if (listDate.isBefore(currentDate)) {
                             binding.autosaveButton.isEnabled = false
                             binding.textTime5.text = "ไม่มี"
-                            autoSaveID =1
-                        }else{
+                            val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                            binding.textTime5.setTextColor(textColor)
+                            binding.title5.setTextColor(textColor)
+                            binding.img55.visibility = View.VISIBLE
+                            binding.detail55.visibility = View.VISIBLE
+                            autoSaveID = 1
+                        } else {
+                            val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
+                            binding.textTime5.setTextColor(textColor)
+                            binding.title5.setTextColor(textColor)
                             binding.autosaveButton.isEnabled = true
+                            binding.img55.visibility = View.GONE
+                            binding.detail55.visibility = View.GONE
                         }
-                        dateTimeSelected = convertDateTimeToUnixTimestamp(formattedDate, binding.textTime.text.toString())
+                        dateTimeSelected = convertDateTimeToUnixTimestamp(
+                            formattedDate,
+                            binding.textTime.text.toString()
+                        )
                     }
                 }
                 "expendsTimeClick" -> {
@@ -341,8 +413,7 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 try {
                     var resultValue = s.toString().toDouble()
-                    resultValue =
-                        BigDecimal(resultValue).setScale(2, RoundingMode.HALF_EVEN).toDouble()
+                    resultValue = BigDecimal(resultValue).setScale(2, RoundingMode.HALF_EVEN).toDouble()
 
                     if (resultValue > 0) {
                         val buttonColor = ContextCompat.getColor(requireContext(), R.color.expends)
@@ -369,10 +440,7 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
 
     private fun convertDateTimeToUnixTimestamp(formattedDate: String, formattedTime: String): Long {
         val dateTimeString = "$formattedDate $formattedTime:00"
-
         val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
-
-
         try {
             val date = dateFormat.parse(dateTimeString)
             return date?.time!! / 1000L
@@ -380,14 +448,13 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
 
             e.printStackTrace()
         }
-
         return 0L
     }
+
 
     private fun setDateTime() {
         binding.textTime.text = viewModel.time
         binding.textDate.text = viewModel.date
-
     }
 
     private fun showSuccessDialog() {
@@ -414,6 +481,10 @@ class AddExpendsFragment(private val editExpends: Report?) : Fragment() {
     private fun unixTimestampToLocalDateTime(unixTimestamp: Int): LocalDateTime {
         val instant = Instant.ofEpochSecond(unixTimestamp.toLong())
         return LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+    }
+    private fun unixTimestampToLocalDate(unixTimestamp: Int): LocalDate {
+        val instant = Instant.ofEpochSecond(unixTimestamp.toLong())
+        return instant.atZone(ZoneId.systemDefault()).toLocalDate()
     }
 
 

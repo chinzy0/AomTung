@@ -52,7 +52,6 @@
                 android:imeOptions="actionDone"
                 android:inputType="numberDecimal"
                 android:maxLines="1"
-                android:maxLength="13"
                 android:paddingEnd="10dp"
                 android:textAlignment="textEnd"
                 android:textColor="@color/b"
@@ -115,6 +114,18 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/img11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="15dp"
+                    android:layout_marginStart="25dp"
+                    android:src="@drawable/frame__21_"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
                 <TextView
                     android:id="@+id/title"
                     android:layout_width="wrap_content"
@@ -166,6 +177,18 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/detail11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="23dp"
+                    android:src="@drawable/frame__20_"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/underline"
                     android:layout_width="match_parent"
@@ -428,7 +451,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="@{() -> addIncomeViewModel.incomeAutoSaveClick()}"
-
                 >
                 <ImageView
                     android:id="@+id/img5"
@@ -451,7 +473,8 @@
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="invisible" />
 
                 <TextView
                     android:id="@+id/title5"
@@ -495,7 +518,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="23dp"
                     android:src="@drawable/frame__20_"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
