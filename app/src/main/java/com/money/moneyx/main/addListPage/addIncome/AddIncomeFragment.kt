@@ -429,48 +429,51 @@ class AddIncomeFragment(private val editIncome: Report?) : Fragment() {
         getCategory.launch(intent)
     }
     private fun changeColorBtn() {
+        val decimalFormat = DecimalFormat("#,###.##")
         binding.textResult.addTextChangedListener(object : TextWatcher {
-            val decimalFormat = DecimalFormat("#,###,###,###.##")
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
                 if (s.toString().isEmpty()) {
                     AddListScreenActivity.textResult.value = s.toString()
                 } else {
                     AddListScreenActivity.textResult.value = s.toString()
+                    try {
+                        var resultValue = s.toString().toDouble()
+                        if (resultValue > 0) {
+                            val buttonColor = ContextCompat.getColor(requireContext(), R.color.income)
+                            binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                            binding.buttonAddIncome.isEnabled = true
+                            if (s!!.length > 13) {
+                                val truncatedText = s.toString().substring(0, 13)
+                                binding.textResult.setText(truncatedText)
+                                binding.textResult.setSelection(truncatedText.length)
+                            }
+                            val indexOfDot = s.indexOf('.')
+                            if (indexOfDot != -1 && s.length - indexOfDot > 3) {
+                                val truncatedDecimal = s.substring(0, indexOfDot + 3)
+                                binding.textResult.setText(truncatedDecimal)
+                                binding.textResult.setSelection(truncatedDecimal.length)
+                            }
+                            if (!s.contains('.')) {
+                                if (s.length > 10) {
+                                    val truncatedText = s.toString().substring(0, 10)
+                                    binding.textResult.setText(truncatedText)
+                                    binding.textResult.setSelection(truncatedText.length)
+                                }
+                            }
+                            result = resultValue
+                        } else {
+                            val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
+                            binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                            binding.buttonAddIncome.isEnabled = false
+                        }
+                    } catch (e: NumberFormatException) {
+
+                    }
                 }
             }
             override fun afterTextChanged(s: Editable?) {
-                try {
-                    if (s.toString().isNotEmpty()) {
-                        var resultValue = s.toString().replace(",", "").toDouble()
-                        resultValue = BigDecimal(resultValue).setScale(2, RoundingMode.HALF_EVEN).toDouble()
 
-                        val decimalFormat = DecimalFormat("#,###,##0.00")
-                        val formattedResult = decimalFormat.format(resultValue)
-
-                        if (s!!.length <= 15) {  // Assuming maximum length including decimals is 15
-                            binding.textResult.removeTextChangedListener(this)
-                            binding.textResult.setText(formattedResult)
-                            binding.textResult.setSelection(binding.textResult.text.length-3)
-                            binding.textResult.addTextChangedListener(this)
-
-                            val buttonColor = if (resultValue > 0) R.color.income else R.color.button_disable
-                            binding.buttonAddIncome.backgroundTintList =
-                                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), buttonColor))
-                            binding.buttonAddIncome.isEnabled = resultValue > 0
-
-                            result = resultValue
-                        } else {
-                            binding.textResult.removeTextChangedListener(this)
-                            binding.textResult.setText(s.subSequence(0, 15))
-                            binding.textResult.setSelection(binding.textResult.text.length)
-                            binding.textResult.addTextChangedListener(this)
-                        }
-                    }
-                } catch (e: NumberFormatException) {
-                    // Handle the exception if needed
-                }
             }
 
         })
