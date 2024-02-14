@@ -112,8 +112,6 @@ class ConfirmResetPincodeActivity : AppCompatActivity() {
     }
 
     private fun pinConfirmationSuccess() {
-
-
         viewModel.forgotPassword(phone = phonenumber, newPassword = firstEnteredPin ) { member ->
             runOnUiThread{
                 val intent = Intent(this, HomeActivity::class.java)

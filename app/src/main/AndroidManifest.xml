@@ -16,6 +16,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".main.profile.editProfile.DeleteAccountActivity"
+            android:exported="false" />
+        <activity
             android:name=".main.profile.editProfile.EditProfileActivity"
             android:exported="false" />
         <activity

@@ -26,6 +26,9 @@ class EditProfileViewModel: ViewModel() {
     fun saveNameChange() {
         onClick.value = "saveNameChange"
     }
+    fun deleteAccount() {
+        onClick.value = "deleteAccount"
+    }
 
     fun resetUsernameAccount(
         idmember: Int,
@@ -55,6 +58,7 @@ class EditProfileViewModel: ViewModel() {
             }
         })
     }
+
 
 
 }

@@ -43,7 +43,11 @@
     <string name="necessaryExpenses">รายจ่ายจำเป็น</string>
     <string name="unnecessaryExpenses">รายจ่ายไม่จำเป็น</string>
     <string name="signOut">คุณต้องการออกจากระบบ ?</string>
+    <string name="deleteAccount">คุณแน่ใจ ว่าต้องการลบบัญชี ?</string>
     <string name="save">บันทึก</string>
+    <string name="delete1">แจ้งให้ทราบ ถ้าคุณลบบัญชีแล้วจะไม่สามารถกู้บัญชีคืนได้</string>
+    <string name="delete3">ท่านต้องการดำเนินการนี้หรือไม่?</string>
+    <string name="delete2">หากท่านยืนยันที่จะดำเนินการลบบัญชีควรทราบว่ากระบวนการนี้ไม่สามารถย้อนกลับได้โปรดควรพิจารณาอย่างรอบคอบก่อนดำเนินการท่านจะไม่สามารถกู้คืนบัญชีได้เนื่องจากข้อมูลภายในบัญชีทั้งหมดจะถูกลบหลังจากดำเนินการเสร็จสมบูรณ์แล้วอย่างถาวร </string>
     <string name="amount">เหลืออีก</string>
     <string name="character">ตัวอักษร</string>
     <string name="not_found_data">ยังไม่มีข้อมูล</string>

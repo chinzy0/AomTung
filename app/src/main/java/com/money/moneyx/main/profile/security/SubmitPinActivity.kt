@@ -25,6 +25,7 @@ import com.money.moneyx.login.createPincode.CustomKeyboardModel
 import com.money.moneyx.login.forgotPassword.ForgotPasswordActivity
 import com.money.moneyx.login.loginScreen.LoginViewModel
 import com.money.moneyx.main.homeScreen.HomeActivity
+import com.money.moneyx.main.profile.editProfile.DeleteAccountActivity
 
 class SubmitPinActivity : AppCompatActivity() {
     private lateinit var binding : ActivitySubmitPinBinding
@@ -32,6 +33,7 @@ class SubmitPinActivity : AppCompatActivity() {
     private var listKeyboard = ArrayList<CustomKeyboardModel>()
     private lateinit var viewModel : LoginViewModel
     private var savedPin = ""
+    private var postition = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySubmitPinBinding.inflate(layoutInflater)
@@ -40,6 +42,8 @@ class SubmitPinActivity : AppCompatActivity() {
         binding.loginViewModel = viewModel
         val preferences = Preference.getInstance(this)
         savedPin = preferences.getString("pincode","")
+        postition = intent.getStringExtra("EditProfile").toString()
+        Log.i("sakldhjasnlkdsad",postition)
 
 
         makeKeyBoard()
@@ -99,7 +103,11 @@ class SubmitPinActivity : AppCompatActivity() {
                 val enteredText = s.toString()
                 if (enteredText.length == 6) {
                     if (enteredText == savedPin){
-                        pinConfirmationSuccess()
+                        if (postition == "EditProfilePage"){
+                            pinConfirmationSuccessEditProfile()
+                        }else{
+                            pinConfirmationSuccess()
+                        }
                     }else{
                         binding.PinView.text?.clear()
                         binding.textView.text = "ลองใหม่อีกครั้ง"
@@ -117,6 +125,14 @@ class SubmitPinActivity : AppCompatActivity() {
         val intent = Intent(this, PasswordAndSecurityActivity::class.java)
         val positionClick = intent.getStringExtra("positionClick")
         intent.putExtra("positionClick",positionClick)
+        binding.PinView.text?.clear()
+        listKeyboard.clear()
+        keyboardAdapter.notifyDataSetChanged()
+        finish()
+        startActivity(intent)
+    }
+    private fun pinConfirmationSuccessEditProfile() {
+        val intent = Intent(this, DeleteAccountActivity::class.java)
         binding.PinView.text?.clear()
         listKeyboard.clear()
         keyboardAdapter.notifyDataSetChanged()

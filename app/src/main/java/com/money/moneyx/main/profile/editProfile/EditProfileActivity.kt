@@ -1,11 +1,17 @@
 package com.money.moneyx.main.profile.editProfile
 
+import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.ViewGroup
+import android.view.Window
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
@@ -19,13 +25,16 @@ import com.money.moneyx.function.loadingScreen
 import com.money.moneyx.function.showExitDialog
 import com.money.moneyx.login.createPincode.ConfirmPincodeActivity
 import com.money.moneyx.login.loginScreen.LoginActivity
+import com.money.moneyx.main.addListPage.AddListScreenActivity
 import com.money.moneyx.main.homeScreen.HomeActivity
 import com.money.moneyx.main.profile.ProfileViewModel
+import com.money.moneyx.main.profile.security.SubmitPinActivity
 
 class EditProfileActivity : AppCompatActivity() {
     private lateinit var binding : ActivityEditProfileBinding
     private lateinit var viewModel: EditProfileViewModel
     private val preferences = Preference.getInstance(this)
+    private val positionClick = "ProfilePage"
     private var newName = ""
     private var name = ""
     private var idMember = 0
@@ -34,7 +43,6 @@ class EditProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
-        val preferences = Preference.getInstance(this)
         viewModel = ViewModelProvider(this)[EditProfileViewModel::class.java]
         binding.editProfileViewModel = viewModel
         idMember = preferences.getInt("idmember", 0)
@@ -74,16 +82,38 @@ class EditProfileActivity : AppCompatActivity() {
                 }
                 "saveNameChange" -> {
                     AVLoading.startAnimLoading()
-                    viewModel.resetUsernameAccount(idmember = idMember, name = name){ model ->
+                    viewModel.resetUsernameAccount(idmember = idMember, name = newName){ model ->
                         AVLoading.stopAnimLoading()
                         if (model.data.is_Reseted) {
-                            preferences.saveString("username", newName)
-                            val intent = Intent(this, HomeActivity::class.java)
-                            startActivity(intent)
+                            runOnUiThread{ showSuccessDialog() }
                         } else { }
                     }
                 }
+                "deleteAccount" -> {
+                    val intent = Intent(this, SubmitPinActivity::class.java)
+                    intent.putExtra("EditProfile","EditProfilePage")
+                    startActivity(intent)
+                }
             }
         })
+    }
+    private fun showSuccessDialog() {
+        val dialog = Dialog(this)
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.add_success_dialog)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
+        val ok = dialog.findViewById<TextView>(R.id.addListSuccessButton)
+        ok.setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            preferences.saveString("username", newName)
+            intent.putExtra("positionClick",positionClick)
+            startActivity(intent)
+        }
     }
 }
