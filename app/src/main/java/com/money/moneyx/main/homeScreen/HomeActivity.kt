@@ -88,7 +88,9 @@ class HomeActivity : AppCompatActivity() {
                 R.id.icon_profile -> ProfileFragment()
                 else -> null
             }
-            fragment?.let { replaceFragment(it) }
+            if (fragment != null && fragment::class.java != supportFragmentManager.findFragmentById(R.id.frame_layout)?.javaClass) {
+                replaceFragment(fragment)
+            }
             true
         }
         binding.fab.setOnClickListener {

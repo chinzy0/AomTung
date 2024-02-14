@@ -54,19 +54,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/profile_image" />
 
                 <TextView
-                    android:id="@+id/textView23"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:fontFamily="@font/sukhumvit_set_text"
-                    android:text="@string/you"
-                    android:textColor="#292D33"
-                    android:textSize="23sp"
-                    app:layout_constraintEnd_toStartOf="@+id/textView24"
-                    app:layout_constraintTop_toBottomOf="@+id/textView22" />
-
-                <TextView
-                    android:id="@+id/textView24"
+                    android:id="@+id/textUsername"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="30dp"

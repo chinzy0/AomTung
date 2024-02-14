@@ -17,6 +17,7 @@ import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.FragmentProfileBinding
 import com.money.moneyx.function.showExitDialog
 import com.money.moneyx.login.loginScreen.LoginActivity
+import com.money.moneyx.main.profile.editProfile.EditProfileActivity
 import com.money.moneyx.main.profile.security.SubmitPinActivity
 
 
@@ -27,6 +28,7 @@ class ProfileFragment : Fragment() {
     private lateinit var viewModel: ProfileViewModel
     private lateinit var sharePreferences: Preference
     private val onClickDialog = MutableLiveData<String>()
+    private var name = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,10 +49,12 @@ class ProfileFragment : Fragment() {
         )
         sharePreferences = Preference.getInstance(requireActivity())
         viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
+        name =  sharePreferences.getString("username","")
         binding.profileViewModel = viewModel
 
         addMenu()
         setEventClick()
+        binding.textUsername.text = name
 
 
         return binding.root
@@ -62,11 +66,11 @@ class ProfileFragment : Fragment() {
         listMenu.add(ProfileModel(R.drawable.security_profile, "รหัสผ่านและความปลอดภัย"))
 
         profileAdapter = ProfileAdapter(listMenu) {
-            Log.i("asdsadas", it)
             when (it) {
                 "ตั้งค่าบัญชี" -> {
+                    val intent = Intent(requireActivity(), EditProfileActivity::class.java)
+                    startActivity(intent)
                 }
-
                 "หมายเลขโทรศัพท์" -> {
                 }
 

@@ -530,9 +530,8 @@
                 android:id="@+id/deleteButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:onClick="@{() -> addIncomeViewModel.incomeDeleteClick()}"
-                >
+                android:visibility="gone">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/underline12"
@@ -564,7 +563,7 @@
                     android:layout_marginStart="11dp"
                     android:fontFamily="@font/sukhumvit_set_text"
                     android:text="ลบรายการ"
-                    android:textColor="#292D33"
+                    android:textColor="#E70000"
                     android:textSize="17sp"
                     app:layout_constraintBottom_toBottomOf="@+id/deleteImg"
                     app:layout_constraintStart_toEndOf="@+id/deleteImg"

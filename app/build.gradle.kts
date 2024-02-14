@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
+    id("com.google.gms.google-services") version "4.4.1" apply false
 }
 
 
@@ -94,7 +95,8 @@ dependencies {
 
     implementation ("com.github.asadej0951:Dialog-Loading-lib:1.0.2")
 
-
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation("com.google.firebase:firebase-analytics")
 
 
 

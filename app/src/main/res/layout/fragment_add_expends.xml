@@ -52,8 +52,8 @@
                 android:imeOptions="actionDone"
                 android:inputType="numberDecimal"
                 android:maxLines="1"
-                android:paddingEnd="10dp"
                 android:maxLength="13"
+                android:paddingEnd="10dp"
                 android:textAlignment="textEnd"
                 android:textColor="@color/b"
                 android:textSize="25sp"
@@ -536,6 +536,17 @@
                 android:layout_height="wrap_content"
                 android:onClick="@{() -> addExpendsViewModel.expendsDelClick()}"
                 android:visibility="gone">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/underline12"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="18dp"
+                    android:background="#E2E2E2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <ImageView
                     android:id="@+id/deleteImg"
@@ -555,7 +566,7 @@
                     android:layout_marginStart="11dp"
                     android:fontFamily="@font/sukhumvit_set_text"
                     android:text="ลบรายการ"
-                    android:textColor="#292D33"
+                    android:textColor="#E70000"
                     android:textSize="17sp"
                     app:layout_constraintBottom_toBottomOf="@+id/deleteImg"
                     app:layout_constraintStart_toEndOf="@+id/deleteImg"

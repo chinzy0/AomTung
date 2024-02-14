@@ -247,8 +247,14 @@ fun note(mContext: Activity, noted: String, page :String, noteText: (Any) -> Uni
 
 
 
-fun dateTime(mContext: Activity, onDateSelected: (String) -> Unit) {
+fun dateTime(mContext: Activity,initialDate: String? ,onDateSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()
+
+    if (!initialDate.isNullOrBlank()) {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        calendar.time = dateFormat.parse(initialDate)
+    }
+
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
@@ -259,19 +265,29 @@ fun dateTime(mContext: Activity, onDateSelected: (String) -> Unit) {
         { _, selectedYear, selectedMonth, selectedDay ->
             val selectedDate = Calendar.getInstance()
             selectedDate.set(selectedYear, selectedMonth, selectedDay)
+
             val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val formattedDate = dateFormat.format(selectedDate.time)
+
             Log.i("formattedDate", formattedDate)
+
             onDateSelected(formattedDate)
         },
         year,
         month,
         dayOfMonth
     )
+
     datePickerDialog.show()
 }
-fun dateTimeExpends(mContext: Activity, onDateSelected: (String) -> Unit) {
+fun dateTimeExpends(mContext: Activity,initialDate: String? , onDateSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()
+
+    if (!initialDate.isNullOrBlank()) {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        calendar.time = dateFormat.parse(initialDate)
+    }
+
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)

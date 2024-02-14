@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "19195797183",
+    "project_id": "aomtung-79d81",
+    "storage_bucket": "aomtung-79d81.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:19195797183:android:37b567f1dd134af21eb00a",
+        "android_client_info": {
+          "package_name": "com.money.moneyx"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJbq2sRNXJKz5ebNoHR8GMZvHjBpqfn6k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

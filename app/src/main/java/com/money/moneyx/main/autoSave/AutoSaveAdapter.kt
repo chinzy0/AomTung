@@ -8,11 +8,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.money.moneyx.R
 import com.money.moneyx.databinding.ListAutosaveBinding
 import com.money.moneyx.databinding.PastprogramBinding
+import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.Report
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class AutoSaveAdapter(private val autoSaveModel: ArrayList<GetListAutoData>, param: (Any) -> Unit): RecyclerView.Adapter<AutoSaveViewAdapter>(){
+class AutoSaveAdapter(
+    private val autoSaveModel: ArrayList<GetListAutoData>,
+    private val callback: (Triple<Int,String,GetListAutoData>) -> Unit)
+    : RecyclerView.Adapter<AutoSaveViewAdapter>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AutoSaveViewAdapter {
         val listAutoSave : ListAutosaveBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
@@ -32,6 +36,11 @@ class AutoSaveAdapter(private val autoSaveModel: ArrayList<GetListAutoData>, par
         holder.binding.textSym.text = autoSaveModel[position].currency_symbol
         holder.binding.textFrequency.text = autoSaveModel[position].save_auto_name
         holder.binding.autoSaveType.text = autoSaveModel[position].type_name
+
+        holder.itemView.setOnClickListener{
+            callback.invoke(Triple(autoSaveModel[position].transaction_id,autoSaveModel[position].dataType,autoSaveModel[position]))
+
+        }
 
         when (autoSaveModel[position].type_name) {
             "รายรับไม่แน่นอน" -> {

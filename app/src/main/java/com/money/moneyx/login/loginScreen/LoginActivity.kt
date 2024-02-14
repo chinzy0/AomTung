@@ -43,12 +43,10 @@ class LoginActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val enteredText = s.toString()
                 if (enteredText.length == 10) {
-                    binding.buttonGetOTP.backgroundTintList =
-                        ColorStateList.valueOf(getColor(R.color.button))
+                    binding.buttonGetOTP.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button))
                     binding.buttonGetOTP.isEnabled = true
                 } else {
-                    binding.buttonGetOTP.backgroundTintList =
-                        ColorStateList.valueOf(getColor(R.color.button_disable))
+                    binding.buttonGetOTP.backgroundTintList = ColorStateList.valueOf(getColor(R.color.button_disable))
                     binding.buttonGetOTP.isEnabled = false
                 }
             }
