@@ -120,8 +120,6 @@ fun addListAlertDialog(mContext: Activity) {
 
 
 
-
-
 fun dropdownHomePage(
     mContext: Activity,
     month : String,
@@ -230,9 +228,6 @@ fun note(mContext: Activity, noted: String, page :String, noteText: (Any) -> Uni
         val resolvedColor = ContextCompat.getColor(mContext, expends)
         button.backgroundTintList = ColorStateList.valueOf(resolvedColor)
     }
-
-
-
     note.setText(noted)
     button.setOnClickListener {
         noteText(note.text.toString())
@@ -249,16 +244,13 @@ fun note(mContext: Activity, noted: String, page :String, noteText: (Any) -> Uni
 
 fun dateTime(mContext: Activity,initialDate: String? ,onDateSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()
-
     if (!initialDate.isNullOrBlank()) {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         calendar.time = dateFormat.parse(initialDate)
     }
-
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-
     val datePickerDialog = DatePickerDialog(
         mContext,
         R.style.DialogTheme,
@@ -277,7 +269,6 @@ fun dateTime(mContext: Activity,initialDate: String? ,onDateSelected: (String) -
         month,
         dayOfMonth
     )
-
     datePickerDialog.show()
 }
 fun dateTimeExpends(mContext: Activity,initialDate: String? , onDateSelected: (String) -> Unit) {

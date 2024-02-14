@@ -91,3 +91,15 @@ data class ForgotPasswordData(
     val message: String,
     val username: String
 )
+data class ResetPhone(
+    val `data`: ResetPhoneData,
+    val message: String,
+    val status: Int,
+    val success: Boolean
+)
+
+data class ResetPhoneData(
+    val is_Seccess: Boolean,
+    val message: String,
+    val phone: String
+)

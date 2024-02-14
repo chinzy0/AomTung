@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -48,6 +49,28 @@ class DeleteAccountActivity : AppCompatActivity() {
         binding.buttonDeleteAcc.setOnClickListener { confirmDeleteDialog() }
         setContentView(binding.root)
     }
+    private fun showDialogDeleteSuccess() {
+        val dialog = Dialog(this)
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.delete_acc_success)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
+        val ok = dialog.findViewById<ConstraintLayout>(R.id.deleteAccountSuccessButton)
+        val text = dialog.findViewById<TextView>(R.id.textViewDelDialog)
+        text.setText("ลบบัญชีสำเร็จ")
+        ok.setOnClickListener {
+            dialog.dismiss()
+            preferences.clear()
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+        }
+    }
     private fun confirmDeleteDialog() {
         val dialog = Dialog(this)
         dialog.setCanceledOnTouchOutside(true)
@@ -71,39 +94,37 @@ class DeleteAccountActivity : AppCompatActivity() {
             AVLoading.startAnimLoading()
             deleteAccount(idMember){ del ->
                 AVLoading.stopAnimLoading()
+                dialog.dismiss()
                 if (del.success){
-                    preferences.clear()
-                    val intent = Intent(this, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
+                    runOnUiThread{ showDialogDeleteSuccess() }
                 }
             }
             }
         }
     }
-    private fun deleteAccount(
-        idmember: Int,
-        clickCallback: ((ResetUsernameAccount) -> Unit)) {
-        val jsonContent = JSONObject()
-            .put("idmember", idmember).toString()
+private fun deleteAccount(
+    idmember: Int,
+    clickCallback: ((ResetUsernameAccount) -> Unit)) {
+    val jsonContent = JSONObject()
+        .put("idmember", idmember).toString()
 
-        val client = OkHttpClient()
-        val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
-        val request = Request.Builder()
-            .url("http://zaserzafear.thddns.net:9973/api/Members/DeleteAccount?id=$idmember")
-            .delete(requestBody)
-            .build()
+    val client = OkHttpClient()
+    val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
+    val request = Request.Builder()
+        .url("http://zaserzafear.thddns.net:9973/api/Members/DeleteAccount?id=$idmember")
+        .delete(requestBody)
+        .build()
 
-        client.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val responseBody = response.body?.string()
-                    val apiResponse = Gson().fromJson(responseBody.toString(), ResetUsernameAccount::class.java)
-                    clickCallback.invoke(apiResponse)
-                }
+    client.newCall(request).enqueue(object : Callback {
+        override fun onResponse(call: Call, response: Response) {
+            if (response.isSuccessful) {
+                val responseBody = response.body?.string()
+                val apiResponse = Gson().fromJson(responseBody.toString(), ResetUsernameAccount::class.java)
+                clickCallback.invoke(apiResponse)
             }
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-            }
-        })
-    }
+        }
+        override fun onFailure(call: Call, e: IOException) {
+            e.printStackTrace()
+        }
+    })
+}

@@ -67,8 +67,7 @@ class LoginActivity : AppCompatActivity() {
                             if (model.success) {
                                 if (model.data.is_Duplicate) {
                                     val intent = Intent(this, EnterPinCodeActivity::class.java)
-                                    intent.flags =
-                                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                                     intent.putExtra("PHONE", binding.editTextPhone.text.toString())
                                     startActivity(intent)
                                 } else {

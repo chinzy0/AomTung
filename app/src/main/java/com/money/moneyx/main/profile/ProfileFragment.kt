@@ -72,8 +72,10 @@ class ProfileFragment : Fragment() {
                     startActivity(intent)
                 }
                 "หมายเลขโทรศัพท์" -> {
+                    val intent = Intent(requireActivity(), SubmitPinActivity::class.java)
+                    intent.putExtra("EditProfile","EditTelPage")
+                    startActivity(intent)
                 }
-
                 "รหัสผ่านและความปลอดภัย" -> {
                     val intent = Intent(requireActivity(), SubmitPinActivity::class.java)
                     startActivity(intent)

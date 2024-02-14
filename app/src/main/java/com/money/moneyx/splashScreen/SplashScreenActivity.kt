@@ -29,7 +29,8 @@ class SplashScreenActivity : AppCompatActivity() {
         check()
 
         Handler().postDelayed({
-            if (status == true){
+            if (status){
+                Log.i("asdlskadasjkd",savedPhone)
                 val intent = Intent(this@SplashScreenActivity, EnterPinCodeActivity::class.java)
                 intent.putExtra("PHONE",savedPhone)
                 startActivity(intent)
@@ -44,12 +45,9 @@ class SplashScreenActivity : AppCompatActivity() {
 
 
     }
-//    Intent(this, NameInputActivity::class.java)
 
     private fun check() {
-        if (savedPhone.isNotEmpty()) {
-            status = true
-        }
+        status = savedPhone.isNotEmpty()
     }
 
 

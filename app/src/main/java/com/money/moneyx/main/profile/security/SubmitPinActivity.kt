@@ -26,6 +26,7 @@ import com.money.moneyx.login.forgotPassword.ForgotPasswordActivity
 import com.money.moneyx.login.loginScreen.LoginViewModel
 import com.money.moneyx.main.homeScreen.HomeActivity
 import com.money.moneyx.main.profile.editProfile.DeleteAccountActivity
+import com.money.moneyx.main.profile.editTelNumber.EditTelNumberActivity
 
 class SubmitPinActivity : AppCompatActivity() {
     private lateinit var binding : ActivitySubmitPinBinding
@@ -103,10 +104,16 @@ class SubmitPinActivity : AppCompatActivity() {
                 val enteredText = s.toString()
                 if (enteredText.length == 6) {
                     if (enteredText == savedPin){
-                        if (postition == "EditProfilePage"){
-                            pinConfirmationSuccessEditProfile()
-                        }else{
-                            pinConfirmationSuccess()
+                        when (postition) {
+                            "EditProfilePage" -> {
+                                pinConfirmationSuccessEditProfile()
+                            }
+                            "EditTelPage" -> {
+                                pinConfirmationSuccessEditTel()
+                            }
+                            else -> {
+                                pinConfirmationSuccess()
+                            }
                         }
                     }else{
                         binding.PinView.text?.clear()
@@ -133,6 +140,14 @@ class SubmitPinActivity : AppCompatActivity() {
     }
     private fun pinConfirmationSuccessEditProfile() {
         val intent = Intent(this, DeleteAccountActivity::class.java)
+        binding.PinView.text?.clear()
+        listKeyboard.clear()
+        keyboardAdapter.notifyDataSetChanged()
+        finish()
+        startActivity(intent)
+    }
+    private fun pinConfirmationSuccessEditTel() {
+        val intent = Intent(this, EditTelNumberActivity::class.java)
         binding.PinView.text?.clear()
         listKeyboard.clear()
         keyboardAdapter.notifyDataSetChanged()
