@@ -30,7 +30,6 @@ class SplashScreenActivity : AppCompatActivity() {
 
         Handler().postDelayed({
             if (status){
-                Log.i("asdlskadasjkd",savedPhone)
                 val intent = Intent(this@SplashScreenActivity, EnterPinCodeActivity::class.java)
                 intent.putExtra("PHONE",savedPhone)
                 startActivity(intent)

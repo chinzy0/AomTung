@@ -112,7 +112,6 @@ class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIn
                         intent.putExtra("modelIncomeEdit", model.third)
                         startActivity(intent)
                     }
-
                 }
             }
             binding.RCVpastIncome.apply {

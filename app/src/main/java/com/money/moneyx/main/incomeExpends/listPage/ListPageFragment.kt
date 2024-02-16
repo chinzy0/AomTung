@@ -11,14 +11,10 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.money.moneyx.R
 import com.money.moneyx.data.ViewPagerAdapter
 import com.money.moneyx.databinding.FragmentListPageBinding
-import com.money.moneyx.databinding.ListAutosaveBinding
-import com.money.moneyx.main.addListPage.addIncome.AddIncomeFragment
-import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.IncomeReportFragment
 import com.money.moneyx.main.incomeExpends.listPage.listDay.ListDayFragment
 import com.money.moneyx.main.incomeExpends.listPage.listMonth.ListMonthFragment
 import com.money.moneyx.main.incomeExpends.listPage.listWeek.ListWeekFragment
 import com.money.moneyx.main.incomeExpends.listPage.listYear.ListYearFragment
-import com.money.moneyx.main.incomeExpends.summary.SummaryFragment
 
 class ListPageFragment : Fragment() {
     private lateinit var binding: FragmentListPageBinding
@@ -32,12 +28,8 @@ class ListPageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_list_page,
-            container,
-            false
-        )
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_list_page, container, false)
+
         tabLayout()
         changeTab()
 

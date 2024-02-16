@@ -189,6 +189,7 @@ fun dropdownHomePage(
 }
 
 
+
 fun note(mContext: Activity, noted: String, page :String, noteText: (Any) -> Unit) {
     //โน๊ต
     val dialog = Dialog(mContext)
@@ -273,7 +274,6 @@ fun dateTime(mContext: Activity,initialDate: String? ,onDateSelected: (String) -
 }
 fun dateTimeExpends(mContext: Activity,initialDate: String? , onDateSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()
-
     if (!initialDate.isNullOrBlank()) {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         calendar.time = dateFormat.parse(initialDate)

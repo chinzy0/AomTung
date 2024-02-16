@@ -68,6 +68,7 @@ class DeleteAccountActivity : AppCompatActivity() {
             preferences.clear()
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.putExtra("positionClick",positionClick)
             startActivity(intent)
         }
     }

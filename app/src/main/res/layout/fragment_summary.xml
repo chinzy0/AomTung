@@ -4,13 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="summaryViewModel"
+            type="com.money.moneyx.main.incomeExpends.summary.SummaryViewModel" />
     </data>
 
-    <FrameLayout
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".main.incomeExpends.summary.SummaryFragment">
+        tools:context=".main.incomeExpends.listPage.ListPageFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout14"
@@ -39,40 +42,344 @@
                 app:tabIndicatorGravity="stretch"
                 app:tabMode="fixed"
                 app:tabSelectedTextColor="@color/white"
-                app:tabTextColor="#C4C4C4">
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="วัน" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="สัปดาห์" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="เดือน" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ปี" />
-
-
-            </com.google.android.material.tabs.TabLayout>
+                app:tabTextColor="#C4C4C4" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/listTab"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:scrollbars="none"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout14" />
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout14">
 
-    </FrameLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintLayout18"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="10dp"
+                        android:src="@drawable/path_back"
+                        android:padding="5dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/calendar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="22 ธันวาคม 2566"
+                        android:textColor="#292D33"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/forward"
+                        app:layout_constraintEnd_toStartOf="@+id/forward"
+                        app:layout_constraintStart_toEndOf="@+id/back"
+                        app:layout_constraintTop_toTopOf="@+id/back" />
+
+                    <ImageView
+                        android:id="@+id/forward"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginTop="10dp"
+                        android:padding="5dp"
+                        android:src="@drawable/path"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayout17"
+                        android:layout_width="match_parent"
+                        android:layout_height="220dp"
+                        android:layout_marginHorizontal="60dp"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginBottom="25dp"
+                        android:background="@color/gray600"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/calendar">
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/underline"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="3dp"
+                    android:background="#E2E2E2"
+                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout18">
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="6dp"
+                    android:background="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/underline">
+
+                    <TextView
+                        android:id="@+id/income"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="21dp"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="รายรับ"
+                        android:textColor="#0589BD"
+                        android:textSize="20sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/incomeSign"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="37dp"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="฿"
+                        android:textColor="#0589BD"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/income"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/income" />
+
+                    <TextView
+                        android:id="@+id/incomeSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="12313"
+                        android:textColor="#0589BD"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/incomeSign"
+                        app:layout_constraintEnd_toStartOf="@+id/incomeSign"
+                        app:layout_constraintTop_toTopOf="@+id/incomeSign" />
+
+                    <TextView
+                        android:id="@+id/incomeType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="แน่นอน"
+                        android:textColor="#4C4C4C"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="@+id/income"
+                        app:layout_constraintTop_toBottomOf="@+id/income" />
+
+                    <TextView
+                        android:id="@+id/incomeTypeUncertain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="ไม่แน่นอน"
+                        android:textColor="#4C4C4C"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="@+id/income"
+                        app:layout_constraintTop_toBottomOf="@+id/incomeType" />
+
+                    <TextView
+                        android:id="@+id/incomeTypeSummarySign"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="฿"
+                        android:textColor="#4C4C4C"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/incomeType"
+                        app:layout_constraintEnd_toEndOf="@+id/incomeSign"
+                        app:layout_constraintTop_toTopOf="@+id/incomeType" />
+
+                    <TextView
+                        android:id="@+id/incomeTypeSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="9,000.00"
+                        android:textColor="#4C4C4C"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/incomeType"
+                        app:layout_constraintEnd_toStartOf="@+id/incomeTypeSummarySign"
+                        app:layout_constraintTop_toTopOf="@+id/incomeType" />
+
+                    <TextView
+                        android:id="@+id/incomeTypeUncertainSummarySign"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="฿"
+                        android:textColor="#4C4C4C"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="@+id/incomeSign"
+                        app:layout_constraintTop_toBottomOf="@+id/incomeTypeSummarySign" />
+
+                    <TextView
+                        android:id="@+id/incomeTypeUncertainSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="9,000.00"
+                        android:textColor="#4C4C4C"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toStartOf="@+id/incomeTypeSummarySign"
+                        app:layout_constraintTop_toBottomOf="@+id/incomeTypeSummary" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/underline2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginHorizontal="30dp"
+                        android:background="#E2E2E2"
+                        app:layout_constraintTop_toBottomOf="@+id/incomeTypeUncertain"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/expends"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="รายจ่าย"
+                        android:textColor="#DF4D4D"
+                        android:textSize="20sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/underline2" />
+
+                    <TextView
+                        android:id="@+id/expendsType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="จำเป็น"
+                        android:textColor="#4C4C4C"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="@+id/expends"
+                        app:layout_constraintTop_toBottomOf="@+id/expends" />
+
+                    <TextView
+                        android:id="@+id/expendsTypeUn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="ไม่จำเป็น"
+                        android:textColor="#4C4C4C"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginBottom="20dp"
+                        app:layout_constraintStart_toStartOf="@+id/expends"
+                        app:layout_constraintTop_toBottomOf="@+id/expendsType" />
+
+                    <TextView
+                        android:id="@+id/expendsSign"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="37dp"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="฿"
+                        android:textColor="#DF4D4D"
+                        android:textSize="20sp"
+
+                        app:layout_constraintBottom_toBottomOf="@+id/expends"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/expends" />
+
+                    <TextView
+                        android:id="@+id/expendsSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="10,000.00"
+                        android:textColor="#DF4D4D"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/expends"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/expendsSign"
+                        app:layout_constraintTop_toTopOf="@+id/expends" />
+
+                    <TextView
+                        android:id="@+id/expendsTypeSign"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="฿"
+                        android:textColor="#4C4C4C"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/expendsType"
+                        app:layout_constraintEnd_toEndOf="@+id/incomeTypeSummarySign"
+                        app:layout_constraintTop_toTopOf="@+id/expendsType" />
+
+                    <TextView
+                        android:id="@+id/expendsTypeUnSign"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="฿"
+                        android:textColor="#4C4C4C"
+                        android:textSize="14sp"
+                        app:layout_constraintTop_toBottomOf="@+id/expendsTypeSign"
+                        app:layout_constraintEnd_toEndOf="@+id/incomeTypeSummarySign"
+                        />
+
+                    <TextView
+                        android:id="@+id/expendsTypeSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="9,000.00"
+                        android:textColor="#4C4C4C"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/expendsTypeSign"
+                        app:layout_constraintEnd_toStartOf="@+id/expendsTypeSign"
+                        app:layout_constraintTop_toTopOf="@+id/expendsTypeSign" />
+
+                    <TextView
+                        android:id="@+id/expendsTypeUnSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sukhumvit_set_text"
+                        android:text="9,000.00"
+                        android:textColor="#4C4C4C"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/expendsTypeUnSign"
+                        app:layout_constraintEnd_toStartOf="@+id/expendsTypeSign"
+                        app:layout_constraintTop_toBottomOf="@+id/expendsTypeSummary" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

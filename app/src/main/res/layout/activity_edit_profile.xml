@@ -69,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
-                android:src="@drawable/profile_image"
+                android:src="@drawable/group_438__1_"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -166,7 +166,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="11dp"
                     android:fontFamily="@font/sukhumvit_set_text"
-                    android:text="ลบรายการ"
+                    android:text="ลบบัญชี"
                     android:textColor="#E70000"
                     android:textSize="17sp"
                     app:layout_constraintBottom_toBottomOf="@+id/deleteImg"

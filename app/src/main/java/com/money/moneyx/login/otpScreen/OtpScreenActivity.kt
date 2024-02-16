@@ -45,6 +45,7 @@ class OtpScreenActivity : AppCompatActivity() {
     private var otp = ""
     private var refCode = ""
     private var idMember = 0
+    private val positionClick = "ProfilePage"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -219,6 +220,7 @@ class OtpScreenActivity : AppCompatActivity() {
             dialog.dismiss()
             val intent = Intent(this, HomeActivity::class.java)
             preferences.saveString("phone", phoneNumber)
+            intent.putExtra("positionClick",positionClick)
             startActivity(intent)
         }
     }

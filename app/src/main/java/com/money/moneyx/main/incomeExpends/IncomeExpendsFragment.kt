@@ -13,8 +13,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.money.moneyx.R
 import com.money.moneyx.data.ViewPagerAdapter
 import com.money.moneyx.databinding.FragmentIncomeExpendsBinding
-import com.money.moneyx.main.addListPage.addExpends.AddExpendsFragment
-import com.money.moneyx.main.addListPage.addIncome.AddIncomeFragment
 import com.money.moneyx.main.incomeExpends.listPage.ListPageFragment
 import com.money.moneyx.main.incomeExpends.summary.SummaryFragment
 

@@ -105,9 +105,7 @@ class AutoSaveFragment : Fragment() {
                     intent.putExtra("AutoSave", model.third)
                     startActivity(intent)
                 }
-
             }
-
         }
         binding.RcvAutoSave.apply {
             layoutManager = LinearLayoutManager(context)
@@ -115,7 +113,4 @@ class AutoSaveFragment : Fragment() {
             autoSaveAdapter.notifyDataSetChanged()
         }
     }
-
-
-
 }

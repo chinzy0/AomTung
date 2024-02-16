@@ -110,7 +110,7 @@
             android:id="@+id/constraintLayout16"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/gray600"
+            android:background="#D9D9D9"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
