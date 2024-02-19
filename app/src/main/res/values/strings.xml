@@ -11,6 +11,7 @@
     <string name="fingerprint">ลายนิ้วมือ</string>
     <string name="faceId">แสกนใบหน้า</string>
     <string name="selectMonth">เลือกเดือน</string>
+    <string name="selectYear">เลือกปี</string>
     <string name="december66">ธันวาคม</string>
     <string name="changePassword">เปลี่ยนรหัสผ่าน </string>
     <string name="hint_name">ตัวอย่าง : หน้าตาดี ทรัพย์จาง </string>

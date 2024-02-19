@@ -1,9 +1,7 @@
 package com.money.moneyx.main.incomeExpends.summary
 
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.Dialog
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -15,10 +13,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.Button
 import android.widget.NumberPicker
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -150,14 +146,124 @@ class SummaryFragment : Fragment() {
     private fun updateUIForWeek() {
         binding.calendar.text = viewModel.week.first+" - "+viewModel.week.second
         binding.calendar.textSize = 16f
-//        binding.calendar.setOnClickListener {
-//            openCalendarPickerWeek(binding.calendar.text.toString())
-//        }
-//        binding.back.setOnClickListener {  }
-//        binding.forward.setOnClickListener {  }
+        binding.calendar.setOnClickListener {
+            openCalendarPickerWeek(binding.calendar.text.toString())
+        }
+        binding.back.setOnClickListener { onBack1Week() }
+        binding.forward.setOnClickListener { forward1Week() }
+        binding.calendar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int, ) {}
+            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int, ) {}
+            override fun afterTextChanged(editable: Editable?) {
+                currentDate = editable.toString()
+                unixTimeStart = convertDateWeekStringToUnixTime(binding.calendar.text.toString())
+                unixTimeEnd = convertDateEndWeekStringToUnixTime(binding.calendar.text.toString())
+                AVLoading.startAnimLoading()
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(300)
+                    viewModel.reportSummary(
+                        idmember = idMember,
+                        datatype = "week",
+                        end_timestamp = unixTimeEnd,
+                        start_timestamp = unixTimeStart,
+                    ) { model ->
+                        AVLoading.stopAnimLoading()
+                        if (model.success) {
+                            activity?.runOnUiThread {
+                                binding.expendsSummary.text = model.data[0].total_expenses
+                                binding.incomeSummary.text = model.data[0].total_income
+                                binding.incomeTypeSummary.text = model.data[0].total_Income_Certain
+                                binding.incomeTypeUncertainSummary.text = model.data[0].total_Income_Uncertain
+                                binding.expendsTypeSummary.text = model.data[0].total_Expenses_Necessary
+                                binding.expendsTypeUnSummary.text = model.data[0].total_Expenses_Unnecessary
+                            }
+                        }
+                    }
+                }
+
+            }
+        })
+        unixTimeStart = convertDateWeekStringToUnixTime(binding.calendar.text.toString())
+        unixTimeEnd = convertDateEndWeekStringToUnixTime(binding.calendar.text.toString())
+        viewModel.reportSummary(
+            idmember = idMember,
+            datatype = "week",
+            end_timestamp = unixTimeEnd,
+            start_timestamp = unixTimeStart,
+        ) { model ->
+            if (model.success) {
+                activity?.runOnUiThread{
+                    binding.expendsSummary.text = model.data[0].total_expenses
+                    binding.incomeSummary.text = model.data[0].total_income
+                    binding.incomeTypeSummary.text = model.data[0].total_Income_Certain
+                    binding.incomeTypeUncertainSummary.text = model.data[0].total_Income_Uncertain
+                    binding.expendsTypeSummary.text = model.data[0].total_Expenses_Necessary
+                    binding.expendsTypeUnSummary.text = model.data[0].total_Expenses_Unnecessary
+                }
+            }
+        }
+
     }
 
+    private fun convertDateEndWeekStringToUnixTime(weekRangeString: String): Long {
+        return try {
+            val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH"))
+            val dates = weekRangeString.split(" - ")
+            val endDate = dateFormat.parse(dates[1])
+            val calendar = Calendar.getInstance()
+            calendar.time = endDate
+            calendar.set(Calendar.HOUR_OF_DAY, 23 + 7)
+            calendar.set(Calendar.MINUTE, 59)
+            calendar.set(Calendar.SECOND, 59)
+            calendar.timeInMillis / 1000L
+        } catch (e: Exception) {
+            e.printStackTrace()
+            -1
+        }
+    }
 
+    private fun convertDateWeekStringToUnixTime(weekRangeString: String): Long {
+        return try {
+            val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH"))
+            val dates = weekRangeString.split(" - ")
+            val startDate = dateFormat.parse(dates[0])
+            val calendar = Calendar.getInstance()
+            calendar.time = startDate
+            calendar.set(Calendar.HOUR_OF_DAY, 0 + 7)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.timeInMillis / 1000L
+        } catch (e: Exception) {
+            e.printStackTrace()
+            -1
+        }
+    }
+
+    private fun forward1Week() {
+        val currentDateString = binding.calendar.text.toString()
+        val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH"))
+        val currentDate = dateFormat.parse(currentDateString)
+        val calendar = Calendar.getInstance()
+        calendar.time = currentDate
+        calendar.add(Calendar.WEEK_OF_YEAR, 1)
+        val formattedStartDate = dateFormat.format(calendar.time)
+        calendar.add(Calendar.DAY_OF_WEEK, 6)
+        val formattedEndDate = dateFormat.format(calendar.time)
+        binding.calendar.text = "$formattedStartDate - $formattedEndDate"
+    }
+
+    private fun onBack1Week() {
+        val currentDateString = binding.calendar.text.toString()
+        val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH"))
+        val currentDate = dateFormat.parse(currentDateString)
+        val calendar = Calendar.getInstance()
+        calendar.time = currentDate
+        calendar.add(Calendar.WEEK_OF_YEAR, -1)
+        val formattedStartDate = dateFormat.format(calendar.time)
+        calendar.add(Calendar.DAY_OF_WEEK, 6)
+        val formattedEndDate = dateFormat.format(calendar.time)
+        binding.calendar.text = "$formattedStartDate - $formattedEndDate"
+    }
 
 
     private fun updateUIForMonth() {
@@ -175,6 +281,8 @@ class SummaryFragment : Fragment() {
                 currentDate = editable.toString()
                 unixTimeStart = convertMonthStringToUnixTime(binding.calendar.text.toString())
                 unixTimeEnd = convertEndMonthStringToUnixTime(binding.calendar.text.toString())
+                Log.i("aslkdhaskldnjmk",unixTimeStart.toString())
+                Log.i("aslkdhaskldnjmk",unixTimeEnd.toString())
                 AVLoading.startAnimLoading()
                 CoroutineScope(Dispatchers.Main).launch {
                     delay(300)
@@ -241,10 +349,91 @@ class SummaryFragment : Fragment() {
         calendar.add(Calendar.MONTH, -1)
         val formattedDate = dateFormat.format(calendar.time)
         binding.calendar.text = formattedDate
-
     }
     private fun updateUIForYear() {
+        binding.calendar.text = viewModel.year
+        binding.calendar.setOnClickListener {
+            dropdownSelectYearSummaryPage(binding.calendar.text.toString())
+        }
+        binding.back.setOnClickListener { goBack1Year() }
+        binding.forward.setOnClickListener { forward1Year() }
+        binding.calendar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int, ) {}
+            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int, ) {}
+            override fun afterTextChanged(editable: Editable?) {
+                currentDate = editable.toString()
+                unixTimeStart = convertYearToUnixTime(binding.calendar.text.toString())
+                unixTimeEnd = getLastDayOfYearAndConvertToUnixTime(binding.calendar.text.toString())
+                AVLoading.startAnimLoading()
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(300)
+                    viewModel.reportSummary(
+                        idmember = idMember,
+                        datatype = "year",
+                        end_timestamp = unixTimeEnd,
+                        start_timestamp = unixTimeStart,
+                    ) { model ->
+                        AVLoading.stopAnimLoading()
+                        if (model.success) {
+                            activity?.runOnUiThread {
+                                binding.expendsSummary.text = model.data[0].total_expenses
+                                binding.incomeSummary.text = model.data[0].total_income
+                                binding.incomeTypeSummary.text = model.data[0].total_Income_Certain
+                                binding.incomeTypeUncertainSummary.text = model.data[0].total_Income_Uncertain
+                                binding.expendsTypeSummary.text = model.data[0].total_Expenses_Necessary
+                                binding.expendsTypeUnSummary.text = model.data[0].total_Expenses_Unnecessary
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        unixTimeStart = convertYearToUnixTime(binding.calendar.text.toString())
+        unixTimeEnd = getLastDayOfYearAndConvertToUnixTime(binding.calendar.text.toString())
+        AVLoading.startAnimLoading()
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(300)
+            viewModel.reportSummary(
+                idmember = idMember,
+                datatype = "year",
+                end_timestamp = unixTimeEnd,
+                start_timestamp = unixTimeStart,
+            ) { model ->
+                AVLoading.stopAnimLoading()
+                if (model.success) {
+                    activity?.runOnUiThread {
+                        binding.expendsSummary.text = model.data[0].total_expenses
+                        binding.incomeSummary.text = model.data[0].total_income
+                        binding.incomeTypeSummary.text = model.data[0].total_Income_Certain
+                        binding.incomeTypeUncertainSummary.text = model.data[0].total_Income_Uncertain
+                        binding.expendsTypeSummary.text = model.data[0].total_Expenses_Necessary
+                        binding.expendsTypeUnSummary.text = model.data[0].total_Expenses_Unnecessary
+                    }
+                }
+            }
+        }
+    }
 
+    private fun forward1Year() {
+        val currentDateString = binding.calendar.text.toString()
+        val dateFormat = SimpleDateFormat("yyyy", Locale("th", "TH"))
+        val currentDate = dateFormat.parse(currentDateString)
+        val calendar = Calendar.getInstance()
+        calendar.time = currentDate
+        calendar.add(Calendar.YEAR, +1)
+        val formattedDate = dateFormat.format(calendar.time)
+        binding.calendar.text = formattedDate
+    }
+
+    private fun goBack1Year() {
+        val currentDateString = binding.calendar.text.toString()
+        val dateFormat = SimpleDateFormat("yyyy", Locale("th", "TH"))
+        val currentDate = dateFormat.parse(currentDateString)
+        val calendar = Calendar.getInstance()
+        calendar.time = currentDate
+        calendar.add(Calendar.YEAR, -1)
+        val formattedDate = dateFormat.format(calendar.time)
+        binding.calendar.text = formattedDate
     }
 
     private fun openCalendarPicker(initialDate: String) {
@@ -274,29 +463,49 @@ class SummaryFragment : Fragment() {
     }
     private fun openCalendarPickerWeek(initialDate: String) {
         val calendar = Calendar.getInstance()
+
         if (!initialDate.isNullOrBlank()) {
-            val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale("th","TH"))
+            val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH"))
             calendar.time = dateFormat.parse(initialDate)
         }
+
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+        val startOfWeek = calendar.time
+
+        calendar.add(Calendar.DAY_OF_WEEK, 6)
+        val endOfWeek = calendar.time
+
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
+
         val datePickerDialog = DatePickerDialog(
             requireActivity(),
             R.style.DialogThemeEx,
             { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = Calendar.getInstance()
                 selectedDate.set(selectedYear, selectedMonth, selectedDay)
-                val dateFormat = SimpleDateFormat("d MMMM yyyy",  Locale("th","TH"))
-                val formattedDate = dateFormat.format(selectedDate.time)
-                binding.calendar.text = formattedDate
+                val selectedDateFormatted = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH")).format(selectedDate.time)
+                calendar.time = selectedDate.time
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+                val startOfWeek = calendar.time
+                calendar.add(Calendar.DAY_OF_WEEK, 6)
+                val endOfWeek = calendar.time
+                val startOfWeekFormatted = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH")).format(startOfWeek)
+                val endOfWeekFormatted = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH")).format(endOfWeek)
+                val weekRangeText = "$startOfWeekFormatted - $endOfWeekFormatted"
+                binding.calendar.text = weekRangeText
             },
             year,
             month,
             day
         )
+
         datePickerDialog.show()
     }
+
+
+
 
     private fun goBack1day() {
         val currentDateString = binding.calendar.text.toString()
@@ -337,8 +546,48 @@ class SummaryFragment : Fragment() {
             return -1
         }
     }
-    private fun convertMonthStringToUnixTime(monthString: String): Long {
+    private fun convertYearToUnixTime(yearString: String): Long {
         try {
+            val dateFormat = SimpleDateFormat("yyyy", Locale("th", "TH"))
+            val date = dateFormat.parse(yearString)
+
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            calendar.set(Calendar.MONTH, Calendar.JANUARY)
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH))
+            calendar.set(Calendar.HOUR_OF_DAY, 0+7)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+
+            return calendar.timeInMillis / 1000L
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return -1
+        }
+    }
+
+    private fun getLastDayOfYearAndConvertToUnixTime(yearString: String): Long {
+        try {
+            val dateFormat = SimpleDateFormat("yyyy", Locale("th", "TH"))
+            val date = dateFormat.parse(yearString)
+
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            calendar.set(Calendar.MONTH, Calendar.DECEMBER)
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+            calendar.set(Calendar.HOUR_OF_DAY, 23+7)
+            calendar.set(Calendar.MINUTE, 59)
+            calendar.set(Calendar.SECOND, 59)
+
+            return calendar.timeInMillis / 1000L
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return -1
+        }
+    }
+
+    private fun convertMonthStringToUnixTime(monthString: String): Long {
+        return try {
             val dateFormat = SimpleDateFormat("MMMM yyyy", Locale("th", "TH"))
             val date = dateFormat.parse(monthString)
             val calendar = Calendar.getInstance()
@@ -348,15 +597,15 @@ class SummaryFragment : Fragment() {
             calendar.set(Calendar.MINUTE, 0)
             calendar.set(Calendar.SECOND, 0)
             calendar.set(Calendar.MILLISECOND, 0)
-            return calendar.timeInMillis / 1000L
+            calendar.timeInMillis / 1000L
         } catch (e: Exception) {
             e.printStackTrace()
-            return -1
+            -1
         }
     }
 
     private fun convertEndMonthStringToUnixTime(monthString: String): Long {
-        try {
+        return try {
             val dateFormat = SimpleDateFormat("MMMM yyyy", Locale("th", "TH"))
             val date = dateFormat.parse(monthString)
             val calendar = Calendar.getInstance()
@@ -366,16 +615,16 @@ class SummaryFragment : Fragment() {
             calendar.set(Calendar.MINUTE, 59)
             calendar.set(Calendar.SECOND, 59)
             calendar.set(Calendar.MILLISECOND, 0)
-            return calendar.timeInMillis / 1000L
+            calendar.timeInMillis / 1000L
         } catch (e: Exception) {
             e.printStackTrace()
-            return -1
+            -1
         }
     }
 
 
     private fun convertDateEndStringToUnixTime(dateString: String): Long {
-        try {
+        return try {
             val dateFormat = SimpleDateFormat("d MMMM yyyy",  Locale("th","TH"))
             val date = dateFormat.parse(dateString)
             val calendar = Calendar.getInstance()
@@ -384,15 +633,13 @@ class SummaryFragment : Fragment() {
             calendar.set(Calendar.MINUTE, 59)
             calendar.set(Calendar.SECOND, 59)
             calendar.set(Calendar.MILLISECOND, 0)
-            return calendar.timeInMillis / 1000L
+            calendar.timeInMillis / 1000L
         } catch (e: Exception) {
             e.printStackTrace()
-            return -1
+            -1
         }
     }
-    private fun dropdownSummaryPage(
-        monthAndYear: String,
-    ) {
+    private fun dropdownSummaryPage(monthAndYear: String, ) {
         val dialog = Dialog(requireActivity())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dropdown_month)
@@ -447,6 +694,41 @@ class SummaryFragment : Fragment() {
 
         return "${months[selectedMonth]} $selectedYear"
     }
+
+    private fun dropdownSelectYearSummaryPage(monthAndYear: String, ) {
+        val dialog = Dialog(requireActivity())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.select_year_dialog)
+        dialog.show()
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setGravity(Gravity.BOTTOM)
+
+        val yearPicker = dialog.findViewById<NumberPicker>(R.id.yearPicker)
+        val yearNow = Calendar.getInstance().get(Calendar.YEAR)
+        yearPicker.minValue = yearNow - 100
+        yearPicker.maxValue = yearNow + 100
+
+        val dateFormat = SimpleDateFormat("yyyy", Locale("th", "TH"))
+        val date = dateFormat.parse(monthAndYear)
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        val selectedYear = calendar.get(Calendar.YEAR)
+
+        yearPicker.value = selectedYear
+
+        val submit = dialog.findViewById<ConstraintLayout>(R.id.buttonSubmitMonthYear)
+
+        submit.setOnClickListener {
+            val selectedYear = yearPicker.value
+            binding.calendar.text = selectedYear.toString()
+            dialog.dismiss()
+        }
+    }
+
 
 
 

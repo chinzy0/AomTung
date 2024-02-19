@@ -1,13 +1,7 @@
 package com.money.moneyx.main.incomeExpends.summary
 
-import android.app.Activity
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
-import com.money.moneyx.data.Preference
-import com.money.moneyx.login.loginScreen.ResetPhone
-import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.ReportMonth
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -26,7 +20,7 @@ class SummaryViewModel : ViewModel(){
     val date = getCurrentDate()
     val week = getCurrentWeek()
     val monthAndYear = getCurrentMonthCalendar()
-    val year = getCurrentMonthCalendar()
+    val year = getCurrentYear()
 
     private fun getCurrentDate(): String {
         val calendar = Calendar.getInstance()
