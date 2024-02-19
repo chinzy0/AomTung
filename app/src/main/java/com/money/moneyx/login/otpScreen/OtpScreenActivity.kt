@@ -221,6 +221,7 @@ class OtpScreenActivity : AppCompatActivity() {
             val intent = Intent(this, HomeActivity::class.java)
             preferences.saveString("phone", phoneNumber)
             intent.putExtra("positionClick",positionClick)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
         }
     }

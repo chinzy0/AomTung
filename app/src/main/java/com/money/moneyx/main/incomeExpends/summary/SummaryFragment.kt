@@ -84,6 +84,7 @@ class SummaryFragment : Fragment() {
 
     private fun updateUIForDay() {
         binding.calendar.text = viewModel.date
+        binding.calendar.textSize = 20f
         binding.calendar.setOnClickListener {
             openCalendarPicker(binding.calendar.text.toString())
         }
@@ -123,7 +124,7 @@ class SummaryFragment : Fragment() {
         })
         unixTimeStart = convertDateStringToUnixTime(binding.calendar.text.toString())
         unixTimeEnd = convertDateEndStringToUnixTime(binding.calendar.text.toString())
-            viewModel.reportSummary(
+        viewModel.reportSummary(
                 idmember = idMember,
                 datatype = "day",
                 end_timestamp = unixTimeEnd,
@@ -268,6 +269,7 @@ class SummaryFragment : Fragment() {
 
     private fun updateUIForMonth() {
         binding.calendar.text = viewModel.monthAndYear
+        binding.calendar.textSize = 20f
         binding.calendar.setOnClickListener {
             dropdownSummaryPage(binding.calendar.text.toString())
         }
@@ -352,6 +354,7 @@ class SummaryFragment : Fragment() {
     }
     private fun updateUIForYear() {
         binding.calendar.text = viewModel.year
+        binding.calendar.textSize = 20f
         binding.calendar.setOnClickListener {
             dropdownSelectYearSummaryPage(binding.calendar.text.toString())
         }
@@ -507,7 +510,7 @@ class SummaryFragment : Fragment() {
 
 
 
-    private fun goBack1day() {
+     private fun goBack1day() {
         val currentDateString = binding.calendar.text.toString()
         val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale("th","TH"))
         val currentDate = dateFormat.parse(currentDateString)
@@ -519,7 +522,7 @@ class SummaryFragment : Fragment() {
 
     }
 
-    private fun forward1day() {
+     private fun forward1day() {
         val currentDateString = binding.calendar.text.toString()
         val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale("th","TH"))
         val currentDate = dateFormat.parse(currentDateString)

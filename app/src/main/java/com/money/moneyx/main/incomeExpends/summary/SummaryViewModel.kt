@@ -75,4 +75,35 @@ class SummaryViewModel : ViewModel(){
             }
         })
     }
+    fun reportListSummary(
+        datatype: String,
+        idmember: Int,
+        start_timestamp: Long,
+        end_timestamp: Long,
+        clickCallback: ((ReportListSummary) -> Unit)) {
+        val jsonContent = JSONObject()
+            .put("datatype", datatype)
+            .put("idmember", idmember)
+            .put("start_timestamp", start_timestamp)
+            .put("end_timestamp", end_timestamp).toString()
+        val client = OkHttpClient()
+        val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url("http://zaserzafear.thddns.net:9973/api/Report/ReportListSummary")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    val apiResponse = Gson().fromJson(responseBody.toString(), ReportListSummary::class.java)
+                    clickCallback.invoke(apiResponse)
+                }
+            }
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+        })
+    }
 }
