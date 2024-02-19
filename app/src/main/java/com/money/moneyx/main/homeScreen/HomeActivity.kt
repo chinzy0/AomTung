@@ -110,6 +110,4 @@ class HomeActivity : AppCompatActivity() {
             fragmentTransaction.commit()
         }
     }
-
-
 }

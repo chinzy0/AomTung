@@ -1,6 +1,7 @@
 package com.money.moneyx.main.incomeExpends.listPage.listMonth
 
 import android.app.Dialog
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -15,6 +16,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.NumberPicker
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.iamauttamai.avloading.ui.AVLoading
@@ -193,7 +195,9 @@ class ListMonthFragment : Fragment() {
         yearPicker.value = selectedYear
 
         val submit = dialog.findViewById<ConstraintLayout>(R.id.buttonSubmitMonthYear)
-
+        val income = R.color.income
+        val resolvedColor = ContextCompat.getColor(requireActivity(), income)
+        submit.backgroundTintList = ColorStateList.valueOf(resolvedColor)
         submit.setOnClickListener {
             val selectedMonth = monthPicker.value
             val selectedYear = yearPicker.value
