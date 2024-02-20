@@ -5,10 +5,7 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
 import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.ActivityHomeBinding
@@ -22,14 +19,8 @@ import com.money.moneyx.main.addListPage.addIncome.ListScheduleAuto
 import com.money.moneyx.main.autoSave.AutoSaveFragment
 import com.money.moneyx.main.autoSave.GetListAuto
 import com.money.moneyx.main.homeScreen.fragments.home.HomeFragment
-import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.ReportMonthExpenses
-import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.ReportMonthIncome
 import com.money.moneyx.main.incomeExpends.IncomeExpendsFragment
 import com.money.moneyx.main.profile.ProfileFragment
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.YearMonth
-import java.util.Locale
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding

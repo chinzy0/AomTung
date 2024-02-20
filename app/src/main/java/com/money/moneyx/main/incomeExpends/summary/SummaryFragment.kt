@@ -15,9 +15,19 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.NumberPicker
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.google.android.material.tabs.TabLayout
 import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
@@ -41,6 +51,7 @@ class SummaryFragment : Fragment() {
     private var unixTimeEnd = 0L
     private var idMember = 0
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -48,7 +59,7 @@ class SummaryFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_summary, container, false)
         viewModel = ViewModelProvider(this)[SummaryViewModel::class.java]
         binding.summaryViewModel = viewModel
@@ -56,9 +67,12 @@ class SummaryFragment : Fragment() {
         idMember = preferences.getInt("idmember", 0)
         setupTabs()
         updateUIForDay()
+
         loadingScreen(requireActivity())
         return binding.root
     }
+
+
 
     private fun setupTabs() {
         val tabTitles = listOf("วัน", "สัปดาห์", "เดือน", "ปี")
@@ -119,6 +133,17 @@ class SummaryFragment : Fragment() {
                             }
                         }
                     }
+                    viewModel.reportListGraph(
+                        idmember = idMember,
+                        datatype = "day",
+                        end_timestamp = unixTimeEnd,
+                        start_timestamp = unixTimeStart,
+                    ){ graph ->
+                        AVLoading.stopAnimLoading()
+                        if (graph.success) {
+                            graph(graph)
+                        }
+                    }
                 }
             }
         })
@@ -141,7 +166,77 @@ class SummaryFragment : Fragment() {
                     }
                 }
             }
+        viewModel.reportListGraph(
+            idmember = idMember,
+            datatype = "day",
+            end_timestamp = unixTimeEnd,
+            start_timestamp = unixTimeStart,
+        ){ graph ->
+            AVLoading.stopAnimLoading()
+            if (graph.success) {
+                graph(graph)
+            }
+        }
     }
+    private fun graph(graphData: ReportListGraph) {
+        val barChart: BarChart = binding.barChart
+        barChart.description.text = ""
+        val dataOfList = graphData.data.dataOfList
+
+        val incomeEntries = mutableListOf<BarEntry>()
+        val expenseEntries = mutableListOf<BarEntry>()
+
+        dataOfList.forEachIndexed { index, dataOf ->
+            incomeEntries.add(BarEntry(index.toFloat(), dataOf.totalIncome.toFloat()))
+            expenseEntries.add(BarEntry(index.toFloat(), dataOf.totalExpenses.toFloat()))
+        }
+
+
+        val incomeDataSet = BarDataSet(incomeEntries, "รายรับ")
+        incomeDataSet.color = ContextCompat.getColor(requireContext(), R.color.income)
+
+        val expenseDataSet = BarDataSet(expenseEntries, "รายจ่าย")
+        expenseDataSet.color = ContextCompat.getColor(requireContext(), R.color.expends)
+
+
+        val dataSets = mutableListOf<IBarDataSet>()
+        dataSets.add(incomeDataSet)
+        dataSets.add(expenseDataSet)
+
+        // Creating the bar data
+        val barData = BarData(dataSets)
+
+
+        val groupSpace = 0.3f
+        val barSpace = 0.05f
+        val barWidth = 0.3f
+        barData.barWidth = barWidth
+        barChart.xAxis.axisMinimum = 0f
+        barChart.xAxis.axisMaximum = graphData.data.dataOfList.size.toFloat()
+        barData.groupBars(0f, groupSpace, barSpace)
+
+        barChart.data = barData
+
+        barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+
+        // Disable right Y-axis
+        barChart.axisRight.isEnabled = false
+        val xAxis = barChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.setCenterAxisLabels(true)
+        xAxis.granularity = 1f
+        xAxis.isGranularityEnabled = true
+        val line  = ContextCompat.getColor(requireActivity(), R.color.line)
+        xAxis.axisLineColor = line
+        xAxis.axisLineWidth = 1.5f
+        xAxis.setDrawAxisLine(true)
+        xAxis.setDrawGridLines(false)
+        barChart.invalidate()
+    }
+
+
+
+
 
 
     private fun updateUIForWeek() {
@@ -180,6 +275,7 @@ class SummaryFragment : Fragment() {
                             }
                         }
                     }
+
                 }
 
             }
@@ -203,6 +299,7 @@ class SummaryFragment : Fragment() {
                 }
             }
         }
+
 
     }
 
@@ -283,8 +380,6 @@ class SummaryFragment : Fragment() {
                 currentDate = editable.toString()
                 unixTimeStart = convertMonthStringToUnixTime(binding.calendar.text.toString())
                 unixTimeEnd = convertEndMonthStringToUnixTime(binding.calendar.text.toString())
-                Log.i("aslkdhaskldnjmk",unixTimeStart.toString())
-                Log.i("aslkdhaskldnjmk",unixTimeEnd.toString())
                 AVLoading.startAnimLoading()
                 CoroutineScope(Dispatchers.Main).launch {
                     delay(300)
@@ -541,8 +636,8 @@ class SummaryFragment : Fragment() {
             calendar.time = date
             calendar.set(Calendar.HOUR_OF_DAY, 7)
             calendar.set(Calendar.MINUTE, 0)
-            calendar.set(Calendar.SECOND, 1)
-            calendar.set(Calendar.MILLISECOND, 0)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 1)
             return calendar.timeInMillis / 1000L
         } catch (e: Exception) {
             e.printStackTrace()
@@ -737,4 +832,15 @@ class SummaryFragment : Fragment() {
 
 
 
+}
+
+class MyXAxisValueFormatter(private val xAxisValues: List<Float>) : ValueFormatter() {
+    override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+        val index = value.toInt()
+        return if (index >= 0 && index < xAxisValues.size) {
+            xAxisValues[index].toString()
+        } else {
+            ""
+        }
+    }
 }

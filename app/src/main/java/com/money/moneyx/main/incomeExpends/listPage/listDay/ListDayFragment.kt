@@ -1,19 +1,26 @@
 package com.money.moneyx.main.incomeExpends.listPage.listDay
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
 import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.FragmentListDayBinding
+import com.money.moneyx.main.addListPage.AddListScreenActivity
+import com.money.moneyx.main.autoSave.AutoSaveAdapter
+import com.money.moneyx.main.incomeExpends.listPage.ListPageAdapter
+import com.money.moneyx.main.incomeExpends.summary.ReportALL
 import com.money.moneyx.main.incomeExpends.summary.SummaryViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +33,7 @@ import java.util.Locale
 class ListDayFragment : Fragment() {
     private lateinit var binding : FragmentListDayBinding
     private lateinit var viewModel: SummaryViewModel
+    private lateinit var listPageAdapter: ListPageAdapter
     private var idMember = 0
     private var currentDate = ""
     private var unixTimeStart = 0L
@@ -48,7 +56,25 @@ class ListDayFragment : Fragment() {
 
         callAPI()
 
+
         return binding.root
+    }
+
+    private fun adapter() {
+        listPageAdapter = ListPageAdapter(viewModel.listDay) { model ->
+
+
+        }
+        binding.RCVday.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = listPageAdapter
+            listPageAdapter.notifyDataSetChanged()
+        }
+        if (viewModel.listDay.isEmpty()) {
+            binding.RCVday.visibility = View.GONE
+        } else {
+            binding.RCVday.visibility = View.VISIBLE
+        }
     }
 
     private fun callAPI() {
@@ -70,12 +96,7 @@ class ListDayFragment : Fragment() {
                 AVLoading.startAnimLoading()
                 CoroutineScope(Dispatchers.Main).launch {
                     delay(300)
-                    viewModel.reportSummary(
-                        idmember = idMember,
-                        datatype = "day",
-                        end_timestamp = unixTimeEnd,
-                        start_timestamp = unixTimeStart,
-                    ) { model ->
+                    viewModel.reportSummary(idmember = idMember, datatype = "day", end_timestamp = unixTimeEnd, start_timestamp = unixTimeStart,) { model ->
                         AVLoading.stopAnimLoading()
                         if (model.success) {
                             activity?.runOnUiThread {
@@ -88,7 +109,25 @@ class ListDayFragment : Fragment() {
                             }
                         }
                     }
+                    viewModel.reportListSummary(
+                        idmember = idMember,
+                        datatype = "day",
+                        end_timestamp = unixTimeEnd,
+                        start_timestamp = unixTimeStart,
+                    ){ listDay ->
+                        viewModel.listDay.clear()
+                        listDay.data.map {
+                            it.report_List_ALL.map { map ->
+                                viewModel.listDay.add(map)
+                                activity?.runOnUiThread {
+                                    adapter()
+                                }
+                            }
+                        }
+                    }
+
                 }
+
             }
         })
         unixTimeStart = convertDateStringToUnixTime(binding.calendar.text.toString())
@@ -110,6 +149,24 @@ class ListDayFragment : Fragment() {
                 }
             }
         }
+        viewModel.reportListSummary(
+            idmember = idMember,
+            datatype = "day",
+            end_timestamp = unixTimeEnd,
+            start_timestamp = unixTimeStart,
+        ){ listDay ->
+            viewModel.listDay.clear()
+           listDay.data.map {
+               it.report_List_ALL.map { map ->
+                   viewModel.listDay.add(map)
+                   activity?.runOnUiThread {
+                       adapter()
+                   }
+               }
+           }
+        }
+
+
     }
 
 

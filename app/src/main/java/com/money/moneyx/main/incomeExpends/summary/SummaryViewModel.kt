@@ -2,6 +2,8 @@ package com.money.moneyx.main.incomeExpends.summary
 
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
+import com.money.moneyx.main.autoSave.GetListAutoData
+import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.ReportMonth
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -21,6 +23,7 @@ class SummaryViewModel : ViewModel(){
     val week = getCurrentWeek()
     val monthAndYear = getCurrentMonthCalendar()
     val year = getCurrentYear()
+    var listDay = ArrayList<ReportALL>()
 
     private fun getCurrentDate(): String {
         val calendar = Calendar.getInstance()
@@ -98,6 +101,38 @@ class SummaryViewModel : ViewModel(){
                 if (response.isSuccessful) {
                     val responseBody = response.body?.string()
                     val apiResponse = Gson().fromJson(responseBody.toString(), ReportListSummary::class.java)
+                    clickCallback.invoke(apiResponse)
+                }
+            }
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+        })
+    }
+
+    fun reportListGraph(
+        datatype: String,
+        idmember: Int,
+        start_timestamp: Long,
+        end_timestamp: Long,
+        clickCallback: ((ReportListGraph) -> Unit)) {
+        val jsonContent = JSONObject()
+            .put("datatype", datatype)
+            .put("idmember", idmember)
+            .put("start_timestamp", start_timestamp)
+            .put("end_timestamp", end_timestamp).toString()
+        val client = OkHttpClient()
+        val requestBody = jsonContent.toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url("http://zaserzafear.thddns.net:9973/api/Report/ReportListGraph")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    val apiResponse = Gson().fromJson(responseBody.toString(), ReportListGraph::class.java)
                     clickCallback.invoke(apiResponse)
                 }
             }

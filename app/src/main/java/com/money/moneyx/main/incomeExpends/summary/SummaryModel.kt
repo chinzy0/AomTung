@@ -27,13 +27,10 @@ data class ReportListSummary(
 data class ReportListSummaryData(
     val dataList_Of: String,
     val number_type: String,
-    val report_Expenses_Necessary: List<ReportExpensesNecessary>,
-    val report_Expenses_Unnecessary: List<ReportExpensesUnnecessary>,
-    val report_Income_Cartain: List<ReportIncomeCartain>,
-    val report_Income_UnCartain: List<ReportIncomeUnCartain>
+    val report_List_ALL: List<ReportALL>
 )
 
-data class ReportExpensesNecessary(
+data class ReportALL(
     val amount: String,
     val category_id: Int,
     val category_name: String,
@@ -48,51 +45,20 @@ data class ReportExpensesNecessary(
     val type_id: Int,
     val type_name: String
 )
-
-data class ReportExpensesUnnecessary(
-    val amount: String,
-    val category_id: Int,
-    val category_name: String,
-    val currency_symbol: String,
-    val description: String,
-    val save_auto_id: Int,
-    val save_auto_name: String,
-    val symbol_math: String,
-    val timestamp: Int,
-    val transaction_id: Int,
-    val type_data: String,
-    val type_id: Int,
-    val type_name: String
+data class ReportListGraph(
+    val `data`: ReportListGraphData,
+    val message: String,
+    val status: Int,
+    val success: Boolean
 )
 
-data class ReportIncomeCartain(
-    val amount: String,
-    val category_id: Int,
-    val category_name: String,
-    val currency_symbol: String,
-    val description: String,
-    val save_auto_id: Int,
-    val save_auto_name: String,
-    val symbol_math: String,
-    val timestamp: Int,
-    val transaction_id: Int,
-    val type_data: String,
-    val type_id: Int,
-    val type_name: String
+data class ReportListGraphData(
+    val dataOfList: List<DataOf>,
+    val numberDayOf: String
 )
 
-data class ReportIncomeUnCartain(
-    val amount: String,
-    val category_id: Int,
-    val category_name: String,
-    val currency_symbol: String,
-    val description: String,
-    val save_auto_id: Int,
-    val save_auto_name: String,
-    val symbol_math: String,
-    val timestamp: Int,
-    val transaction_id: Int,
-    val type_data: String,
-    val type_id: Int,
-    val type_name: String
+data class DataOf(
+    val number: String,
+    val totalExpenses: String,
+    val totalIncome: String
 )

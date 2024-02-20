@@ -43,7 +43,6 @@ class AutoSaveFragment : Fragment() {
         idMember = preferences.getInt("idmember", 0)
 
 
-//        adapterAutoSave(null)
         dropdownAutoSave()
         loadingScreen(requireActivity())
         return binding.root

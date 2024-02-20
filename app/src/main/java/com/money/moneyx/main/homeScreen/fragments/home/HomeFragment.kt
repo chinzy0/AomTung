@@ -109,7 +109,6 @@ class HomeFragment() : Fragment() {
                 fragment.clear()
                 fragment.add(IncomeReportFragment(map.report_month_list_income))
                 fragment.add(ExpendsReportFragment(map.report_month_list_Expenses))
-
                 mPageAdapter = ViewPagerAdapter(fragmentManager, lifecycle, fragment)
                 binding.report.adapter = mPageAdapter
                 binding.report.isUserInputEnabled = false
@@ -137,7 +136,6 @@ class HomeFragment() : Fragment() {
                     binding.tabLayout.setSelectedTabIndicatorColor(resources.getColor(R.color.income))
                 }
             }
-
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
