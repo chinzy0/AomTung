@@ -43,17 +43,21 @@ class ListPageAdapter(
             "รายรับไม่แน่นอน" -> {
                 holder.binding.textView24.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.income_uncertainText))
                 holder.binding.textView17.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.income_uncertainText))
+                holder.binding.textView23.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.income_uncertainText))
             }
             "รายรับแน่นอน" -> {
                 holder.binding.textView24.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.income_certainText))
+                holder.binding.textView23.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.income_certainText))
                 holder.binding.textView17.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.income_certainText))
             }
             "รายจ่ายจำเป็น" -> {
                 holder.binding.textView24.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter2))
+                holder.binding.textView23.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter2))
                 holder.binding.textView17.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter2))
             }
             "รายจ่ายไม่จำเป็น" -> {
                 holder.binding.textView24.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter1))
+                holder.binding.textView23.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter1))
                 holder.binding.textView17.setTextColor(ContextCompat.getColor(holder.binding.root.context, R.color.expends_letter1))
             }
         }
@@ -64,6 +68,6 @@ class ListPageViewAdapter(internal val binding: ListIncomeExpendsBinding):
     RecyclerView.ViewHolder(binding.root)
 private fun convertTimeStampToFormattedDateTime(timeStamp: Int): String {
     val date = Date(timeStamp * 1000L)
-    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+    val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
     return sdf.format(date)
 }

@@ -1,13 +1,17 @@
 package com.money.moneyx.main.incomeExpends.summary
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class ReportSummary(
     val `data`: List<ReportSummaryData>,
     val message: String,
     val status: Int,
     val success: Boolean
-)
+): Parcelable
 
+@Parcelize
 data class ReportSummaryData(
     val titie_Number: String,
     val total_Expenses_Necessary: String,
@@ -16,20 +20,24 @@ data class ReportSummaryData(
     val total_Income_Uncertain: String,
     val total_expenses: String,
     val total_income: String
-)
+): Parcelable
+
+@Parcelize
 data class ReportListSummary(
     val `data`: List<ReportListSummaryData>,
     val message: String,
     val status: Int,
     val success: Boolean
-)
+): Parcelable
 
+@Parcelize
 data class ReportListSummaryData(
     val dataList_Of: String,
     val number_type: String,
     val report_List_ALL: List<ReportALL>
-)
+): Parcelable
 
+@Parcelize
 data class ReportALL(
     val amount: String,
     val category_id: Int,
@@ -44,21 +52,25 @@ data class ReportALL(
     val type_data: String,
     val type_id: Int,
     val type_name: String
-)
+): Parcelable
+
+@Parcelize
 data class ReportListGraph(
     val `data`: ReportListGraphData,
     val message: String,
     val status: Int,
     val success: Boolean
-)
+): Parcelable
 
+@Parcelize
 data class ReportListGraphData(
     val dataOfList: List<DataOf>,
     val numberDayOf: String
-)
+): Parcelable
 
+@Parcelize
 data class DataOf(
     val number: String,
     val totalExpenses: String,
     val totalIncome: String
-)
+): Parcelable

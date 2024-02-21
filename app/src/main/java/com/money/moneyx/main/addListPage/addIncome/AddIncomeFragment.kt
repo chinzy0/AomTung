@@ -40,7 +40,7 @@ import com.money.moneyx.main.addListPage.category.CategoryIncomeActivity
 import com.money.moneyx.main.autoSave.GetListAutoData
 import com.money.moneyx.main.homeScreen.HomeActivity
 import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.Report
-import java.text.NumberFormat
+import com.money.moneyx.main.incomeExpends.summary.ReportALL
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
@@ -50,7 +50,11 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 
-class AddIncomeFragment(private val editIncome: Report?,private val editAutoSave: GetListAutoData?) : Fragment() {
+class AddIncomeFragment(
+    private val editIncome: Report?,
+    private val editAutoSave: GetListAutoData?,
+    private val incomeExpends: ReportALL?
+) : Fragment() {
     private lateinit var binding: FragmentAddIncomeBinding
     private lateinit var viewModel: AddIncomeViewModel
     private var typeID = 0
@@ -106,7 +110,8 @@ class AddIncomeFragment(private val editIncome: Report?,private val editAutoSave
 
     private fun editIncomeData() {
         editAutoSave?.let { model ->
-            result = editAutoSave.amount.toDouble()
+            val editAutoSaveAmount = editAutoSave?.amount?.replace(",", "")
+            result = editAutoSaveAmount!!.toDouble()
             categoryId = editAutoSave.category_id
             typeID = editAutoSave.type_id
             description = model.description
@@ -123,7 +128,7 @@ class AddIncomeFragment(private val editIncome: Report?,private val editAutoSave
             formattedDate = localDateTime.format(dateFormat)
             val formattedTime = localDateTime.format(timeFormat)
 
-            binding.textResult.setText(editAutoSave.amount)
+            binding.textResult.setText(editAutoSaveAmount)
             binding.textTime2.text = model.type_name
             binding.textTime3.text = model.category_name
             binding.textTime44.text = model.description
@@ -131,9 +136,37 @@ class AddIncomeFragment(private val editIncome: Report?,private val editAutoSave
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
         }
+        incomeExpends?.let { income ->
+            val amount = income.amount.replace(",", "")
+            result = amount.toDouble()
+            categoryId = income.category_id
+            typeID = income.type_id
+            description = income.description
+            autoSaveID = income.save_auto_id
+            categoryId = income.category_id
+            description = income.description
+            incomeID = income.transaction_id
+
+            val localDateTime = unixTimestampToLocalDateTime(income.timestamp)
+            val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            listDate = unixTimestampToLocalDate(income.timestamp)
+            Log.i("LocalDate", listDate.toString())
+            val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
+            formattedDate = localDateTime.format(dateFormat)
+            val formattedTime = localDateTime.format(timeFormat)
+
+            binding.textResult.setText(amount)
+            binding.textTime2.text = income.type_name
+            binding.textTime3.text = income.category_name
+            binding.textTime44.text = income.description
+            binding.textTime5.text = income.save_auto_name
+            binding.textDate.text = formattedDate
+            binding.textTime.text = formattedTime
+        }
 
         editIncome?.let { data ->
-            result = editIncome.amount.toDouble()
+            val amount = editIncome.amount.replace(",", "")
+            result = amount.toDouble()
             categoryId = editIncome.category_id
             typeID = editIncome.type_id
             description = data.description
@@ -150,7 +183,7 @@ class AddIncomeFragment(private val editIncome: Report?,private val editAutoSave
             formattedDate = localDateTime.format(dateFormat)
             val formattedTime = localDateTime.format(timeFormat)
 
-            binding.textResult.setText(editIncome.amount)
+            binding.textResult.setText(amount)
             binding.textTime2.text = data.type_name
             binding.textTime3.text = data.category_name
             binding.textTime44.text = data.description
@@ -158,7 +191,7 @@ class AddIncomeFragment(private val editIncome: Report?,private val editAutoSave
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
         }
-        if (editIncome != null || editAutoSave != null) {
+        if (editIncome != null || editAutoSave != null || incomeExpends != null) {
             edit = true
             if (description.isNotEmpty()) {
                 binding.textTime4.visibility = View.GONE
@@ -178,7 +211,7 @@ class AddIncomeFragment(private val editIncome: Report?,private val editAutoSave
                 noteText = ""
                 description = ""
             }
-            if (editIncome?.save_auto_id != 1 || editAutoSave?.save_auto_id != 1) {
+            if (editIncome?.save_auto_id != 1 || editAutoSave?.save_auto_id != 1 || incomeExpends?.save_auto_id != 1) {
                 binding.autosaveButton.isEnabled = false
                 binding.textDate.isEnabled = false
                 binding.textTime.isEnabled = false
@@ -356,7 +389,7 @@ class AddIncomeFragment(private val editIncome: Report?,private val editAutoSave
                         }
                         addListAlertDialog(requireActivity())
                     } else if (edit) {
-                        autoSaveID = editAutoSave?.save_auto_id ?: editIncome!!.save_auto_id
+                        autoSaveID = editAutoSave?.save_auto_id ?: editIncome?.save_auto_id ?: incomeExpends?.save_auto_id ?: 0
                         AVLoading.startAnimLoading()
                         viewModel.updateIncome(
                             income_id = incomeID,

@@ -74,10 +74,7 @@ dependencies {
     //PinView
     implementation ("io.github.chaosleung:pinview:1.4.4")
     //chart
-    implementation ("com.diogobernardino:williamchart:3.10.1")
-    implementation ("com.androidplot:androidplot-core:1.5.10")
     implementation ("ir.mahozad.android:pie-chart:0.7.0")
-    implementation ("co.yml:ycharts:2.1.0")
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
 

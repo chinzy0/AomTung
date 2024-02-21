@@ -34,7 +34,7 @@ class SummaryViewModel : ViewModel(){
         val calendar = Calendar.getInstance()
         calendar.time = Date()
         val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale("th","TH"))
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
         val startDateString = dateFormat.format(calendar.time)
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
         val endDateString = dateFormat.format(calendar.time)

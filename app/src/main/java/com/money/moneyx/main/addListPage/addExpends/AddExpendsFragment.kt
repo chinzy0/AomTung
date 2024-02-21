@@ -40,7 +40,7 @@ import com.money.moneyx.main.addListPage.category.CategoryExpendsActivity
 import com.money.moneyx.main.autoSave.GetListAutoData
 import com.money.moneyx.main.homeScreen.HomeActivity
 import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.Report
-import java.text.NumberFormat
+import com.money.moneyx.main.incomeExpends.summary.ReportALL
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
@@ -50,7 +50,11 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 
-class AddExpendsFragment(private val editExpends: Report?,private val editAutoSaveExpends: GetListAutoData?) : Fragment() {
+class AddExpendsFragment(
+    private val editExpends: Report?,
+    private val editAutoSaveExpends: GetListAutoData?,
+    private val incomeExpends: ReportALL?
+) : Fragment() {
     private lateinit var binding: FragmentAddExpendsBinding
     private lateinit var viewModel: AddExpendsViewModel
     private var typeID = 0
@@ -62,7 +66,6 @@ class AddExpendsFragment(private val editExpends: Report?,private val editAutoSa
     private var expendsID = 0
     private var noteText = ""
     private var result = 0.0
-    private var formatted = ""
     private var edit = false
     private lateinit var currentDate : LocalDate
     private lateinit var listDate: LocalDate
@@ -100,7 +103,8 @@ class AddExpendsFragment(private val editExpends: Report?,private val editAutoSa
 
     private fun editIncomeData() {
         editAutoSaveExpends?.let { model ->
-            result = editAutoSaveExpends.amount.toDouble()
+            val editAutoSaveExpendsAmount = editAutoSaveExpends?.amount?.replace(",", "")
+            result = editAutoSaveExpendsAmount!!.toDouble()
             categoryId = editAutoSaveExpends.category_id
             typeID = editAutoSaveExpends.type_id
             description = model.description
@@ -116,7 +120,7 @@ class AddExpendsFragment(private val editExpends: Report?,private val editAutoSa
             formattedDate = localDateTime.format(dateFormat)
             val formattedTime = localDateTime.format(timeFormat)
 
-            binding.textTv.setText(result.toString())
+            binding.textTv.setText(editAutoSaveExpendsAmount)
             binding.textTime2.text = model.type_name
             binding.textTime3.text = model.category_name
             binding.textTime44.text = model.description
@@ -124,8 +128,37 @@ class AddExpendsFragment(private val editExpends: Report?,private val editAutoSa
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
         }
+        incomeExpends?.let { expends ->
+            val amount = expends.amount.replace(",", "")
+            result = amount.toDouble()
+            categoryId = expends.category_id
+            typeID = expends.type_id
+            description = expends.description
+            autoSaveID = expends.save_auto_id
+            categoryId = expends.category_id
+            description = expends.description
+            expendsID = expends.transaction_id
+
+            val localDateTime = unixTimestampToLocalDateTime(expends.timestamp)
+            val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            listDate = unixTimestampToLocalDate(expends.timestamp)
+            val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
+            formattedDate = localDateTime.format(dateFormat)
+            val formattedTime = localDateTime.format(timeFormat)
+
+            binding.textTv.setText(amount)
+            binding.textTime2.text = expends.type_name
+            binding.textTime3.text = expends.category_name
+            binding.textTime44.text = expends.description
+            binding.textTime5.text = expends.save_auto_name
+            binding.textDate.text = formattedDate
+            binding.textTime.text = formattedTime
+        }
+
+
         editExpends?.let { data ->
-            result = editExpends.amount.toDouble()
+            val amount = editExpends.amount.replace(",", "")
+            result = amount.toDouble()
             categoryId = editExpends.category_id
             typeID = editExpends.type_id
             description = data.description
@@ -141,7 +174,7 @@ class AddExpendsFragment(private val editExpends: Report?,private val editAutoSa
             formattedDate = localDateTime.format(dateFormat)
             val formattedTime = localDateTime.format(timeFormat)
 
-            binding.textTv.setText(result.toString())
+            binding.textTv.setText(amount)
             binding.textTime2.text = data.type_name
             binding.textTime3.text = data.category_name
             binding.textTime44.text = data.description
@@ -149,7 +182,7 @@ class AddExpendsFragment(private val editExpends: Report?,private val editAutoSa
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
         }
-        if (editExpends != null || editAutoSaveExpends != null) {
+        if (editExpends != null || editAutoSaveExpends != null|| incomeExpends != null) {
             edit = true
             if (description.isNotEmpty()) {
                 binding.textTime4.visibility = View.GONE
@@ -169,7 +202,7 @@ class AddExpendsFragment(private val editExpends: Report?,private val editAutoSa
                 noteText = ""
                 description = ""
             }
-            if (editExpends?.save_auto_id != 1 || editAutoSaveExpends?.save_auto_id != 1) {
+            if (editExpends?.save_auto_id != 1 || editAutoSaveExpends?.save_auto_id != 1|| incomeExpends?.save_auto_id != 1) {
                 binding.autosaveButton.isEnabled = false
                 binding.textDate.isEnabled = false
                 binding.textTime.isEnabled = false
@@ -356,6 +389,7 @@ class AddExpendsFragment(private val editExpends: Report?,private val editAutoSa
                         }
                         addListAlertDialog(requireActivity())
                     } else if (edit) {
+                        autoSaveID = editAutoSaveExpends?.save_auto_id ?: editExpends?.save_auto_id ?: incomeExpends?.save_auto_id ?: 0
                         AVLoading.startAnimLoading()
                         viewModel.updateExpenses(
                             expends_id = expendsID,
@@ -430,46 +464,47 @@ class AddExpendsFragment(private val editExpends: Report?,private val editAutoSa
         binding.textTv.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                AddListScreenActivity.textResult.value = s.toString()
-                try {
-                    binding.textTv.removeTextChangedListener(this)
-                    var resultValue = s.toString().toDouble()
-                    if (resultValue > 0) {
-                        var resultValue = s.toString().replace(",", "").toDouble()
-                        val formattedText = NumberFormat.getNumberInstance(Locale.US).format(resultValue)
-                        binding.textTv.setText(formattedText)
-                        binding.textTv.setSelection(formattedText.length)
-                        val buttonColor = ContextCompat.getColor(requireContext(), R.color.expends)
-                        binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
-                        binding.buttonAddExpends.isEnabled = true
-                        if (s!!.length > 13) {
-                            val truncatedText = s.toString().substring(0, 13)
-                            binding.textTv.setText(truncatedText)
-                            binding.textTv.setSelection(truncatedText.length)
-                        }
-                        val indexOfDot = s.indexOf('.')
-                        if (indexOfDot != -1 && s.length - indexOfDot > 3) {
-                            val truncatedDecimal = s.substring(0, indexOfDot + 3)
-                            binding.textTv.setText(truncatedDecimal)
-                            binding.textTv.setSelection(truncatedDecimal.length)
-                        }
-                        if (!s.contains('.')) {
-                            if (s.length > 10) {
-                                val truncatedText = s.toString().substring(0, 10)
+                if (s.toString().isEmpty()) {
+                    AddListScreenActivity.textResult.value = s.toString()
+                } else {
+                    AddListScreenActivity.textResult.value = s.toString()
+                    try {
+                        var resultValue = s.toString().toDouble()
+                        if (resultValue > 0) {
+                            val buttonColor = ContextCompat.getColor(requireContext(), R.color.expends)
+                            binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                            binding.buttonAddExpends.isEnabled = true
+                            if (s!!.length > 13) {
+                                val truncatedText = s.toString().substring(0, 13)
                                 binding.textTv.setText(truncatedText)
                                 binding.textTv.setSelection(truncatedText.length)
                             }
+                            val indexOfDot = s.indexOf('.')
+                            if (indexOfDot != -1 && s.length - indexOfDot > 3) {
+                                val truncatedDecimal = s.substring(0, indexOfDot + 3)
+                                binding.textTv.setText(truncatedDecimal)
+                                binding.textTv.setSelection(truncatedDecimal.length)
+                            }
+                            if (!s.contains('.')) {
+                                if (s.length > 10) {
+                                    val truncatedText = s.toString().substring(0, 10)
+                                    binding.textTv.setText(truncatedText)
+                                    binding.textTv.setSelection(truncatedText.length)
+                                }
+                            }
+                            result = resultValue
+                        } else {
+                            val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
+                            binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                            binding.buttonAddExpends.isEnabled = false
                         }
-                        result = resultValue
-                    } else {
-                        val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
-                        binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
-                        binding.buttonAddExpends.isEnabled = false
+                        AddListScreenActivity.textResult.value = s.toString()
+                    } catch (e: NumberFormatException) {
+
                     }
-                    binding.textTv.addTextChangedListener(this)
-                } catch (e: NumberFormatException) {
                 }
             }
+
 
             override fun afterTextChanged(s: Editable?) {
             }

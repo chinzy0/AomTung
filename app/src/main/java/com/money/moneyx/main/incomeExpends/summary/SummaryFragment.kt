@@ -50,6 +50,7 @@ class SummaryFragment : Fragment() {
     private var unixTimeStart = 0L
     private var unixTimeEnd = 0L
     private var idMember = 0
+    private var dataType = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +68,6 @@ class SummaryFragment : Fragment() {
         idMember = preferences.getInt("idmember", 0)
         setupTabs()
         updateUIForDay()
-
         loadingScreen(requireActivity())
         return binding.root
     }
@@ -85,10 +85,22 @@ class SummaryFragment : Fragment() {
             TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when (tab?.position) {
-                    0 -> updateUIForDay()
-                    1 -> updateUIForWeek()
-                    2 -> updateUIForMonth()
-                    3 -> updateUIForYear()
+                    0 -> {
+                        updateUIForDay()
+                        dataType = "day"
+                    }
+                    1 -> {
+                        updateUIForWeek()
+                        dataType = "week"
+                    }
+                    2 -> {
+                        updateUIForMonth()
+                        dataType = "month"
+                    }
+                    3 -> {
+                        updateUIForYear()
+                        dataType = "year"
+                    }
                 }
             }
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
@@ -97,6 +109,7 @@ class SummaryFragment : Fragment() {
     }
 
     private fun updateUIForDay() {
+        dataType = "day"
         binding.calendar.text = viewModel.date
         binding.calendar.textSize = 20f
         binding.calendar.setOnClickListener {
@@ -117,11 +130,10 @@ class SummaryFragment : Fragment() {
                     delay(300)
                     viewModel.reportSummary(
                         idmember = idMember,
-                        datatype = "day",
+                        datatype = dataType,
                         end_timestamp = unixTimeEnd,
                         start_timestamp = unixTimeStart,
                     ) { model ->
-                        AVLoading.stopAnimLoading()
                         if (model.success) {
                             activity?.runOnUiThread {
                                 binding.expendsSummary.text = model.data[0].total_expenses
@@ -135,7 +147,7 @@ class SummaryFragment : Fragment() {
                     }
                     viewModel.reportListGraph(
                         idmember = idMember,
-                        datatype = "day",
+                        datatype = dataType,
                         end_timestamp = unixTimeEnd,
                         start_timestamp = unixTimeStart,
                     ){ graph ->
@@ -149,97 +161,42 @@ class SummaryFragment : Fragment() {
         })
         unixTimeStart = convertDateStringToUnixTime(binding.calendar.text.toString())
         unixTimeEnd = convertDateEndStringToUnixTime(binding.calendar.text.toString())
-        viewModel.reportSummary(
+            viewModel.reportSummary(
                 idmember = idMember,
-                datatype = "day",
+                datatype = dataType,
                 end_timestamp = unixTimeEnd,
                 start_timestamp = unixTimeStart,
             ) { model ->
                 if (model.success) {
-                    activity?.runOnUiThread{
+                    activity?.runOnUiThread {
                         binding.expendsSummary.text = model.data[0].total_expenses
                         binding.incomeSummary.text = model.data[0].total_income
                         binding.incomeTypeSummary.text = model.data[0].total_Income_Certain
-                        binding.incomeTypeUncertainSummary.text = model.data[0].total_Income_Uncertain
+                        binding.incomeTypeUncertainSummary.text =
+                            model.data[0].total_Income_Uncertain
                         binding.expendsTypeSummary.text = model.data[0].total_Expenses_Necessary
                         binding.expendsTypeUnSummary.text = model.data[0].total_Expenses_Unnecessary
                     }
                 }
             }
-        viewModel.reportListGraph(
-            idmember = idMember,
-            datatype = "day",
-            end_timestamp = unixTimeEnd,
-            start_timestamp = unixTimeStart,
-        ){ graph ->
-            AVLoading.stopAnimLoading()
-            if (graph.success) {
-                graph(graph)
-            }
+
+            viewModel.reportListGraph(
+                idmember = idMember,
+                datatype = dataType,
+                end_timestamp = unixTimeEnd,
+                start_timestamp = unixTimeStart,
+            ) { graph ->
+
+                if (graph.success) {
+                    graph(graph)
+                }
         }
     }
-    private fun graph(graphData: ReportListGraph) {
-        val barChart: BarChart = binding.barChart
-        barChart.description.text = ""
-        val dataOfList = graphData.data.dataOfList
-
-        val incomeEntries = mutableListOf<BarEntry>()
-        val expenseEntries = mutableListOf<BarEntry>()
-
-        dataOfList.forEachIndexed { index, dataOf ->
-            incomeEntries.add(BarEntry(index.toFloat(), dataOf.totalIncome.toFloat()))
-            expenseEntries.add(BarEntry(index.toFloat(), dataOf.totalExpenses.toFloat()))
-        }
-
-
-        val incomeDataSet = BarDataSet(incomeEntries, "รายรับ")
-        incomeDataSet.color = ContextCompat.getColor(requireContext(), R.color.income)
-
-        val expenseDataSet = BarDataSet(expenseEntries, "รายจ่าย")
-        expenseDataSet.color = ContextCompat.getColor(requireContext(), R.color.expends)
-
-
-        val dataSets = mutableListOf<IBarDataSet>()
-        dataSets.add(incomeDataSet)
-        dataSets.add(expenseDataSet)
-
-        // Creating the bar data
-        val barData = BarData(dataSets)
-
-
-        val groupSpace = 0.3f
-        val barSpace = 0.05f
-        val barWidth = 0.3f
-        barData.barWidth = barWidth
-        barChart.xAxis.axisMinimum = 0f
-        barChart.xAxis.axisMaximum = graphData.data.dataOfList.size.toFloat()
-        barData.groupBars(0f, groupSpace, barSpace)
-
-        barChart.data = barData
-
-        barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-
-        // Disable right Y-axis
-        barChart.axisRight.isEnabled = false
-        val xAxis = barChart.xAxis
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setCenterAxisLabels(true)
-        xAxis.granularity = 1f
-        xAxis.isGranularityEnabled = true
-        val line  = ContextCompat.getColor(requireActivity(), R.color.line)
-        xAxis.axisLineColor = line
-        xAxis.axisLineWidth = 1.5f
-        xAxis.setDrawAxisLine(true)
-        xAxis.setDrawGridLines(false)
-        barChart.invalidate()
-    }
-
-
-
 
 
 
     private fun updateUIForWeek() {
+        dataType = "week"
         binding.calendar.text = viewModel.week.first+" - "+viewModel.week.second
         binding.calendar.textSize = 16f
         binding.calendar.setOnClickListener {
@@ -254,16 +211,17 @@ class SummaryFragment : Fragment() {
                 currentDate = editable.toString()
                 unixTimeStart = convertDateWeekStringToUnixTime(binding.calendar.text.toString())
                 unixTimeEnd = convertDateEndWeekStringToUnixTime(binding.calendar.text.toString())
+                Log.i("askjdbgakhjsdbasd",unixTimeStart.toString())
+                Log.i("askjdbgakhjsdbasd",unixTimeEnd.toString())
                 AVLoading.startAnimLoading()
                 CoroutineScope(Dispatchers.Main).launch {
                     delay(300)
                     viewModel.reportSummary(
                         idmember = idMember,
-                        datatype = "week",
+                        datatype = dataType,
                         end_timestamp = unixTimeEnd,
                         start_timestamp = unixTimeStart,
                     ) { model ->
-                        AVLoading.stopAnimLoading()
                         if (model.success) {
                             activity?.runOnUiThread {
                                 binding.expendsSummary.text = model.data[0].total_expenses
@@ -275,21 +233,30 @@ class SummaryFragment : Fragment() {
                             }
                         }
                     }
-
+                    viewModel.reportListGraph(
+                        idmember = idMember,
+                        datatype = dataType,
+                        end_timestamp = unixTimeEnd,
+                        start_timestamp = unixTimeStart
+                    ) { graph ->
+                        AVLoading.stopAnimLoading()
+                        if (graph.success) {
+                            graph(graph)
+                        }
+                    }
                 }
-
             }
         })
         unixTimeStart = convertDateWeekStringToUnixTime(binding.calendar.text.toString())
         unixTimeEnd = convertDateEndWeekStringToUnixTime(binding.calendar.text.toString())
         viewModel.reportSummary(
             idmember = idMember,
-            datatype = "week",
+            datatype = dataType,
             end_timestamp = unixTimeEnd,
-            start_timestamp = unixTimeStart,
+            start_timestamp = unixTimeStart
         ) { model ->
             if (model.success) {
-                activity?.runOnUiThread{
+                activity?.runOnUiThread {
                     binding.expendsSummary.text = model.data[0].total_expenses
                     binding.incomeSummary.text = model.data[0].total_income
                     binding.incomeTypeSummary.text = model.data[0].total_Income_Certain
@@ -299,9 +266,19 @@ class SummaryFragment : Fragment() {
                 }
             }
         }
-
-
+        viewModel.reportListGraph(
+            idmember = idMember,
+            datatype = dataType,
+            end_timestamp = unixTimeEnd,
+            start_timestamp = unixTimeStart
+        ) { graph ->
+            if (graph.success) {
+                graph(graph)
+            }
+        }
     }
+
+
 
     private fun convertDateEndWeekStringToUnixTime(weekRangeString: String): Long {
         return try {
@@ -374,8 +351,8 @@ class SummaryFragment : Fragment() {
         binding.back.setOnClickListener { goBack1Month() }
         binding.forward.setOnClickListener { forward1Month() }
         binding.calendar.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int, ) {}
+            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int, ) {}
             override fun afterTextChanged(editable: Editable?) {
                 currentDate = editable.toString()
                 unixTimeStart = convertMonthStringToUnixTime(binding.calendar.text.toString())
@@ -385,11 +362,10 @@ class SummaryFragment : Fragment() {
                     delay(300)
                     viewModel.reportSummary(
                         idmember = idMember,
-                        datatype = "month",
+                        datatype = dataType,
                         end_timestamp = unixTimeEnd,
                         start_timestamp = unixTimeStart,
                     ) { model ->
-                        AVLoading.stopAnimLoading()
                         if (model.success) {
                             activity?.runOnUiThread {
                                 binding.expendsSummary.text = model.data[0].total_expenses
@@ -401,25 +377,52 @@ class SummaryFragment : Fragment() {
                             }
                         }
                     }
+                    viewModel.reportListGraph(
+                        idmember = idMember,
+                        datatype = dataType,
+                        end_timestamp = unixTimeEnd,
+                        start_timestamp = unixTimeStart,
+                    ){ graph ->
+                        AVLoading.stopAnimLoading()
+                        if (graph.success) {
+                            graph(graph)
+                        }
+                    }
                 }
             }
         })
         unixTimeStart = convertMonthStringToUnixTime(binding.calendar.text.toString())
         unixTimeEnd = convertEndMonthStringToUnixTime(binding.calendar.text.toString())
-        viewModel.reportSummary(
-            idmember = idMember,
-            datatype = "month",
-            end_timestamp = unixTimeEnd,
-            start_timestamp = unixTimeStart,
-        ) { model ->
-            if (model.success) {
-                activity?.runOnUiThread {
-                    binding.expendsSummary.text = model.data[0].total_expenses
-                    binding.incomeSummary.text = model.data[0].total_income
-                    binding.incomeTypeSummary.text = model.data[0].total_Income_Certain
-                    binding.incomeTypeUncertainSummary.text = model.data[0].total_Income_Uncertain
-                    binding.expendsTypeSummary.text = model.data[0].total_Expenses_Necessary
-                    binding.expendsTypeUnSummary.text = model.data[0].total_Expenses_Unnecessary
+        AVLoading.startAnimLoading()
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(300)
+            viewModel.reportSummary(
+                idmember = idMember,
+                datatype = dataType,
+                end_timestamp = unixTimeEnd,
+                start_timestamp = unixTimeStart,
+            ) { model ->
+
+                if (model.success) {
+                    activity?.runOnUiThread {
+                        binding.expendsSummary.text = model.data[0].total_expenses
+                        binding.incomeSummary.text = model.data[0].total_income
+                        binding.incomeTypeSummary.text = model.data[0].total_Income_Certain
+                        binding.incomeTypeUncertainSummary.text = model.data[0].total_Income_Uncertain
+                        binding.expendsTypeSummary.text = model.data[0].total_Expenses_Necessary
+                        binding.expendsTypeUnSummary.text = model.data[0].total_Expenses_Unnecessary
+                    }
+                }
+            }
+            viewModel.reportListGraph(
+                idmember = idMember,
+                datatype = dataType,
+                end_timestamp = unixTimeEnd,
+                start_timestamp = unixTimeStart,
+            ){ graph ->
+                AVLoading.stopAnimLoading()
+                if (graph.success) {
+                    graph(graph)
                 }
             }
         }
@@ -467,11 +470,10 @@ class SummaryFragment : Fragment() {
                     delay(300)
                     viewModel.reportSummary(
                         idmember = idMember,
-                        datatype = "year",
+                        datatype = dataType,
                         end_timestamp = unixTimeEnd,
                         start_timestamp = unixTimeStart,
                     ) { model ->
-                        AVLoading.stopAnimLoading()
                         if (model.success) {
                             activity?.runOnUiThread {
                                 binding.expendsSummary.text = model.data[0].total_expenses
@@ -481,6 +483,17 @@ class SummaryFragment : Fragment() {
                                 binding.expendsTypeSummary.text = model.data[0].total_Expenses_Necessary
                                 binding.expendsTypeUnSummary.text = model.data[0].total_Expenses_Unnecessary
                             }
+                        }
+                    }
+                    viewModel.reportListGraph(
+                        idmember = idMember,
+                        datatype = dataType,
+                        end_timestamp = unixTimeEnd,
+                        start_timestamp = unixTimeStart,
+                    ){ graph ->
+                        AVLoading.stopAnimLoading()
+                        if (graph.success) {
+                            graph(graph)
                         }
                     }
                 }
@@ -493,11 +506,11 @@ class SummaryFragment : Fragment() {
             delay(300)
             viewModel.reportSummary(
                 idmember = idMember,
-                datatype = "year",
+                datatype = dataType,
                 end_timestamp = unixTimeEnd,
                 start_timestamp = unixTimeStart,
             ) { model ->
-                AVLoading.stopAnimLoading()
+
                 if (model.success) {
                     activity?.runOnUiThread {
                         binding.expendsSummary.text = model.data[0].total_expenses
@@ -507,6 +520,17 @@ class SummaryFragment : Fragment() {
                         binding.expendsTypeSummary.text = model.data[0].total_Expenses_Necessary
                         binding.expendsTypeUnSummary.text = model.data[0].total_Expenses_Unnecessary
                     }
+                }
+            }
+            viewModel.reportListGraph(
+                idmember = idMember,
+                datatype = dataType,
+                end_timestamp = unixTimeEnd,
+                start_timestamp = unixTimeStart,
+            ){ graph ->
+                AVLoading.stopAnimLoading()
+                if (graph.success) {
+                    graph(graph)
                 }
             }
         }
@@ -568,10 +592,8 @@ class SummaryFragment : Fragment() {
         }
 
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
-        val startOfWeek = calendar.time
-
         calendar.add(Calendar.DAY_OF_WEEK, 6)
-        val endOfWeek = calendar.time
+
 
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
@@ -827,20 +849,59 @@ class SummaryFragment : Fragment() {
         }
     }
 
+    private fun graph(graphData: ReportListGraph) {
+        val barChart: BarChart = binding.barChart
+        barChart.description.text = ""
+        val dataOfList = graphData.data.dataOfList
 
-
-
-
-
-}
-
-class MyXAxisValueFormatter(private val xAxisValues: List<Float>) : ValueFormatter() {
-    override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-        val index = value.toInt()
-        return if (index >= 0 && index < xAxisValues.size) {
-            xAxisValues[index].toString()
-        } else {
-            ""
+        val incomeEntries = mutableListOf<BarEntry>()
+        val expenseEntries = mutableListOf<BarEntry>()
+        val labels = mutableListOf<String>()
+        dataOfList.forEachIndexed { index, dataOf ->
+            incomeEntries.add(BarEntry(index.toFloat(), dataOf.totalIncome.toFloat()))
+            expenseEntries.add(BarEntry(index.toFloat(), dataOf.totalExpenses.toFloat()))
+            labels.add(dataOf.number)
         }
+        val incomeDataSet = BarDataSet(incomeEntries, "รายรับ")
+        incomeDataSet.color = ContextCompat.getColor(requireContext(), R.color.income)
+
+        val expenseDataSet = BarDataSet(expenseEntries, "รายจ่าย")
+        expenseDataSet.color = ContextCompat.getColor(requireContext(), R.color.expends)
+
+        val dataSets = mutableListOf<IBarDataSet>()
+        dataSets.add(incomeDataSet)
+        dataSets.add(expenseDataSet)
+
+        val barData = BarData(dataSets)
+
+        val groupSpace = 0.3f
+        val barSpace = 0.05f
+        val barWidth = 0.3f
+        barData.barWidth = barWidth
+        barChart.xAxis.axisMinimum = 0f
+        barChart.xAxis.axisMaximum = graphData.data.dataOfList.size.toFloat()
+        barData.groupBars(0f, groupSpace, barSpace)
+
+        barChart.data = barData
+
+        barChart.xAxis.valueFormatter = IndexAxisValueFormatter(labels) // ใช้ labels เป็นรายการ label บนแกน x
+        barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        barChart.axisRight.isEnabled = false
+        val xAxis = barChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.setCenterAxisLabels(true)
+        xAxis.granularity = 1f
+        xAxis.isGranularityEnabled = true
+        val line = ContextCompat.getColor(requireActivity(), R.color.line)
+        xAxis.axisLineColor = line
+        xAxis.axisLineWidth = 1.5f
+        xAxis.setDrawAxisLine(true)
+        xAxis.setDrawGridLines(false)
+        barChart.invalidate()
     }
+
+
+
+
 }
+

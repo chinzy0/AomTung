@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,9 +17,7 @@ import com.money.moneyx.R
 import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.FragmentListDayBinding
 import com.money.moneyx.main.addListPage.AddListScreenActivity
-import com.money.moneyx.main.autoSave.AutoSaveAdapter
 import com.money.moneyx.main.incomeExpends.listPage.ListPageAdapter
-import com.money.moneyx.main.incomeExpends.summary.ReportALL
 import com.money.moneyx.main.incomeExpends.summary.SummaryViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +44,7 @@ class ListDayFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list_day, container, false)
         viewModel = ViewModelProvider(this)[SummaryViewModel::class.java]
         binding.summaryViewModel = viewModel
@@ -61,9 +58,24 @@ class ListDayFragment : Fragment() {
     }
 
     private fun adapter() {
+
+
         listPageAdapter = ListPageAdapter(viewModel.listDay) { model ->
-
-
+            when(model.first){
+                model.first -> {
+                    if (model.second == "income"){
+                        var intent = Intent(requireActivity(),AddListScreenActivity:: class.java)
+                        intent.putExtra("edit", "editIncome")
+                        intent.putExtra("modelIncomeExpends", model.third)
+                        startActivity(intent)
+                    }else{
+                        var intent = Intent(requireActivity(),AddListScreenActivity:: class.java)
+                        intent.putExtra("edit", "editExpense")
+                        intent.putExtra("modelIncomeExpends", model.third)
+                        startActivity(intent)
+                    }
+                }
+            }
         }
         binding.RCVday.apply {
             layoutManager = LinearLayoutManager(context)
@@ -75,11 +87,12 @@ class ListDayFragment : Fragment() {
         } else {
             binding.RCVday.visibility = View.VISIBLE
         }
+
+
     }
 
     private fun callAPI() {
         binding.calendar.text = viewModel.date
-        binding.calendar2.text = viewModel.date
         binding.calendar.textSize = 20f
         binding.calendar.setOnClickListener {
             openCalendarPicker(binding.calendar.text.toString())
@@ -97,7 +110,7 @@ class ListDayFragment : Fragment() {
                 CoroutineScope(Dispatchers.Main).launch {
                     delay(300)
                     viewModel.reportSummary(idmember = idMember, datatype = "day", end_timestamp = unixTimeEnd, start_timestamp = unixTimeStart,) { model ->
-                        AVLoading.stopAnimLoading()
+
                         if (model.success) {
                             activity?.runOnUiThread {
                                 binding.expendsSummary.text = model.data[0].total_expenses
@@ -115,19 +128,18 @@ class ListDayFragment : Fragment() {
                         end_timestamp = unixTimeEnd,
                         start_timestamp = unixTimeStart,
                     ){ listDay ->
+                        AVLoading.stopAnimLoading()
                         viewModel.listDay.clear()
                         listDay.data.map {
                             it.report_List_ALL.map { map ->
                                 viewModel.listDay.add(map)
-                                activity?.runOnUiThread {
-                                    adapter()
-                                }
                             }
                         }
+                        activity?.runOnUiThread {
+                            adapter()
+                        }
                     }
-
                 }
-
             }
         })
         unixTimeStart = convertDateStringToUnixTime(binding.calendar.text.toString())
@@ -159,11 +171,11 @@ class ListDayFragment : Fragment() {
            listDay.data.map {
                it.report_List_ALL.map { map ->
                    viewModel.listDay.add(map)
-                   activity?.runOnUiThread {
-                       adapter()
-                   }
                }
            }
+            activity?.runOnUiThread {
+                adapter()
+            }
         }
 
 
@@ -188,7 +200,7 @@ class ListDayFragment : Fragment() {
                 val dateFormat = SimpleDateFormat("d MMMM yyyy",  Locale("th","TH"))
                 val formattedDate = dateFormat.format(selectedDate.time)
                 binding.calendar.text = formattedDate
-                binding.calendar2.text = formattedDate
+
             },
             year,
             month,
@@ -205,7 +217,7 @@ class ListDayFragment : Fragment() {
         calendar.add(Calendar.DAY_OF_MONTH, -1)
         val formattedDate = dateFormat.format(calendar.time)
         binding.calendar.text = formattedDate
-        binding.calendar2.text = formattedDate
+
 
     }
 
@@ -218,7 +230,7 @@ class ListDayFragment : Fragment() {
         calendar.add(Calendar.DAY_OF_MONTH, +1)
         val formattedDate = dateFormat.format(calendar.time)
         binding.calendar.text = formattedDate
-        binding.calendar2.text = formattedDate
+
     }
 
     private fun convertDateStringToUnixTime(dateString: String): Long {

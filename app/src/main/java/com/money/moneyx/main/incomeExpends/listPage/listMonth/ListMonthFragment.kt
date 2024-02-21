@@ -1,6 +1,7 @@
 package com.money.moneyx.main.incomeExpends.listPage.listMonth
 
 import android.app.Dialog
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -19,10 +20,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
 import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.FragmentListMonthBinding
+import com.money.moneyx.main.addListPage.AddListScreenActivity
+import com.money.moneyx.main.incomeExpends.listPage.ListPageAdapter
 import com.money.moneyx.main.incomeExpends.summary.SummaryViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +38,7 @@ import java.util.Locale
 
 class ListMonthFragment : Fragment() {
     private lateinit var binding: FragmentListMonthBinding
+    private lateinit var listPageAdapter: ListPageAdapter
     private lateinit var viewModel: SummaryViewModel
     private var idMember = 0
     private var currentDate = ""
@@ -95,6 +100,22 @@ class ListMonthFragment : Fragment() {
                             }
                         }
                     }
+                    viewModel.reportListSummary(
+                        idmember = idMember,
+                        datatype = "month",
+                        end_timestamp = unixTimeEnd,
+                        start_timestamp = unixTimeStart,
+                    ){ listDay ->
+                        viewModel.listDay.clear()
+                        listDay.data.map {
+                            it.report_List_ALL.map { map ->
+                                viewModel.listDay.add(map)
+                            }
+                        }
+                        activity?.runOnUiThread {
+                            adapter()
+                        }
+                    }
                 }
             }
         })
@@ -118,6 +139,22 @@ class ListMonthFragment : Fragment() {
                         binding.expendsTypeSummary.text = model.data[0].total_Expenses_Necessary
                         binding.expendsTypeUnSummary.text = model.data[0].total_Expenses_Unnecessary
                     }
+                }
+            }
+            viewModel.reportListSummary(
+                idmember = idMember,
+                datatype = "month",
+                end_timestamp = unixTimeEnd,
+                start_timestamp = unixTimeStart,
+            ){ listDay ->
+                viewModel.listDay.clear()
+                listDay.data.map {
+                    it.report_List_ALL.map { map ->
+                        viewModel.listDay.add(map)
+                    }
+                }
+                activity?.runOnUiThread {
+                    adapter()
                 }
             }
         }
@@ -156,6 +193,36 @@ class ListMonthFragment : Fragment() {
             e.printStackTrace()
             -1
         }
+    }
+    private fun adapter() {
+        listPageAdapter = ListPageAdapter(viewModel.listDay) { model ->
+            when(model.first){
+                model.first -> {
+                    if (model.second == "income"){
+                        var intent = Intent(requireActivity(), AddListScreenActivity:: class.java)
+                        intent.putExtra("edit", "editIncome")
+                        intent.putExtra("modelIncomeExpends", model.third)
+                        startActivity(intent)
+                    }else{
+                        var intent = Intent(requireActivity(), AddListScreenActivity:: class.java)
+                        intent.putExtra("edit", "editExpense")
+                        intent.putExtra("modelIncomeExpends", model.third)
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
+        binding.RCVday.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = listPageAdapter
+            listPageAdapter.notifyDataSetChanged()
+        }
+        if (viewModel.listDay.isEmpty()) {
+            binding.RCVday.visibility = View.GONE
+        } else {
+            binding.RCVday.visibility = View.VISIBLE
+        }
+
     }
     private fun dropdownListPage(monthAndYear: String, ) {
         val dialog = Dialog(requireActivity())

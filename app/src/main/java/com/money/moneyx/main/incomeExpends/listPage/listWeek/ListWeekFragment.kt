@@ -1,6 +1,7 @@
 package com.money.moneyx.main.incomeExpends.listPage.listWeek
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,10 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.iamauttamai.avloading.ui.AVLoading
 import com.money.moneyx.R
 import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.FragmentListWeekBinding
+import com.money.moneyx.main.addListPage.AddListScreenActivity
+import com.money.moneyx.main.incomeExpends.listPage.ListPageAdapter
 import com.money.moneyx.main.incomeExpends.summary.SummaryViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +30,7 @@ import java.util.Locale
 class ListWeekFragment : Fragment() {
     private lateinit var binding: FragmentListWeekBinding
     private lateinit var viewModel: SummaryViewModel
+    private lateinit var listPageAdapter: ListPageAdapter
     private var idMember = 0
     private var currentDate = ""
     private var unixTimeStart = 0L
@@ -85,35 +90,94 @@ class ListWeekFragment : Fragment() {
                             }
                         }
                     }
+                    viewModel.reportListSummary(
+                        idmember = idMember,
+                        datatype = "week",
+                        end_timestamp = unixTimeEnd,
+                        start_timestamp = unixTimeStart,
+                    ){ listDay ->
+                        viewModel.listDay.clear()
+                        listDay.data.map {
+                            it.report_List_ALL.map { map ->
+                                viewModel.listDay.add(map)
+                            }
+                        }
+                        activity?.runOnUiThread {
+                            adapter()
+                        }
+                    }
+
                 }
 
             }
         })
         unixTimeStart = convertDateWeekStringToUnixTime(binding.calendar.text.toString())
         unixTimeEnd = convertDateEndWeekStringToUnixTime(binding.calendar.text.toString())
-        AVLoading.startAnimLoading()
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(300)
-            viewModel.reportSummary(
-                idmember = idMember,
-                datatype = "week",
-                end_timestamp = unixTimeEnd,
-                start_timestamp = unixTimeStart,
-            ) { model ->
-                AVLoading.stopAnimLoading()
-                if (model.success) {
-                    activity?.runOnUiThread {
-                        binding.expendsSummary.text = model.data[0].total_expenses
-                        binding.incomeSummary.text = model.data[0].total_income
-                        binding.incomeTypeSummary.text = model.data[0].total_Income_Certain
-                        binding.incomeTypeUncertainSummary.text = model.data[0].total_Income_Uncertain
-                        binding.expendsTypeSummary.text = model.data[0].total_Expenses_Necessary
-                        binding.expendsTypeUnSummary.text = model.data[0].total_Expenses_Unnecessary
+        viewModel.reportSummary(
+            idmember = idMember,
+            datatype = "week",
+            end_timestamp = unixTimeEnd,
+            start_timestamp = unixTimeStart,
+        ) { model ->
+            if (model.success) {
+                activity?.runOnUiThread{
+                    binding.expendsSummary.text = model.data[0].total_expenses
+                    binding.incomeSummary.text = model.data[0].total_income
+                    binding.incomeTypeSummary.text = model.data[0].total_Income_Certain
+                    binding.incomeTypeUncertainSummary.text = model.data[0].total_Income_Uncertain
+                    binding.expendsTypeSummary.text = model.data[0].total_Expenses_Necessary
+                    binding.expendsTypeUnSummary.text = model.data[0].total_Expenses_Unnecessary
+                }
+            }
+        }
+        viewModel.reportListSummary(
+            idmember = idMember,
+            datatype = "week",
+            end_timestamp = unixTimeEnd,
+            start_timestamp = unixTimeStart,
+        ){ listDay ->
+            viewModel.listDay.clear()
+            listDay.data.map {
+                it.report_List_ALL.map { map ->
+                    viewModel.listDay.add(map)
+                }
+            }
+            activity?.runOnUiThread {
+                adapter()
+            }
+        }
+    }
+
+    private fun adapter() {
+        listPageAdapter = ListPageAdapter(viewModel.listDay) { model ->
+            when(model.first){
+                model.first -> {
+                    if (model.second == "income"){
+                        var intent = Intent(requireActivity(), AddListScreenActivity:: class.java)
+                        intent.putExtra("edit", "editIncome")
+                        intent.putExtra("modelIncomeExpends", model.third)
+                        startActivity(intent)
+                    }else{
+                        var intent = Intent(requireActivity(), AddListScreenActivity:: class.java)
+                        intent.putExtra("edit", "editExpense")
+                        intent.putExtra("modelIncomeExpends", model.third)
+                        startActivity(intent)
                     }
                 }
             }
         }
+        binding.RCVday.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = listPageAdapter
+            listPageAdapter.notifyDataSetChanged()
+        }
+        if (viewModel.listDay.isEmpty()) {
+            binding.RCVday.visibility = View.GONE
+        } else {
+            binding.RCVday.visibility = View.VISIBLE
+        }
     }
+
     private fun convertDateWeekStringToUnixTime(weekRangeString: String): Long {
         return try {
             val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH"))
@@ -154,7 +218,7 @@ class ListWeekFragment : Fragment() {
             calendar.time = dateFormat.parse(initialDate)
         }
 
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
         val startOfWeek = calendar.time
 
         calendar.add(Calendar.DAY_OF_WEEK, 6)
@@ -172,7 +236,7 @@ class ListWeekFragment : Fragment() {
                 selectedDate.set(selectedYear, selectedMonth, selectedDay)
                 val selectedDateFormatted = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH")).format(selectedDate.time)
                 calendar.time = selectedDate.time
-                calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
                 val startOfWeek = calendar.time
                 calendar.add(Calendar.DAY_OF_WEEK, 6)
                 val endOfWeek = calendar.time

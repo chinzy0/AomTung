@@ -17,6 +17,7 @@ import com.money.moneyx.main.addListPage.addExpends.AddExpendsFragment
 import com.money.moneyx.main.addListPage.addIncome.AddIncomeFragment
 import com.money.moneyx.main.autoSave.GetListAutoData
 import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.Report
+import com.money.moneyx.main.incomeExpends.summary.ReportALL
 
 class AddListScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddListScreenBinding
@@ -26,6 +27,7 @@ class AddListScreenActivity : AppCompatActivity() {
     private var edit = ""
     private var editIncome: Report? = null
     private var editExpends: Report? = null
+    private var incomeExpends: ReportALL? = null
     private var editAutoSave: GetListAutoData? = null
     private var editAutoSaveIncome: GetListAutoData? = null
     private var editAutoSaveExpends: GetListAutoData? = null
@@ -54,6 +56,7 @@ class AddListScreenActivity : AppCompatActivity() {
         edit = intent.getStringExtra("edit").toString()
         editIncome = intent.getParcelableExtra("modelIncomeEdit")
         editExpends = intent.getParcelableExtra("modelExpenseEdit")
+        incomeExpends = intent.getParcelableExtra("modelIncomeExpends")
         editAutoSave = intent.getParcelableExtra("AutoSave")
         if (edit == "null") {
             binding.appbarAddListPage.textView9.text = "เพิ่มรายการ"
@@ -99,8 +102,8 @@ class AddListScreenActivity : AppCompatActivity() {
     private fun tabLayout() {
         val fragmentManager: FragmentManager = supportFragmentManager
         fragment.clear()
-        fragment.add(AddIncomeFragment(editIncome,editAutoSaveIncome))
-        fragment.add(AddExpendsFragment(editExpends,editAutoSaveExpends))
+        fragment.add(AddIncomeFragment(editIncome,editAutoSaveIncome,incomeExpends))
+        fragment.add(AddExpendsFragment(editExpends,editAutoSaveExpends,incomeExpends))
         mPageAdapter = ViewPagerAdapter(fragmentManager, lifecycle, fragment)
         binding.ListAddPage.adapter = mPageAdapter
         binding.ListAddPage.isUserInputEnabled = false

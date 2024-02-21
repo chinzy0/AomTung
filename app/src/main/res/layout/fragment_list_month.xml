@@ -341,26 +341,18 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/constraintLayout23">
 
-                    <TextView
-                        android:id="@+id/calendar2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="25dp"
-                        android:layout_marginTop="10dp"
-                        android:fontFamily="@font/sukhumvit_set_text"
-                        android:text="22 ธันวาคม 2566"
-                        android:textColor="#B1B1B1"
-                        android:textSize="13sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/RCVday"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="25dp"
                         android:layout_marginTop="10dp"
-                        tools:listitem="@layout/list_income_expends"
-                        app:layout_constraintTop_toBottomOf="@+id/calendar2" />
+
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:listitem="@layout/list_income_expends" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

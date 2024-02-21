@@ -77,9 +77,11 @@ class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIn
     private fun setData() {
         viewModel.incomeModel.clear()
         reportMonthListIncome!!.map {
-            val total = it.total_Income_Certain.toFloat() + it.total_Income_Uncertain.toFloat()
-            incomeCertain = it.total_Income_Certain.toDouble()
-            incomeUnCertain = it.total_Income_Uncertain.toDouble()
+            val certainIncomeWithoutCommas = it.total_Income_Certain.replace(",", "")
+            val uncertainIncomeWithoutCommas = it.total_Income_Uncertain.replace(",", "")
+            val total = certainIncomeWithoutCommas.toFloat() + uncertainIncomeWithoutCommas.toFloat()
+            incomeCertain = certainIncomeWithoutCommas.toDouble()
+            incomeUnCertain = uncertainIncomeWithoutCommas.toDouble()
             incomeCertainGraph = (incomeCertain / total * 100) * 0.01
             incomeUnCertainGraph = (incomeUnCertain / total * 100) * 0.01
             viewModel.incomeModel.addAll(it.report_List)

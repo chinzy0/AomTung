@@ -77,9 +77,11 @@ class ExpendsReportFragment(
     private fun setData() {
         viewModel.expendsModel.clear()
         reportMonthListExpenses!!.map {
-            val total = it.total_Expenses_Necessary.toFloat() + it.total_Expenses_Unnecessary.toFloat()
-            expensesNecessary = it.total_Expenses_Necessary.toDouble()
-            expensesUnNecessary = it.total_Expenses_Unnecessary.toDouble()
+            val totalExpensesNecessary = it.total_Expenses_Necessary.replace(",", "")
+            val totalExpensesUnnecessary = it.total_Expenses_Unnecessary.replace(",", "")
+            val total = totalExpensesNecessary.toFloat() + totalExpensesUnnecessary.toFloat()
+            expensesNecessary = totalExpensesNecessary.toDouble()
+            expensesUnNecessary = totalExpensesUnnecessary.toDouble()
             expensesUnNecessaryGraph = (expensesUnNecessary / total * 100) * 0.01
             expensesNecessaryGraph = (expensesNecessary / total * 100) * 0.01
             viewModel.expendsModel.addAll(it.report_List)
