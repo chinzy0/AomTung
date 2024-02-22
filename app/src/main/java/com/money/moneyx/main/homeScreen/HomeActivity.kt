@@ -3,6 +3,7 @@ package com.money.moneyx.main.homeScreen
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -27,7 +28,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var viewModel: HomeViewModel
     private var positionClick = ""
     private var idMember = 0
-
+    private var isLoading = false
 
     companion object {
         var getAllTypeIncomeData: GetAllTypeIncome? = null
@@ -49,6 +50,7 @@ class HomeActivity : AppCompatActivity() {
         positionClick = intent.getStringExtra("positionClick").toString()
         val preferences = Preference.getInstance(this)
         idMember = preferences.getInt("idmember", 0)
+
         loadingScreen(this)
         changePage()
 
@@ -94,11 +96,13 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        runOnUiThread {
-            val fragmentManager = supportFragmentManager
-            val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.frame_layout, fragment)
-            fragmentTransaction.commit()
-        }
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.frame_layout, fragment)
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
     }
+
+
+
 }

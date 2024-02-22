@@ -133,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sukhumvit_set_text"
                     android:paddingVertical="11dp"
-                    android:text="@string/submit"
+                    android:text="@string/d"
                     android:textColor="@color/white"
                     android:textSize="22sp"
                     android:textStyle="bold"

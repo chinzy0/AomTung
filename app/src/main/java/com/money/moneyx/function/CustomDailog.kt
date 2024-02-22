@@ -1,6 +1,5 @@
 package com.money.moneyx.function
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
@@ -19,12 +18,10 @@ import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,8 +29,10 @@ import com.money.moneyx.R
 import com.money.moneyx.main.addListPage.addExpends.GetAllTypeExpenses
 import com.money.moneyx.main.addListPage.addIncome.GetAllTypeIncome
 import com.money.moneyx.main.addListPage.addIncome.ListScheduleAuto
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 
@@ -302,8 +301,17 @@ fun dateTimeExpends(mContext: Activity,initialDate: String? , onDateSelected: (S
 }
 
 
-fun showTimePicker(mContext: Activity,onTimeSelected: (String) -> Unit) {
-    val calendar = Calendar.getInstance()
+fun showTimePicker(mContext: Activity, onTimeSelected1: String, onTimeSelected: (String) -> Unit) {
+    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    val initialTime: Date = try {
+        timeFormat.parse(onTimeSelected1)
+    } catch (e: ParseException) {
+        Calendar.getInstance().time // Default to current time if parsing fails
+    }
+
+    val calendar = Calendar.getInstance().apply {
+        time = initialTime
+    }
     val inflater = LayoutInflater.from(mContext)
     val view = inflater.inflate(R.layout.time_picker_dialog, null)
 

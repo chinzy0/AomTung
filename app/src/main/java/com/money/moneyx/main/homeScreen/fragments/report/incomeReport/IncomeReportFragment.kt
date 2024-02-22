@@ -105,9 +105,9 @@ class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIn
     private fun adapter() {
         activity?.runOnUiThread {
             incomeAdapter = IncomeReportAdapter(viewModel.incomeModel) { model ->
-                when(model.first){
+                when (model.first) {
                     model.first -> {
-                        var intent = Intent(requireActivity(),AddListScreenActivity:: class.java)
+                        var intent = Intent(requireActivity(), AddListScreenActivity::class.java)
                         intent.putExtra("edit", "editIncome")
                         intent.putExtra("modelIncomeEdit", model.third)
                         startActivity(intent)
@@ -117,7 +117,6 @@ class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIn
             binding.RCVpastIncome.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = incomeAdapter
-                incomeAdapter.notifyDataSetChanged()
             }
 
             if (viewModel.incomeModel.isEmpty()) {
@@ -127,9 +126,9 @@ class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIn
                 binding.RCVpastIncome.visibility = View.VISIBLE
                 binding.textView21.visibility = View.GONE
             }
-
         }
     }
+
 
     private fun setMonthYear() {
         binding.textMonth.text = viewModel.currentMonthIncome

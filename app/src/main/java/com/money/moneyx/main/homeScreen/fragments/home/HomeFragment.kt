@@ -102,7 +102,6 @@ class HomeFragment() : Fragment() {
 
 
     private fun fragmentSetup(reportMonth: ReportMonth) {
-
         activity?.runOnUiThread {
             reportMonth.data.map { map ->
                 val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
@@ -110,6 +109,8 @@ class HomeFragment() : Fragment() {
                 fragment.add(IncomeReportFragment(map.report_month_list_income))
                 fragment.add(ExpendsReportFragment(map.report_month_list_Expenses))
                 mPageAdapter = ViewPagerAdapter(fragmentManager, lifecycle, fragment)
+
+
                 binding.report.adapter = mPageAdapter
                 binding.report.isUserInputEnabled = false
 
@@ -117,6 +118,7 @@ class HomeFragment() : Fragment() {
             }
         }
     }
+
 
     private fun swapTab() {
         activity?.runOnUiThread {

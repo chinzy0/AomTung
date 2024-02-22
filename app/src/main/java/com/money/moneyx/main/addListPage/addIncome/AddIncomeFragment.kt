@@ -53,7 +53,7 @@ import java.util.Locale
 class AddIncomeFragment(
     private val editIncome: Report?,
     private val editAutoSave: GetListAutoData?,
-    private val incomeExpends: ReportALL?
+    private val incomeExpends: ReportALL?,
 ) : Fragment() {
     private lateinit var binding: FragmentAddIncomeBinding
     private lateinit var viewModel: AddIncomeViewModel
@@ -69,6 +69,7 @@ class AddIncomeFragment(
     private lateinit var currentDate: LocalDate
     private lateinit var listDate: LocalDate
     private var formattedDate = ""
+    private var formattedTime = ""
     private var edit = false
     private val onClickDialog = MutableLiveData<String>()
 
@@ -125,7 +126,7 @@ class AddIncomeFragment(
             Log.i("LocalDate", listDate.toString())
             val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
             formattedDate = localDateTime.format(dateFormat)
-            val formattedTime = localDateTime.format(timeFormat)
+            formattedTime = localDateTime.format(timeFormat)
 
             binding.textResult.setText(editAutoSaveAmount)
             binding.textTime2.text = model.type_name
@@ -152,7 +153,7 @@ class AddIncomeFragment(
             Log.i("LocalDate", listDate.toString())
             val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
             formattedDate = localDateTime.format(dateFormat)
-            val formattedTime = localDateTime.format(timeFormat)
+            formattedTime = localDateTime.format(timeFormat)
 
             binding.textResult.setText(amount)
             binding.textTime2.text = income.type_name
@@ -179,7 +180,7 @@ class AddIncomeFragment(
             Log.i("LocalDate", listDate.toString())
             val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
             formattedDate = localDateTime.format(dateFormat)
-            val formattedTime = localDateTime.format(timeFormat)
+            formattedTime = localDateTime.format(timeFormat)
 
             binding.textResult.setText(amount)
             binding.textTime2.text = data.type_name
@@ -297,14 +298,15 @@ class AddIncomeFragment(
                 }
 
                 "incomeDateClick" -> {
-                    dateTime(requireActivity(), binding.textDate.text.toString()) { formattedDate ->
+                    dateTime(requireActivity(), binding.textDate.text.toString()) { formatted ->
                         val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                        listDate = LocalDate.parse(formattedDate, dateFormat)
-                        binding.textDate.text = formattedDate
+                        listDate = LocalDate.parse(formatted, dateFormat)
+                        binding.textDate.text = formatted
                         if (listDate.isBefore(currentDate)) {
                             binding.autosaveButton.isEnabled = false
                             binding.textTime5.text = "ไม่มี"
-                            val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                            val textColor =
+                                ContextCompat.getColor(requireActivity(), R.color.disable)
                             binding.textTime5.setTextColor(textColor)
                             binding.title5.setTextColor(textColor)
                             binding.img55.visibility = View.VISIBLE
@@ -318,27 +320,40 @@ class AddIncomeFragment(
                             binding.img55.visibility = View.GONE
                             binding.detail55.visibility = View.GONE
                         }
-                        dateTimeSelected = convertDateTimeToUnixTimestamp(formattedDate, binding.textTime.text.toString())
+                        dateTimeSelected = convertDateTimeToUnixTimestamp(
+                            formattedDate,
+                            binding.textTime.text.toString()
+                        )
+                        updateData()
                     }
                 }
+
                 "incomeTimeClick" -> {
-                    showTimePicker(requireActivity()) { formattedTime ->
-                        binding.textTime.text = formattedTime
+                    showTimePicker(
+                        requireActivity(),
+                        binding.textTime.text.toString()
+                    ) { formatted ->
+                        binding.textTime.text = formatted
                         dateTimeSelected = convertDateTimeToUnixTimestamp(
                             binding.textDate.text.toString(),
-                            formattedTime
+                            formatted
                         )
+                        updateData()
                     }
                 }
+
                 "incomeTypeClick" -> {
                     selectType(requireActivity(), HomeActivity.getAllTypeIncomeData) { type ->
                         binding.textTime2.text = type.first
                         typeID = type.second
+                        updateData()
                     }
                 }
+
                 "incomeCategoryClick" -> {
                     selectCategory()
                 }
+
                 "incomeNoteClick" -> {
                     note(requireActivity(), noted = noteText, page = "income") { text ->
                         if (text.toString().isNotEmpty()) {
@@ -359,31 +374,57 @@ class AddIncomeFragment(
                             noteText = ""
                             description = ""
                         }
+                        updateData()
                     }
                 }
+
                 "incomeAutoSaveClick" -> {
                     autoSave(requireActivity(), HomeActivity.listScheduleAuto) { autoSaved ->
                         binding.textTime5.text = autoSaved.first
                         autoSaveID = autoSaved.second
+                        updateData()
                     }
                 }
+
                 "incomeDeleteClick" -> {
                     showConfirmDeleteDialog(requireActivity(), onClickDialog)
                 }
+
                 "incomeSaveClickButton" -> {
                     dateTimeSelected = convertDateTimeToUnixTimestamp(
                         binding.textDate.text.toString(),
-                        binding.textTime.text.toString())
+                        binding.textTime.text.toString()
+                    )
                     if (typeID == 0 || categoryId == 0) {
                         if (typeID == 0) {
-                            binding.textTime2.setTextColor(ContextCompat.getColor(binding.root.context, R.color.red))
+                            binding.textTime2.setTextColor(
+                                ContextCompat.getColor(
+                                    binding.root.context,
+                                    R.color.red
+                                )
+                            )
                         } else {
-                            binding.textTime2.setTextColor(ContextCompat.getColor(binding.root.context,R.color.black))
+                            binding.textTime2.setTextColor(
+                                ContextCompat.getColor(
+                                    binding.root.context,
+                                    R.color.black
+                                )
+                            )
                         }
                         if (categoryId == 0) {
-                            binding.textTime3.setTextColor(ContextCompat.getColor(binding.root.context, R.color.red))
+                            binding.textTime3.setTextColor(
+                                ContextCompat.getColor(
+                                    binding.root.context,
+                                    R.color.red
+                                )
+                            )
                         } else {
-                            binding.textTime3.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
+                            binding.textTime3.setTextColor(
+                                ContextCompat.getColor(
+                                    binding.root.context,
+                                    R.color.black
+                                )
+                            )
                         }
                         addListAlertDialog(requireActivity())
                     } else if (edit) {
@@ -426,6 +467,44 @@ class AddIncomeFragment(
         })
     }
 
+    private fun updateData() {
+        if (edit && binding.textResult.text.toString().toDouble() > 0) {
+            if (editIncome != null) {
+                val amount = editIncome.amount.replace(",", "")
+                if (binding.textDate.text != formattedDate || binding.textResult.text.toString()
+                        .toDouble() != amount.toDouble()
+                    || binding.textTime.text != formattedTime || typeID != editIncome.type_id || categoryId != editIncome.category_id
+                    || description != editIncome.description || autoSaveID != editIncome.save_auto_id
+                ) {
+                    enableBtn()
+                } else {
+                    unableBtn()
+                }
+            } else if (editAutoSave != null) {
+                val amount = editAutoSave.amount.replace(",", "")
+                if (binding.textDate.text != formattedDate || binding.textResult.text.toString()
+                        .toDouble() != amount.toDouble()
+                    || binding.textTime.text != formattedTime || typeID != editAutoSave.type_id || categoryId != editAutoSave.category_id
+                    || description != editAutoSave.description || autoSaveID != editAutoSave.save_auto_id
+                ) {
+                    enableBtn()
+                } else {
+                    unableBtn()
+                }
+            } else if (incomeExpends != null) {
+                val amount = incomeExpends.amount.replace(",", "")
+                if (binding.textDate.text != formattedDate || binding.textResult.text.toString()
+                        .toDouble() != amount.toDouble()
+                    || binding.textTime.text != formattedTime || typeID != incomeExpends.type_id || categoryId != incomeExpends.category_id
+                    || description != incomeExpends.description || autoSaveID != incomeExpends.save_auto_id
+                ) {
+                    enableBtn()
+                } else {
+                    unableBtn()
+                }
+            }
+        }
+    }
 
 
     private fun setDateTime() {
@@ -434,7 +513,20 @@ class AddIncomeFragment(
 
     }
 
-    private val resultActivityAppointment = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private fun enableBtn() {
+        val buttonColor = ContextCompat.getColor(requireContext(), R.color.income)
+        binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+        binding.buttonAddIncome.isEnabled = true
+    }
+
+    private fun unableBtn() {
+        val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
+        binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+        binding.buttonAddIncome.isEnabled = false
+    }
+
+    private val resultActivityAppointment =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.let { data ->
                     val x = data.getStringExtra("number").toString()
@@ -442,13 +534,15 @@ class AddIncomeFragment(
                 }
             }
         }
-    private val getCategory = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val getCategory =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.let { data ->
                     val categorySelected = data.getStringExtra("Category").toString()
                     val categoryID = data.getIntExtra("Category_Id", 0)
                     categoryId = categoryID
                     binding.textTime3.text = categorySelected
+                    updateData()
                 }
             }
         }
@@ -458,19 +552,23 @@ class AddIncomeFragment(
         val intent = Intent(requireActivity(), CategoryIncomeActivity::class.java)
         getCategory.launch(intent)
     }
+
     private fun changeColorBtn() {
         binding.textResult.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.toString().isEmpty()) {
                     AddListScreenActivity.textResult.value = s.toString()
+                    result = 0.0
                 } else {
                     AddListScreenActivity.textResult.value = s.toString()
                     try {
                         var resultValue = s.toString().toDouble()
                         if (resultValue > 0) {
-                            val buttonColor = ContextCompat.getColor(requireContext(), R.color.income)
-                            binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                            val buttonColor =
+                                ContextCompat.getColor(requireContext(), R.color.income)
+                            binding.buttonAddIncome.backgroundTintList =
+                                ColorStateList.valueOf(buttonColor)
                             binding.buttonAddIncome.isEnabled = true
                             if (s!!.length > 13) {
                                 val truncatedText = s.toString().substring(0, 13)
@@ -492,8 +590,10 @@ class AddIncomeFragment(
                             }
                             result = resultValue
                         } else {
-                            val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
-                            binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                            val buttonColor =
+                                ContextCompat.getColor(requireContext(), R.color.button_disable)
+                            binding.buttonAddIncome.backgroundTintList =
+                                ColorStateList.valueOf(buttonColor)
                             binding.buttonAddIncome.isEnabled = false
                         }
                         AddListScreenActivity.textResult.value = s.toString()
@@ -502,6 +602,7 @@ class AddIncomeFragment(
                     }
                 }
             }
+
             override fun afterTextChanged(s: Editable?) {
 
             }

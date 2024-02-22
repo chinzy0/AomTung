@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +18,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -53,7 +53,7 @@ import java.util.Locale
 class AddExpendsFragment(
     private val editExpends: Report?,
     private val editAutoSaveExpends: GetListAutoData?,
-    private val incomeExpends: ReportALL?
+    private val incomeExpends: ReportALL?,
 ) : Fragment() {
     private lateinit var binding: FragmentAddExpendsBinding
     private lateinit var viewModel: AddExpendsViewModel
@@ -67,9 +67,10 @@ class AddExpendsFragment(
     private var noteText = ""
     private var result = 0.0
     private var edit = false
-    private lateinit var currentDate : LocalDate
+    private lateinit var currentDate: LocalDate
     private lateinit var listDate: LocalDate
     private var formattedDate = ""
+    private var formattedTime = ""
     private val onClickDialog = MutableLiveData<String>()
 
 
@@ -118,7 +119,7 @@ class AddExpendsFragment(
             listDate = unixTimestampToLocalDate(model.timestamp)
             val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
             formattedDate = localDateTime.format(dateFormat)
-            val formattedTime = localDateTime.format(timeFormat)
+            formattedTime = localDateTime.format(timeFormat)
 
             binding.textTv.setText(editAutoSaveExpendsAmount)
             binding.textTime2.text = model.type_name
@@ -144,7 +145,7 @@ class AddExpendsFragment(
             listDate = unixTimestampToLocalDate(expends.timestamp)
             val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
             formattedDate = localDateTime.format(dateFormat)
-            val formattedTime = localDateTime.format(timeFormat)
+            formattedTime = localDateTime.format(timeFormat)
 
             binding.textTv.setText(amount)
             binding.textTime2.text = expends.type_name
@@ -172,7 +173,7 @@ class AddExpendsFragment(
             listDate = unixTimestampToLocalDate(data.timestamp)
             val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
             formattedDate = localDateTime.format(dateFormat)
-            val formattedTime = localDateTime.format(timeFormat)
+            formattedTime = localDateTime.format(timeFormat)
 
             binding.textTv.setText(amount)
             binding.textTime2.text = data.type_name
@@ -182,7 +183,7 @@ class AddExpendsFragment(
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
         }
-        if (editExpends != null || editAutoSaveExpends != null|| incomeExpends != null) {
+        if (editExpends != null || editAutoSaveExpends != null || incomeExpends != null) {
             edit = true
             if (description.isNotEmpty()) {
                 binding.textTime4.visibility = View.GONE
@@ -262,9 +263,7 @@ class AddExpendsFragment(
         } else {
             binding.deleteButton.visibility = View.GONE
         }
-        Log.i("asdkjghabskjd",autoSaveID.toString())
     }
-
 
 
     private fun setEventClick() {
@@ -287,15 +286,20 @@ class AddExpendsFragment(
                     intent.putExtra("resultExpends", binding.textTv.text.toString())
                     resultActivityAppointment.launch(intent)
                 }
+
                 "expendsDateClick" -> {
-                    dateTimeExpends(requireActivity(),binding.textDate.text.toString()) { formattedDate ->
+                    dateTimeExpends(
+                        requireActivity(),
+                        binding.textDate.text.toString()
+                    ) { formattedDate ->
                         val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
                         listDate = LocalDate.parse(formattedDate, dateFormat)
                         binding.textDate.text = formattedDate
                         if (listDate.isBefore(currentDate)) {
                             binding.autosaveButton.isEnabled = false
                             binding.textTime5.text = "ไม่มี"
-                            val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                            val textColor =
+                                ContextCompat.getColor(requireActivity(), R.color.disable)
                             binding.textTime5.setTextColor(textColor)
                             binding.title5.setTextColor(textColor)
                             binding.img55.visibility = View.VISIBLE
@@ -313,22 +317,29 @@ class AddExpendsFragment(
                             formattedDate,
                             binding.textTime.text.toString()
                         )
+                        updateData()
                     }
                 }
+
                 "expendsTimeClick" -> {
-                    showTimePicker(requireActivity()) { formattedTime ->
+                    showTimePicker(
+                        requireActivity(),
+                        binding.textTime.text.toString()
+                    ) { formattedTime ->
                         binding.textTime.text = formattedTime
                         dateTimeSelected = convertDateTimeToUnixTimestamp(
                             binding.textDate.text.toString(),
                             formattedTime
                         )
-
+                        updateData()
                     }
                 }
+
                 "expendsTypeClick" -> {
                     selectTypeExpends(requireActivity(), HomeActivity.getAllTypeExpenses) { type ->
                         binding.textTime2.text = type.first
                         typeID = type.second
+                        updateData()
                     }
                 }
 
@@ -355,8 +366,8 @@ class AddExpendsFragment(
                             binding.textTime44.visibility = View.GONE
                             noteText = ""
                             description = ""
-                            Log.i("asdkajgbhdasd",description.toString())
                         }
+                        updateData()
                     }
                 }
 
@@ -364,6 +375,7 @@ class AddExpendsFragment(
                     autoSave(requireActivity(), HomeActivity.listScheduleAuto) { autoSaved ->
                         binding.textTime5.text = autoSaved.first
                         autoSaveID = autoSaved.second
+                        updateData()
                     }
                 }
 
@@ -377,14 +389,35 @@ class AddExpendsFragment(
                         binding.textTime.text.toString()
                     )
                     if (typeID == 0 || categoryId == 0) {
-                        if (typeID == 0 ){
-                            binding.textTime2.setTextColor(ContextCompat.getColor(binding.root.context, R.color.red))
-                        }else{
-                            binding.textTime2.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
+                        if (typeID == 0) {
+                            binding.textTime2.setTextColor(
+                                ContextCompat.getColor(
+                                    binding.root.context,
+                                    R.color.red
+                                )
+                            )
+                        } else {
+                            binding.textTime2.setTextColor(
+                                ContextCompat.getColor(
+                                    binding.root.context,
+                                    R.color.black
+                                )
+                            )
                         }
-                        if (categoryId == 0){ binding.textTime3.setTextColor(ContextCompat.getColor(binding.root.context, R.color.red))
-                        }else{
-                            binding.textTime3.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
+                        if (categoryId == 0) {
+                            binding.textTime3.setTextColor(
+                                ContextCompat.getColor(
+                                    binding.root.context,
+                                    R.color.red
+                                )
+                            )
+                        } else {
+                            binding.textTime3.setTextColor(
+                                ContextCompat.getColor(
+                                    binding.root.context,
+                                    R.color.black
+                                )
+                            )
                         }
                         addListAlertDialog(requireActivity())
                     } else if (edit) {
@@ -429,6 +462,45 @@ class AddExpendsFragment(
         })
     }
 
+    private fun updateData() {
+        if (edit && binding.textTv.text.toString().toDouble() > 0) {
+            if (editExpends != null) {
+                val amount = editExpends.amount.replace(",", "")
+                if (binding.textDate.text != formattedDate || binding.textTv.text.toString()
+                        .toDouble() != amount.toDouble()
+                    || binding.textTime.text != formattedTime || typeID != editExpends.type_id || categoryId != editExpends.category_id
+                    || description != editExpends.description || autoSaveID != editExpends.save_auto_id
+                ) {
+                    enableBtn()
+                } else {
+                    unableBtn()
+                }
+            } else if (editAutoSaveExpends != null) {
+                val amount = editAutoSaveExpends.amount.replace(",", "")
+                if (binding.textDate.text != formattedDate || binding.textTv.text.toString()
+                        .toDouble() != amount.toDouble()
+                    || binding.textTime.text != formattedTime || typeID != editAutoSaveExpends.type_id || categoryId != editAutoSaveExpends.category_id
+                    || description != editAutoSaveExpends.description || autoSaveID != editAutoSaveExpends.save_auto_id
+                ) {
+                    enableBtn()
+                } else {
+                    unableBtn()
+                }
+            } else if (incomeExpends != null) {
+                val amount = incomeExpends.amount.replace(",", "")
+                if (binding.textDate.text != formattedDate || binding.textTv.text.toString()
+                        .toDouble() != amount.toDouble()
+                    || binding.textTime.text != formattedTime || typeID != incomeExpends.type_id || categoryId != incomeExpends.category_id
+                    || description != incomeExpends.description || autoSaveID != incomeExpends.save_auto_id
+                ) {
+                    enableBtn()
+                } else {
+                    unableBtn()
+                }
+            }
+        }
+    }
+
 
     private val resultActivityAppointment =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -448,6 +520,7 @@ class AddExpendsFragment(
                     val categoryID = data.getIntExtra("Category_Id", 0)
                     categoryId = categoryID
                     binding.textTime3.text = categorySelected
+                    updateData()
                 }
             }
         }
@@ -456,6 +529,18 @@ class AddExpendsFragment(
     private fun selectCategory() {
         val intent = Intent(requireActivity(), CategoryExpendsActivity::class.java)
         getCategory.launch(intent)
+    }
+
+    private fun enableBtn() {
+        val buttonColor = ContextCompat.getColor(requireContext(), R.color.expends)
+        binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
+        binding.buttonAddExpends.isEnabled = true
+    }
+
+    private fun unableBtn() {
+        val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
+        binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
+        binding.buttonAddExpends.isEnabled = false
     }
 
     private fun changeColorBtn() {
@@ -469,8 +554,10 @@ class AddExpendsFragment(
                     try {
                         var resultValue = s.toString().toDouble()
                         if (resultValue > 0) {
-                            val buttonColor = ContextCompat.getColor(requireContext(), R.color.expends)
-                            binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                            val buttonColor =
+                                ContextCompat.getColor(requireContext(), R.color.expends)
+                            binding.buttonAddExpends.backgroundTintList =
+                                ColorStateList.valueOf(buttonColor)
                             binding.buttonAddExpends.isEnabled = true
                             if (s!!.length > 13) {
                                 val truncatedText = s.toString().substring(0, 13)
@@ -492,8 +579,10 @@ class AddExpendsFragment(
                             }
                             result = resultValue
                         } else {
-                            val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
-                            binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
+                            val buttonColor =
+                                ContextCompat.getColor(requireContext(), R.color.button_disable)
+                            binding.buttonAddExpends.backgroundTintList =
+                                ColorStateList.valueOf(buttonColor)
                             binding.buttonAddExpends.isEnabled = false
                         }
                         AddListScreenActivity.textResult.value = s.toString()
@@ -557,6 +646,7 @@ class AddExpendsFragment(
         val instant = Instant.ofEpochSecond(unixTimestamp.toLong())
         return LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
     }
+
     private fun unixTimestampToLocalDate(unixTimestamp: Int): LocalDate {
         val instant = Instant.ofEpochSecond(unixTimestamp.toLong())
         return instant.atZone(ZoneId.systemDefault()).toLocalDate()

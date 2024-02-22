@@ -4,6 +4,7 @@
     <string name="hint_phone">063xxxxxxx</string>
     <string name="get_otp">รับรหัส OTP</string>
     <string name="submit">ยืนยัน</string>
+    <string name="d">ดำเนินการ</string>
     <string name="cancle">ยกเลิก</string>
     <string name="note">โน้ต</string>
     <string name="complete">เสร็จสิ้น</string>
