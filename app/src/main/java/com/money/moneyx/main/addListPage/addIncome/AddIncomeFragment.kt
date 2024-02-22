@@ -59,7 +59,7 @@ class AddIncomeFragment(
     private lateinit var viewModel: AddIncomeViewModel
     private var typeID = 0
     private var result = 0.0
-    private var autoSaveID = 1
+    private var autoSaveID = 0
     private var categoryId = 0
     private var idMember = 0
     private var description = ""
@@ -92,7 +92,6 @@ class AddIncomeFragment(
 
 
 
-
         setDateTime()
         editIncomeData()
         changeColorBtn()
@@ -112,13 +111,13 @@ class AddIncomeFragment(
         editAutoSave?.let { model ->
             val editAutoSaveAmount = editAutoSave?.amount?.replace(",", "")
             result = editAutoSaveAmount!!.toDouble()
-            categoryId = editAutoSave.category_id
-            typeID = editAutoSave.type_id
+            categoryId = model.category_id
+            typeID = model.type_id
             description = model.description
-            autoSaveID = editAutoSave.save_auto_id
-            categoryId = editAutoSave.category_id
-            description = editAutoSave.description
-            incomeID = editAutoSave.transaction_id
+            autoSaveID = model.save_auto_id
+            categoryId = model.category_id
+            description = model.description
+            incomeID = model.transaction_id
 
             val localDateTime = unixTimestampToLocalDateTime(model.timestamp)
             val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -163,17 +162,16 @@ class AddIncomeFragment(
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
         }
-
         editIncome?.let { data ->
-            val amount = editIncome.amount.replace(",", "")
+            val amount = data.amount.replace(",", "")
             result = amount.toDouble()
-            categoryId = editIncome.category_id
-            typeID = editIncome.type_id
+            categoryId = data.category_id
+            typeID = data.type_id
             description = data.description
-            autoSaveID = editIncome.save_auto_id
-            categoryId = editIncome.category_id
-            description = editIncome.description
-            incomeID = editIncome.transaction_id
+            autoSaveID = data.save_auto_id
+            categoryId = data.category_id
+            description = data.description
+            incomeID = data.transaction_id
 
             val localDateTime = unixTimestampToLocalDateTime(data.timestamp)
             val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -232,7 +230,6 @@ class AddIncomeFragment(
                     binding.title5.setTextColor(textColor)
                     binding.img55.visibility = View.VISIBLE
                     binding.detail55.visibility = View.VISIBLE
-                    autoSaveID = 1
                 } else {
                     val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
                     binding.textTime5.setTextColor(textColor)
@@ -272,6 +269,7 @@ class AddIncomeFragment(
         } else {
             binding.deleteButton.visibility = View.GONE
         }
+
     }
 
 
@@ -389,7 +387,6 @@ class AddIncomeFragment(
                         }
                         addListAlertDialog(requireActivity())
                     } else if (edit) {
-                        autoSaveID = editAutoSave?.save_auto_id ?: editIncome?.save_auto_id ?: incomeExpends?.save_auto_id ?: 0
                         AVLoading.startAnimLoading()
                         viewModel.updateIncome(
                             income_id = incomeID,

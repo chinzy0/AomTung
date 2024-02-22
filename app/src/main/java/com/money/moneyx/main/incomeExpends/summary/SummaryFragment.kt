@@ -20,13 +20,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.google.android.material.tabs.TabLayout
 import com.iamauttamai.avloading.ui.AVLoading
@@ -153,7 +151,7 @@ class SummaryFragment : Fragment() {
                     ){ graph ->
                         AVLoading.stopAnimLoading()
                         if (graph.success) {
-                            graph(graph)
+                            activity?.runOnUiThread{ graph(graph) }
                         }
                     }
                 }
@@ -179,16 +177,14 @@ class SummaryFragment : Fragment() {
                     }
                 }
             }
-
             viewModel.reportListGraph(
                 idmember = idMember,
                 datatype = dataType,
                 end_timestamp = unixTimeEnd,
                 start_timestamp = unixTimeStart,
             ) { graph ->
-
                 if (graph.success) {
-                    graph(graph)
+                    activity?.runOnUiThread{ graph(graph) }
                 }
         }
     }
@@ -241,7 +237,7 @@ class SummaryFragment : Fragment() {
                     ) { graph ->
                         AVLoading.stopAnimLoading()
                         if (graph.success) {
-                            graph(graph)
+                            activity?.runOnUiThread{ graph(graph) }
                         }
                     }
                 }
@@ -273,7 +269,7 @@ class SummaryFragment : Fragment() {
             start_timestamp = unixTimeStart
         ) { graph ->
             if (graph.success) {
-                graph(graph)
+                activity?.runOnUiThread{ graph(graph) }
             }
         }
     }
@@ -385,7 +381,7 @@ class SummaryFragment : Fragment() {
                     ){ graph ->
                         AVLoading.stopAnimLoading()
                         if (graph.success) {
-                            graph(graph)
+                            activity?.runOnUiThread{ graph(graph) }
                         }
                     }
                 }
@@ -422,7 +418,7 @@ class SummaryFragment : Fragment() {
             ){ graph ->
                 AVLoading.stopAnimLoading()
                 if (graph.success) {
-                    graph(graph)
+                    activity?.runOnUiThread{ graph(graph) }
                 }
             }
         }
@@ -493,7 +489,7 @@ class SummaryFragment : Fragment() {
                     ){ graph ->
                         AVLoading.stopAnimLoading()
                         if (graph.success) {
-                            graph(graph)
+                            activity?.runOnUiThread{ graph(graph) }
                         }
                     }
                 }
@@ -530,7 +526,7 @@ class SummaryFragment : Fragment() {
             ){ graph ->
                 AVLoading.stopAnimLoading()
                 if (graph.success) {
-                    graph(graph)
+                    activity?.runOnUiThread{ graph(graph) }
                 }
             }
         }
@@ -605,7 +601,6 @@ class SummaryFragment : Fragment() {
             { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = Calendar.getInstance()
                 selectedDate.set(selectedYear, selectedMonth, selectedDay)
-                val selectedDateFormatted = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH")).format(selectedDate.time)
                 calendar.time = selectedDate.time
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
                 val startOfWeek = calendar.time
@@ -614,13 +609,13 @@ class SummaryFragment : Fragment() {
                 val startOfWeekFormatted = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH")).format(startOfWeek)
                 val endOfWeekFormatted = SimpleDateFormat("d MMMM yyyy", Locale("th", "TH")).format(endOfWeek)
                 val weekRangeText = "$startOfWeekFormatted - $endOfWeekFormatted"
+                Log.i("asjhdvakdbjlk","$startOfWeekFormatted - $endOfWeekFormatted")
                 binding.calendar.text = weekRangeText
             },
             year,
             month,
             day
         )
-
         datePickerDialog.show()
     }
 

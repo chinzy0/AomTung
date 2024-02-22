@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/sukhumvit_set_text"
             android:text="รายรับแน่นอน"
+            android:layout_marginStart="25dp"
             android:textColor="#064F6C"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,6 +31,7 @@
             android:text="เงินเดือน"
             android:textColor="#4C4C4C"
             android:textSize="13sp"
+            android:layout_marginStart="25dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView17" />
 
@@ -39,6 +41,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/sukhumvit_set_text"
             android:text="฿"
+            android:layout_marginEnd="25dp"
             android:textColor="#064F6C"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -63,6 +66,7 @@
             android:text="303030"
             android:textColor="#303030"
             android:textSize="11sp"
+            android:layout_marginEnd="25dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView24" />
 

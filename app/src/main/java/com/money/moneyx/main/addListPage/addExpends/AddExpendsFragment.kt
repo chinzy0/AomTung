@@ -105,13 +105,13 @@ class AddExpendsFragment(
         editAutoSaveExpends?.let { model ->
             val editAutoSaveExpendsAmount = editAutoSaveExpends?.amount?.replace(",", "")
             result = editAutoSaveExpendsAmount!!.toDouble()
-            categoryId = editAutoSaveExpends.category_id
-            typeID = editAutoSaveExpends.type_id
+            categoryId = model.category_id
+            typeID = model.type_id
             description = model.description
-            autoSaveID = editAutoSaveExpends.save_auto_id
-            categoryId = editAutoSaveExpends.category_id
-            description = editAutoSaveExpends.description
-            expendsID = editAutoSaveExpends.transaction_id
+            autoSaveID = model.save_auto_id
+            categoryId = model.category_id
+            description = model.description
+            expendsID = model.transaction_id
 
             val localDateTime = unixTimestampToLocalDateTime(model.timestamp)
             val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -159,13 +159,13 @@ class AddExpendsFragment(
         editExpends?.let { data ->
             val amount = editExpends.amount.replace(",", "")
             result = amount.toDouble()
-            categoryId = editExpends.category_id
-            typeID = editExpends.type_id
+            categoryId = data.category_id
+            typeID = data.type_id
             description = data.description
-            autoSaveID = editExpends.save_auto_id
-            categoryId = editExpends.category_id
-            description = editExpends.description
-            expendsID = editExpends.transaction_id
+            autoSaveID = data.save_auto_id
+            categoryId = data.category_id
+            description = data.description
+            expendsID = data.transaction_id
 
             val localDateTime = unixTimestampToLocalDateTime(data.timestamp)
             val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -202,7 +202,7 @@ class AddExpendsFragment(
                 noteText = ""
                 description = ""
             }
-            if (editExpends?.save_auto_id != 1 || editAutoSaveExpends?.save_auto_id != 1|| incomeExpends?.save_auto_id != 1) {
+            if (editExpends?.save_auto_id != 1 || editAutoSaveExpends?.save_auto_id != 1 || incomeExpends?.save_auto_id != 1) {
                 binding.autosaveButton.isEnabled = false
                 binding.textDate.isEnabled = false
                 binding.textTime.isEnabled = false
@@ -216,7 +216,6 @@ class AddExpendsFragment(
                 binding.img11.visibility = View.VISIBLE
                 binding.detail55.visibility = View.VISIBLE
                 binding.detail11.visibility = View.VISIBLE
-
                 if (listDate.isBefore(currentDate)) {
                     binding.autosaveButton.isEnabled = false
                     val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
@@ -224,7 +223,6 @@ class AddExpendsFragment(
                     binding.title5.setTextColor(textColor)
                     binding.img55.visibility = View.VISIBLE
                     binding.detail55.visibility = View.VISIBLE
-                    autoSaveID = 1
                 } else {
                     val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
                     binding.textTime5.setTextColor(textColor)
@@ -264,6 +262,7 @@ class AddExpendsFragment(
         } else {
             binding.deleteButton.visibility = View.GONE
         }
+        Log.i("asdkjghabskjd",autoSaveID.toString())
     }
 
 
@@ -389,7 +388,6 @@ class AddExpendsFragment(
                         }
                         addListAlertDialog(requireActivity())
                     } else if (edit) {
-                        autoSaveID = editAutoSaveExpends?.save_auto_id ?: editExpends?.save_auto_id ?: incomeExpends?.save_auto_id ?: 0
                         AVLoading.startAnimLoading()
                         viewModel.updateExpenses(
                             expends_id = expendsID,
