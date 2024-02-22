@@ -176,9 +176,11 @@ class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIn
                     HomeFragment.summary.value = Triple(data.totalBalance, data.totalIncome, data.totalExpenses)
                 }
                 data.report_month_list_income.map { reportMonthIncome ->
-                    val total = reportMonthIncome.total_Income_Certain.toFloat() + reportMonthIncome.total_Income_Uncertain.toFloat()
-                    incomeCertain = reportMonthIncome.total_Income_Certain.toDouble()
-                    incomeUnCertain = reportMonthIncome.total_Income_Uncertain.toDouble()
+                    val certainIncomeWithoutCommas = reportMonthIncome.total_Income_Certain.replace(",", "")
+                    val uncertainIncomeWithoutCommas = reportMonthIncome.total_Income_Uncertain.replace(",", "")
+                    val total = certainIncomeWithoutCommas.toFloat() + uncertainIncomeWithoutCommas.toFloat()
+                    incomeCertain = certainIncomeWithoutCommas.toDouble()
+                    incomeUnCertain = uncertainIncomeWithoutCommas.toDouble()
                     incomeCertainGraph = (incomeCertain / total * 100) * 0.01
                     incomeUnCertainGraph = (incomeUnCertain / total * 100) * 0.01
                     chart()

@@ -219,10 +219,11 @@ class ExpendsReportFragment(
                         Triple(data.totalBalance, data.totalIncome, data.totalExpenses)
                 }
                 data.report_month_list_Expenses.map { reportMonthExpends ->
-                    val total =
-                        reportMonthExpends.total_Expenses_Necessary.toFloat() + reportMonthExpends.total_Expenses_Unnecessary.toFloat()
-                    expensesNecessary = reportMonthExpends.total_Expenses_Necessary.toDouble()
-                    expensesUnNecessary = reportMonthExpends.total_Expenses_Unnecessary.toDouble()
+                    val totalExpensesNecessaryWithoutCommas = reportMonthExpends.total_Expenses_Necessary.replace(",", "")
+                    val totalExpensesUnnecessaryWithoutCommas = reportMonthExpends.total_Expenses_Unnecessary.replace(",", "")
+                    val total = totalExpensesNecessaryWithoutCommas.toFloat() + totalExpensesUnnecessaryWithoutCommas.toFloat()
+                    expensesNecessary = totalExpensesNecessaryWithoutCommas.toDouble()
+                    expensesUnNecessary = totalExpensesUnnecessaryWithoutCommas.toDouble()
                     expensesNecessaryGraph = (expensesNecessary / total * 100) * 0.01
                     expensesUnNecessaryGraph = (expensesUnNecessary / total * 100) * 0.01
                     chart()
