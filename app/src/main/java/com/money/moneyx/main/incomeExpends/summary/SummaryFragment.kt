@@ -207,8 +207,6 @@ class SummaryFragment : Fragment() {
                 currentDate = editable.toString()
                 unixTimeStart = convertDateWeekStringToUnixTime(binding.calendar.text.toString())
                 unixTimeEnd = convertDateEndWeekStringToUnixTime(binding.calendar.text.toString())
-                Log.i("askjdbgakhjsdbasd",unixTimeStart.toString())
-                Log.i("askjdbgakhjsdbasd",unixTimeEnd.toString())
                 AVLoading.startAnimLoading()
                 CoroutineScope(Dispatchers.Main).launch {
                     delay(300)

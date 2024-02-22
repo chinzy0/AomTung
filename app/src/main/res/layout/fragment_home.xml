@@ -84,6 +84,7 @@
                             android:textColor="@color/black"
                             android:textSize="25sp"
                             android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/imageView7"
                             app:layout_constraintTop_toBottomOf="@+id/textView12" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -131,13 +132,14 @@
 
                         <TextView
                             android:id="@+id/textIncomeTotal"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/sukhumvit_set_text"
                             android:text="@string/balance_money"
                             android:textColor="@color/black"
-                            android:textSize="15sp"
+                            app:autoSizeTextType="uniform"
                             android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="@+id/text176"
                             app:layout_constraintTop_toBottomOf="@+id/text176" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -174,13 +176,14 @@
 
                         <TextView
                             android:id="@+id/textExpendsTotal"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/sukhumvit_set_text"
                             android:text="@string/balance_money"
                             android:textColor="@color/black"
-                            android:textSize="15sp"
+                            app:autoSizeTextType="uniform"
                             android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="@+id/textView18"
                             app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
