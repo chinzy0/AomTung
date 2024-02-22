@@ -106,8 +106,8 @@ class AutoSaveFragment : Fragment() {
             }
         }
         binding.RcvAutoSave.apply {
-            layoutManager = LinearLayoutManager(context)
             adapter = autoSaveAdapter
+            layoutManager = LinearLayoutManager(context)
             autoSaveAdapter.notifyDataSetChanged()
         }
     }

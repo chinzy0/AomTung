@@ -22,6 +22,10 @@ import com.money.moneyx.main.homeScreen.HomeViewModel
 import com.money.moneyx.main.homeScreen.fragments.report.expendsReport.ExpendsReportFragment
 import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.IncomeReportFragment
 import com.money.moneyx.main.homeScreen.fragments.report.incomeReport.ReportMonth
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.YearMonth
 
@@ -46,6 +50,7 @@ class HomeFragment() : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
 
         }
+        setAPI()
     }
 
     override fun onCreateView(
@@ -56,7 +61,7 @@ class HomeFragment() : Fragment() {
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         binding.homeViewModel = viewModel
 
-        setAPI()
+
         changeColor()
 
         summary.observe(requireActivity(), Observer {
@@ -77,8 +82,7 @@ class HomeFragment() : Fragment() {
                 currentDateTime.monthValue.toString(),
                 currentDateTime.year.toString()
             ).toString()
-            ApiReport.endDateTime =
-                viewModel.convertEndDateTimeToUnixTimestamp(lastDayOfMonth.toString()).toString()
+            ApiReport.endDateTime = viewModel.convertEndDateTimeToUnixTimestamp(lastDayOfMonth.toString()).toString()
         } else {
             ApiReport.startDateTime = ApiReport.startDateTime
             ApiReport.endDateTime = ApiReport.endDateTime
@@ -86,19 +90,27 @@ class HomeFragment() : Fragment() {
 
 
         AVLoading.startAnimLoading()
-        viewModel.reportMonth(requireActivity(),ApiReport.startDateTime,ApiReport.endDateTime) { model ->
-            AVLoading.stopAnimLoading()
-            viewModel.reportMonth = model
-            model.data.map { data ->
-                activity?.runOnUiThread{
-                    summary.value = Triple(data.totalBalance, data.totalIncome, data.totalExpenses)
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(300)
+            viewModel.reportMonth(
+                requireActivity(),
+                ApiReport.startDateTime,
+                ApiReport.endDateTime
+            ) { model ->
+                AVLoading.stopAnimLoading()
+                viewModel.reportMonth = model
+                model.data.map { data ->
+                    activity?.runOnUiThread {
+                        summary.value = Triple(data.totalBalance, data.totalIncome, data.totalExpenses)
+                    }
                 }
-
+                fragmentSetup(model)
             }
-            fragmentSetup(model)
 
         }
+
     }
+
 
 
     private fun fragmentSetup(reportMonth: ReportMonth) {

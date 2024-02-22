@@ -135,8 +135,8 @@ class ExpendsReportFragment(
                 }
             }
             binding.RCVpastIncome.apply {
-                layoutManager = LinearLayoutManager(context)
                 adapter = expendsReportAdapter
+                layoutManager = LinearLayoutManager(context)
                 expendsReportAdapter.notifyDataSetChanged()
             }
 

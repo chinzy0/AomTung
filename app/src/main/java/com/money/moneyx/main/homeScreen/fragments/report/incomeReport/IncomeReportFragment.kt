@@ -57,8 +57,7 @@ class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIn
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_income_report, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_income_report, container, false)
         viewModel = ViewModelProvider(this)[IncomeViewModel::class.java]
         viewModelHome = ViewModelProvider(this)[HomeViewModel::class.java]
         binding.incomeViewModel = viewModel
@@ -115,8 +114,8 @@ class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIn
                 }
             }
             binding.RCVpastIncome.apply {
-                layoutManager = LinearLayoutManager(context)
                 adapter = incomeAdapter
+                layoutManager = LinearLayoutManager(context)
             }
 
             if (viewModel.incomeModel.isEmpty()) {
