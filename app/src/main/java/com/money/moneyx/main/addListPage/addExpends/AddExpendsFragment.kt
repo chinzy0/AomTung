@@ -71,6 +71,7 @@ class AddExpendsFragment(
     private lateinit var listDate: LocalDate
     private var formattedDate = ""
     private var formattedTime = ""
+    private var autoSaveName = ""
     private val onClickDialog = MutableLiveData<String>()
 
 
@@ -136,6 +137,7 @@ class AddExpendsFragment(
             binding.textTime3.text = model.category_name
             binding.textTime44.text = model.description
             binding.textTime5.text = model.save_auto_name
+            autoSaveName = model.save_auto_name
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
         }
@@ -161,6 +163,7 @@ class AddExpendsFragment(
             binding.textTime3.text = expends.category_name
             binding.textTime44.text = expends.description
             binding.textTime5.text = expends.save_auto_name
+            autoSaveName = expends.save_auto_name
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
         }
@@ -188,6 +191,7 @@ class AddExpendsFragment(
             binding.textTime3.text = data.category_name
             binding.textTime44.text = data.description
             binding.textTime5.text = data.save_auto_name
+            autoSaveName = data.save_auto_name
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
         }
@@ -212,42 +216,19 @@ class AddExpendsFragment(
                 description = ""
             }
             if (editExpends?.save_auto_id != 1 || editAutoSaveExpends?.save_auto_id != 1 || incomeExpends?.save_auto_id != 1) {
-                binding.autosaveButton.isEnabled = false
-                binding.textDate.isEnabled = false
-                binding.textTime.isEnabled = false
-                val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
-                binding.textTime5.setTextColor(textColor)
-                binding.title5.setTextColor(textColor)
-                binding.textTime.setTextColor(textColor)
-                binding.textDate.setTextColor(textColor)
-                binding.title.setTextColor(textColor)
-                binding.img55.visibility = View.VISIBLE
-                binding.img11.visibility = View.VISIBLE
-                binding.detail55.visibility = View.VISIBLE
-                binding.detail11.visibility = View.VISIBLE
-                if (listDate.isBefore(currentDate)) {
+                if (listDate.isBefore(currentDate)){
                     binding.autosaveButton.isEnabled = false
                     val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
                     binding.textTime5.setTextColor(textColor)
                     binding.title5.setTextColor(textColor)
                     binding.img55.visibility = View.VISIBLE
                     binding.detail55.visibility = View.VISIBLE
-                } else {
+                }else{
                     val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
                     binding.textTime5.setTextColor(textColor)
                     binding.title5.setTextColor(textColor)
-                    binding.autosaveButton.isEnabled = true
                     binding.img55.visibility = View.GONE
                     binding.detail55.visibility = View.GONE
-                    binding.detail11.visibility = View.GONE
-                    binding.img11.visibility = View.GONE
-                    binding.textDate.isEnabled = true
-                    binding.textTime.isEnabled = true
-                    binding.textTime5.setTextColor(textColor)
-                    binding.title5.setTextColor(textColor)
-                    binding.textTime.setTextColor(textColor)
-                    binding.textDate.setTextColor(textColor)
-                    binding.title.setTextColor(textColor)
                 }
             } else {
                 if (listDate.isBefore(currentDate)) {
@@ -299,32 +280,77 @@ class AddExpendsFragment(
                     dateTimeExpends(
                         requireActivity(),
                         binding.textDate.text.toString()
-                    ) { formattedDate ->
+                    ) { formatted ->
                         val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                        listDate = LocalDate.parse(formattedDate, dateFormat)
-                        binding.textDate.text = formattedDate
-                        if (listDate.isBefore(currentDate)) {
-                            binding.autosaveButton.isEnabled = false
-                            binding.textTime5.text = "ไม่มี"
-                            val textColor =
-                                ContextCompat.getColor(requireActivity(), R.color.disable)
-                            binding.textTime5.setTextColor(textColor)
-                            binding.title5.setTextColor(textColor)
-                            binding.img55.visibility = View.VISIBLE
-                            binding.detail55.visibility = View.VISIBLE
-                            autoSaveID = 1
-                        } else {
-                            val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
-                            binding.textTime5.setTextColor(textColor)
-                            binding.title5.setTextColor(textColor)
-                            binding.autosaveButton.isEnabled = true
-                            binding.img55.visibility = View.GONE
-                            binding.detail55.visibility = View.GONE
+                        listDate = LocalDate.parse(formatted, dateFormat)
+                        binding.textDate.text = formatted
+                        if (edit){
+                            if (formattedDate != binding.textDate.text) {
+                                binding.autosaveButton.isEnabled = false
+                                binding.textTime5.text = "ไม่มี"
+                                val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                                binding.textTime5.setTextColor(textColor)
+                                binding.title5.setTextColor(textColor)
+                                binding.img55.visibility = View.VISIBLE
+                                binding.detail55.visibility = View.VISIBLE
+                                autoSaveID = 1
+                                if (listDate.isBefore(currentDate)) {
+                                    binding.textTime5.text = "ไม่มี"
+                                    binding.autosaveButton.isEnabled = false
+                                    val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                                    binding.textTime5.setTextColor(textColor)
+                                    binding.title5.setTextColor(textColor)
+                                    binding.img55.visibility = View.VISIBLE
+                                    binding.detail55.visibility = View.VISIBLE
+                                    autoSaveID = 1
+                                } else {
+                                    val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
+                                    binding.textTime5.setTextColor(textColor)
+                                    binding.title5.setTextColor(textColor)
+                                    binding.autosaveButton.isEnabled = true
+                                    binding.img55.visibility = View.GONE
+                                    binding.detail55.visibility = View.GONE
+                                }
+                            }else{
+                                binding.textTime5.text = autoSaveName
+                                binding.autosaveButton.isEnabled = true
+                                val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
+                                binding.textTime5.setTextColor(textColor)
+                                binding.title5.setTextColor(textColor)
+                                binding.img55.visibility = View.GONE
+                                binding.detail55.visibility = View.GONE
+                                if (editExpends == null && editAutoSaveExpends == null){
+                                    autoSaveID = incomeExpends!!.save_auto_id
+                                }else if (editExpends == null && incomeExpends == null){
+                                    autoSaveID = editAutoSaveExpends!!.save_auto_id
+                                }else if (editAutoSaveExpends == null && incomeExpends == null){
+                                    autoSaveID = editExpends!!.save_auto_id
+                                }
+                            }
+                        }else{
+                            if (listDate.isBefore(currentDate)) {
+                                binding.textTime5.text = "ไม่มี"
+                                binding.autosaveButton.isEnabled = false
+                                val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                                binding.textTime5.setTextColor(textColor)
+                                binding.title5.setTextColor(textColor)
+                                binding.img55.visibility = View. GONE
+                                binding.detail55.visibility = View.GONE
+                                autoSaveID = 1
+                            } else {
+                                val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
+                                binding.textTime5.setTextColor(textColor)
+                                binding.title5.setTextColor(textColor)
+                                binding.autosaveButton.isEnabled = true
+                                binding.img55.visibility = View.GONE
+                                binding.detail55.visibility = View.GONE
+                            }
+                            dateTimeSelected = convertDateTimeToUnixTimestamp(
+                                formattedDate,
+                                binding.textTime.text.toString()
+                            )
+
                         }
-                        dateTimeSelected = convertDateTimeToUnixTimestamp(
-                            formattedDate,
-                            binding.textTime.text.toString()
-                        )
                         updateData()
                     }
                 }

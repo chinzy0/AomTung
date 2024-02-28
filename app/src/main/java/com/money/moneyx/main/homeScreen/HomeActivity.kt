@@ -56,6 +56,7 @@ class HomeActivity : AppCompatActivity() {
         val preferences = Preference.getInstance(this)
         idMember = preferences.getInt("idmember", 0)
 
+
         loadingScreen(this)
         changePage()
 
@@ -91,7 +92,11 @@ class HomeActivity : AppCompatActivity() {
         if (positionClick == "ProfilePage") {
             replaceFragment(ProfileFragment())
             binding.bottomNavigationView.selectedItemId = R.id.icon_profile
-        } else {
+        }else if (positionClick == "autoSave"){
+            replaceFragment(AutoSaveFragment())
+            binding.bottomNavigationView.selectedItemId = R.id.icon_autosave
+        }
+        else {
             replaceFragment(HomeFragment())
             binding.bottomNavigationView.selectedItemId = R.id.icon_home
         }

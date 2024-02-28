@@ -132,6 +132,7 @@ class AddIncomeFragment(
             binding.textTime3.text = model.category_name
             binding.textTime44.text = model.description
             binding.textTime5.text = model.save_auto_name
+            autoSaveName = model.save_auto_name
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
         }
@@ -158,6 +159,7 @@ class AddIncomeFragment(
             binding.textTime3.text = income.category_name
             binding.textTime44.text = income.description
             binding.textTime5.text = income.save_auto_name
+            autoSaveName = income.save_auto_name
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
         }
@@ -184,6 +186,7 @@ class AddIncomeFragment(
             binding.textTime3.text = data.category_name
             binding.textTime44.text = data.description
             binding.textTime5.text = data.save_auto_name
+            autoSaveName = data.save_auto_name
             binding.textDate.text = formattedDate
             binding.textTime.text = formattedTime
         }
@@ -208,36 +211,21 @@ class AddIncomeFragment(
                 description = ""
             }
             if (editIncome?.save_auto_id != 1 || editAutoSave?.save_auto_id != 1 || incomeExpends?.save_auto_id != 1) {
-                binding.autosaveButton.isEnabled = false
-                val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
-                binding.textTime5.setTextColor(textColor)
-                binding.title5.setTextColor(textColor)
-                binding.img55.visibility = View.VISIBLE
-                binding.detail55.visibility = View.VISIBLE
-                if (listDate.isBefore(currentDate)) {
+                if (listDate.isBefore(currentDate)){
                     binding.autosaveButton.isEnabled = false
                     val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
                     binding.textTime5.setTextColor(textColor)
                     binding.title5.setTextColor(textColor)
                     binding.img55.visibility = View.VISIBLE
                     binding.detail55.visibility = View.VISIBLE
-                } else {
+                }else{
                     val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
                     binding.textTime5.setTextColor(textColor)
                     binding.title5.setTextColor(textColor)
-                    binding.autosaveButton.isEnabled = true
                     binding.img55.visibility = View.GONE
                     binding.detail55.visibility = View.GONE
-                    binding.detail11.visibility = View.GONE
-                    binding.img11.visibility = View.GONE
-                    binding.textDate.isEnabled = true
-                    binding.textTime.isEnabled = true
-                    binding.textTime5.setTextColor(textColor)
-                    binding.title5.setTextColor(textColor)
-                    binding.textTime.setTextColor(textColor)
-                    binding.textDate.setTextColor(textColor)
-                    binding.title.setTextColor(textColor)
                 }
+
             } else {
                 if (listDate.isBefore(currentDate)) {
                     binding.autosaveButton.isEnabled = false
@@ -293,11 +281,6 @@ class AddIncomeFragment(
                         listDate = LocalDate.parse(formatted, dateFormat)
                         binding.textDate.text = formatted
                         if (edit){
-                            val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
-                            binding.textTime5.setTextColor(textColor)
-                            binding.title5.setTextColor(textColor)
-                            binding.img55.visibility = View.VISIBLE
-                            binding.detail55.visibility = View.VISIBLE
                             if (formattedDate != binding.textDate.text) {
                                 binding.autosaveButton.isEnabled = false
                                 binding.textTime5.text = "ไม่มี"
@@ -307,18 +290,48 @@ class AddIncomeFragment(
                                 binding.img55.visibility = View.VISIBLE
                                 binding.detail55.visibility = View.VISIBLE
                                 autoSaveID = 1
+                                if (listDate.isBefore(currentDate)) {
+                                    binding.textTime5.text = "ไม่มี"
+                                    binding.autosaveButton.isEnabled = false
+                                    val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                                    binding.textTime5.setTextColor(textColor)
+                                    binding.title5.setTextColor(textColor)
+                                    binding.img55.visibility = View.VISIBLE
+                                    binding.detail55.visibility = View.VISIBLE
+                                    autoSaveID = 1
+                                } else {
+                                    val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
+                                    binding.textTime5.setTextColor(textColor)
+                                    binding.title5.setTextColor(textColor)
+                                    binding.autosaveButton.isEnabled = true
+                                    binding.img55.visibility = View.GONE
+                                    binding.detail55.visibility = View.GONE
+                                }
                             }else{
-
+                                binding.textTime5.text = autoSaveName
+                                binding.autosaveButton.isEnabled = true
+                                val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
+                                binding.textTime5.setTextColor(textColor)
+                                binding.title5.setTextColor(textColor)
+                                binding.img55.visibility = View.GONE
+                                binding.detail55.visibility = View.GONE
+                                if (editIncome == null && editAutoSave == null){
+                                    autoSaveID = incomeExpends!!.save_auto_id
+                                }else if (editIncome == null && incomeExpends == null){
+                                    autoSaveID = editAutoSave!!.save_auto_id
+                                }else if (editAutoSave == null && incomeExpends == null){
+                                    autoSaveID = editIncome!!.save_auto_id
+                                }
                             }
                         }else{
                             if (listDate.isBefore(currentDate)) {
-                                binding.autosaveButton.isEnabled = false
                                 binding.textTime5.text = "ไม่มี"
+                                binding.autosaveButton.isEnabled = false
                                 val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
                                 binding.textTime5.setTextColor(textColor)
                                 binding.title5.setTextColor(textColor)
-                                binding.img55.visibility = View.VISIBLE
-                                binding.detail55.visibility = View.VISIBLE
+                                binding.img55.visibility = View. GONE
+                                binding.detail55.visibility = View.GONE
                                 autoSaveID = 1
                             } else {
                                 val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
@@ -332,9 +345,9 @@ class AddIncomeFragment(
                                 formattedDate,
                                 binding.textTime.text.toString()
                             )
-                            updateData()
-                        }
 
+                        }
+                        updateData()
                     }
                 }
 
