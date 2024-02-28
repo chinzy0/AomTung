@@ -89,6 +89,7 @@ class AddExpendsFragment(
         val preferences = Preference.getInstance(requireActivity())
         idMember = preferences.getInt("idmember", 0)
         Log.i("idMember", idMember.toString())
+        AddListScreenActivity.change.value = ""
 
         currentDate = LocalDate.now()
 
@@ -102,6 +103,16 @@ class AddExpendsFragment(
         return binding.root
     }
 
+    private fun checkHasChanged() {
+        if (result > 0 || categoryId != 0 || typeID != 0 || description != "" || autoSaveID != 0 || binding.textTime.text != viewModel.time
+            || binding.textDate.text != viewModel.date
+        ) {
+            AddListScreenActivity.change.value = "HasChanged"
+        } else {
+            AddListScreenActivity.change.value = ""
+        }
+    }
+
     private fun editIncomeData() {
         editAutoSaveExpends?.let { model ->
             val editAutoSaveExpendsAmount = editAutoSaveExpends?.amount?.replace(",", "")
@@ -110,7 +121,6 @@ class AddExpendsFragment(
             typeID = model.type_id
             description = model.description
             autoSaveID = model.save_auto_id
-            categoryId = model.category_id
             description = model.description
             expendsID = model.transaction_id
 
@@ -136,7 +146,6 @@ class AddExpendsFragment(
             typeID = expends.type_id
             description = expends.description
             autoSaveID = expends.save_auto_id
-            categoryId = expends.category_id
             description = expends.description
             expendsID = expends.transaction_id
 
@@ -164,7 +173,6 @@ class AddExpendsFragment(
             typeID = data.type_id
             description = data.description
             autoSaveID = data.save_auto_id
-            categoryId = data.category_id
             description = data.description
             expendsID = data.transaction_id
 
@@ -406,10 +414,7 @@ class AddExpendsFragment(
                         }
                         if (categoryId == 0) {
                             binding.textTime3.setTextColor(
-                                ContextCompat.getColor(
-                                    binding.root.context,
-                                    R.color.red
-                                )
+                                ContextCompat.getColor(binding.root.context, R.color.red)
                             )
                         } else {
                             binding.textTime3.setTextColor(
@@ -419,7 +424,7 @@ class AddExpendsFragment(
                                 )
                             )
                         }
-                        addListAlertDialog(requireActivity())
+                        addListAlertDialog(requireActivity(), "expends")
                     } else if (edit) {
                         AVLoading.startAnimLoading()
                         viewModel.updateExpenses(
@@ -499,6 +504,7 @@ class AddExpendsFragment(
                 }
             }
         }
+        checkHasChanged()
     }
 
 
@@ -535,12 +541,14 @@ class AddExpendsFragment(
         val buttonColor = ContextCompat.getColor(requireContext(), R.color.expends)
         binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
         binding.buttonAddExpends.isEnabled = true
+        AddListScreenActivity.change.value = "HasChanged"
     }
 
     private fun unableBtn() {
         val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
         binding.buttonAddExpends.backgroundTintList = ColorStateList.valueOf(buttonColor)
         binding.buttonAddExpends.isEnabled = false
+        AddListScreenActivity.change.value = ""
     }
 
     private fun changeColorBtn() {

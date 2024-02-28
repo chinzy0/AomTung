@@ -36,6 +36,7 @@ class AddListScreenActivity : AppCompatActivity() {
 
     companion object {
         val textResult = MutableLiveData<String>()
+        val change = MutableLiveData<String>()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +52,6 @@ class AddListScreenActivity : AppCompatActivity() {
         onBack()
         setEventClick()
 
-        Log.i("asdkalmdksadasd", edit)
     }
 
     private fun checkAddress() {
@@ -123,7 +123,9 @@ class AddListScreenActivity : AppCompatActivity() {
         binding.appbarAddListPage.imageView6.setOnClickListener {
             if (textResult.value != null && textResult.value!!.isNotEmpty()) {
                 showConfirmOnBack(this, onClickDialog)
-            } else {
+            }else if (change.value != null && change.value!!.isNotEmpty()){
+                showConfirmOnBack(this, onClickDialog)
+            }else {
                 onBackPressed()
             }
         }

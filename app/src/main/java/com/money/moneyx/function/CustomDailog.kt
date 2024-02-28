@@ -100,7 +100,7 @@ fun wrongOtpDialog(mContext: Activity, message: String) {
         dialog.dismiss()
     }
 }
-fun addListAlertDialog(mContext: Activity) {
+fun addListAlertDialog(mContext: Activity, s: String) {
     val dialog = Dialog(mContext)
     dialog.setCanceledOnTouchOutside(false)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -112,6 +112,16 @@ fun addListAlertDialog(mContext: Activity) {
     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     dialog.show()
     val ok = dialog.findViewById<TextView>(R.id.addlistOkButton)
+    val income = R.color.income
+    val expends = R.color.expends
+    if (s=="income"){
+        val resolvedColor = ContextCompat.getColor(mContext, income)
+        ok.backgroundTintList = ColorStateList.valueOf(resolvedColor)
+    }else{
+        val resolvedColor = ContextCompat.getColor(mContext, expends)
+        ok.backgroundTintList = ColorStateList.valueOf(resolvedColor)
+    }
+
     ok.setOnClickListener {
         dialog.dismiss()
     }

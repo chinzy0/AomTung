@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -17,6 +18,8 @@ import com.money.moneyx.data.Preference
 import com.money.moneyx.databinding.FragmentProfileBinding
 import com.money.moneyx.function.showExitDialog
 import com.money.moneyx.login.loginScreen.LoginActivity
+import com.money.moneyx.main.addListPage.AddListScreenActivity
+import com.money.moneyx.main.homeScreen.HomeActivity
 import com.money.moneyx.main.profile.editProfile.EditProfileActivity
 import com.money.moneyx.main.profile.security.SubmitPinActivity
 
@@ -31,16 +34,18 @@ class ProfileFragment : Fragment() {
     private var name = ""
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
+        activity?.onBackPressedDispatcher?.addCallback {
 
+        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
 
+    ): View? {
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_profile,
@@ -61,6 +66,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun addMenu() {
+        listMenu.clear()
         listMenu.add(ProfileModel(R.drawable.profile_menu, "ตั้งค่าบัญชี"))
         listMenu.add(ProfileModel(R.drawable.tel_profile, "หมายเลขโทรศัพท์"))
         listMenu.add(ProfileModel(R.drawable.security_profile, "รหัสผ่านและความปลอดภัย"))

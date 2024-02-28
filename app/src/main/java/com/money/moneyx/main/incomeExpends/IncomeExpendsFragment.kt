@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
@@ -21,9 +22,11 @@ class IncomeExpendsFragment : Fragment() {
     private lateinit var binding: FragmentIncomeExpendsBinding
     private val fragment = ArrayList<Fragment>()
     private lateinit var mPageAdapter: ViewPagerAdapter
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
+        activity?.onBackPressedDispatcher?.addCallback {
 
+        }
     }
 
     override fun onCreateView(

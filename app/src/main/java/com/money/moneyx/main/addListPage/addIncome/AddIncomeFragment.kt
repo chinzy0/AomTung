@@ -70,13 +70,12 @@ class AddIncomeFragment(
     private lateinit var listDate: LocalDate
     private var formattedDate = ""
     private var formattedTime = ""
+    private var autoSaveName = ""
     private var edit = false
     private val onClickDialog = MutableLiveData<String>()
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+
 
 
     override fun onCreateView(
@@ -91,6 +90,7 @@ class AddIncomeFragment(
         Log.i("IdMember", idMember.toString())
         currentDate = LocalDate.now()
 
+        AddListScreenActivity.change.value = ""
 
 
         setDateTime()
@@ -116,7 +116,6 @@ class AddIncomeFragment(
             typeID = model.type_id
             description = model.description
             autoSaveID = model.save_auto_id
-            categoryId = model.category_id
             description = model.description
             incomeID = model.transaction_id
 
@@ -143,7 +142,6 @@ class AddIncomeFragment(
             typeID = income.type_id
             description = income.description
             autoSaveID = income.save_auto_id
-            categoryId = income.category_id
             description = income.description
             incomeID = income.transaction_id
 
@@ -170,7 +168,6 @@ class AddIncomeFragment(
             typeID = data.type_id
             description = data.description
             autoSaveID = data.save_auto_id
-            categoryId = data.category_id
             description = data.description
             incomeID = data.transaction_id
 
@@ -212,18 +209,11 @@ class AddIncomeFragment(
             }
             if (editIncome?.save_auto_id != 1 || editAutoSave?.save_auto_id != 1 || incomeExpends?.save_auto_id != 1) {
                 binding.autosaveButton.isEnabled = false
-                binding.textDate.isEnabled = false
-                binding.textTime.isEnabled = false
                 val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
                 binding.textTime5.setTextColor(textColor)
                 binding.title5.setTextColor(textColor)
-                binding.textTime.setTextColor(textColor)
-                binding.textDate.setTextColor(textColor)
-                binding.title.setTextColor(textColor)
                 binding.img55.visibility = View.VISIBLE
-                binding.img11.visibility = View.VISIBLE
                 binding.detail55.visibility = View.VISIBLE
-                binding.detail11.visibility = View.VISIBLE
                 if (listDate.isBefore(currentDate)) {
                     binding.autosaveButton.isEnabled = false
                     val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
@@ -302,29 +292,49 @@ class AddIncomeFragment(
                         val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
                         listDate = LocalDate.parse(formatted, dateFormat)
                         binding.textDate.text = formatted
-                        if (listDate.isBefore(currentDate)) {
-                            binding.autosaveButton.isEnabled = false
-                            binding.textTime5.text = "ไม่มี"
-                            val textColor =
-                                ContextCompat.getColor(requireActivity(), R.color.disable)
+                        if (edit){
+                            val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
                             binding.textTime5.setTextColor(textColor)
                             binding.title5.setTextColor(textColor)
                             binding.img55.visibility = View.VISIBLE
                             binding.detail55.visibility = View.VISIBLE
-                            autoSaveID = 1
-                        } else {
-                            val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
-                            binding.textTime5.setTextColor(textColor)
-                            binding.title5.setTextColor(textColor)
-                            binding.autosaveButton.isEnabled = true
-                            binding.img55.visibility = View.GONE
-                            binding.detail55.visibility = View.GONE
+                            if (formattedDate != binding.textDate.text) {
+                                binding.autosaveButton.isEnabled = false
+                                binding.textTime5.text = "ไม่มี"
+                                val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                                binding.textTime5.setTextColor(textColor)
+                                binding.title5.setTextColor(textColor)
+                                binding.img55.visibility = View.VISIBLE
+                                binding.detail55.visibility = View.VISIBLE
+                                autoSaveID = 1
+                            }else{
+
+                            }
+                        }else{
+                            if (listDate.isBefore(currentDate)) {
+                                binding.autosaveButton.isEnabled = false
+                                binding.textTime5.text = "ไม่มี"
+                                val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
+                                binding.textTime5.setTextColor(textColor)
+                                binding.title5.setTextColor(textColor)
+                                binding.img55.visibility = View.VISIBLE
+                                binding.detail55.visibility = View.VISIBLE
+                                autoSaveID = 1
+                            } else {
+                                val textColor = ContextCompat.getColor(requireActivity(), R.color.black)
+                                binding.textTime5.setTextColor(textColor)
+                                binding.title5.setTextColor(textColor)
+                                binding.autosaveButton.isEnabled = true
+                                binding.img55.visibility = View.GONE
+                                binding.detail55.visibility = View.GONE
+                            }
+                            dateTimeSelected = convertDateTimeToUnixTimestamp(
+                                formattedDate,
+                                binding.textTime.text.toString()
+                            )
+                            updateData()
                         }
-                        dateTimeSelected = convertDateTimeToUnixTimestamp(
-                            formattedDate,
-                            binding.textTime.text.toString()
-                        )
-                        updateData()
+
                     }
                 }
 
@@ -426,7 +436,7 @@ class AddIncomeFragment(
                                 )
                             )
                         }
-                        addListAlertDialog(requireActivity())
+                        addListAlertDialog(requireActivity(),"income")
                     } else if (edit) {
                         AVLoading.startAnimLoading()
                         viewModel.updateIncome(
@@ -504,6 +514,17 @@ class AddIncomeFragment(
                 }
             }
         }
+        checkHasChanged()
+    }
+
+    private fun checkHasChanged() {
+        if (result > 0 || categoryId != 0 || typeID != 0 || description != "" || autoSaveID != 0 || binding.textTime.text != viewModel.time
+            || binding.textDate.text != viewModel.date
+        ) {
+            AddListScreenActivity.change.value = "HasChanged"
+        } else {
+            AddListScreenActivity.change.value = ""
+        }
     }
 
 
@@ -517,12 +538,14 @@ class AddIncomeFragment(
         val buttonColor = ContextCompat.getColor(requireContext(), R.color.income)
         binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
         binding.buttonAddIncome.isEnabled = true
+        AddListScreenActivity.change.value = "HasChanged"
     }
 
     private fun unableBtn() {
         val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
         binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
         binding.buttonAddIncome.isEnabled = false
+        AddListScreenActivity.change.value = ""
     }
 
     private val resultActivityAppointment =

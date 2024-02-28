@@ -35,7 +35,6 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var viewModel: HomeViewModel
     private var positionClick = ""
     private var idMember = 0
-    private val handler = Handler(Looper.getMainLooper())
     companion object {
         var getAllTypeIncomeData: GetAllTypeIncome? = null
         var getAllCategoryincome: GetAllCategoryincome? = null

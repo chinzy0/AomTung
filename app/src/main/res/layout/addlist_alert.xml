@@ -44,7 +44,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="45dp"
                 android:paddingVertical="5dp"
-                android:text="@string/okay"
+                android:text="@string/ok"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:background="@drawable/border_radius"
