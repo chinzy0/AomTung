@@ -89,16 +89,27 @@ class HomeActivity : AppCompatActivity() {
             true
         }
 
-        if (positionClick == "ProfilePage") {
-            replaceFragment(ProfileFragment())
-            binding.bottomNavigationView.selectedItemId = R.id.icon_profile
-        }else if (positionClick == "autoSave"){
-            replaceFragment(AutoSaveFragment())
-            binding.bottomNavigationView.selectedItemId = R.id.icon_autosave
-        }
-        else {
-            replaceFragment(HomeFragment())
-            binding.bottomNavigationView.selectedItemId = R.id.icon_home
+        when (positionClick) {
+            "ProfilePage" -> {
+                replaceFragment(ProfileFragment())
+                binding.bottomNavigationView.selectedItemId = R.id.icon_profile
+            }
+            "incomeExpends" -> {
+                replaceFragment(IncomeExpendsFragment())
+                binding.bottomNavigationView.selectedItemId = R.id.icon_income
+            }
+            "editAutoSave" -> {
+                replaceFragment(AutoSaveFragment())
+                binding.bottomNavigationView.selectedItemId = R.id.icon_autosave
+            }
+            "editIncome" -> {
+                replaceFragment(AutoSaveFragment())
+                binding.bottomNavigationView.selectedItemId = R.id.icon_home
+            }
+            else -> {
+                replaceFragment(HomeFragment())
+                binding.bottomNavigationView.selectedItemId = R.id.icon_home
+            }
         }
 
         binding.fab.setOnClickListener {

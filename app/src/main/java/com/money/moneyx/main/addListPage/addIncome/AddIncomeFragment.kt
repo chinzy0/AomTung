@@ -71,6 +71,7 @@ class AddIncomeFragment(
     private var formattedDate = ""
     private var formattedTime = ""
     private var autoSaveName = ""
+    private var position = ""
     private var edit = false
     private val onClickDialog = MutableLiveData<String>()
 
@@ -249,6 +250,14 @@ class AddIncomeFragment(
             binding.deleteButton.visibility = View.GONE
         }
 
+        if (editIncome == null && editAutoSave == null){
+            position = "incomeExpends"
+        }else if (editIncome == null && incomeExpends == null){
+            position = "editAutoSave"
+        }else if (editAutoSave == null && incomeExpends == null){
+            position = "editIncome"
+        }
+
     }
 
 
@@ -283,13 +292,19 @@ class AddIncomeFragment(
                         if (edit){
                             if (formattedDate != binding.textDate.text) {
                                 binding.autosaveButton.isEnabled = false
-                                binding.textTime5.text = "ไม่มี"
+                                binding.textTime5.text = autoSaveName
                                 val textColor = ContextCompat.getColor(requireActivity(), R.color.disable)
                                 binding.textTime5.setTextColor(textColor)
                                 binding.title5.setTextColor(textColor)
                                 binding.img55.visibility = View.VISIBLE
                                 binding.detail55.visibility = View.VISIBLE
-                                autoSaveID = 1
+                                if (editIncome == null && editAutoSave == null){
+                                    autoSaveID = incomeExpends!!.save_auto_id
+                                }else if (editIncome == null && incomeExpends == null){
+                                    autoSaveID = editAutoSave!!.save_auto_id
+                                }else if (editAutoSave == null && incomeExpends == null){
+                                    autoSaveID = editIncome!!.save_auto_id
+                                }
                                 if (listDate.isBefore(currentDate)) {
                                     binding.textTime5.text = "ไม่มี"
                                     binding.autosaveButton.isEnabled = false
@@ -463,7 +478,7 @@ class AddIncomeFragment(
                         ) { updateIncome ->
                             AVLoading.stopAnimLoading()
                             if (updateIncome.data.is_Updated) {
-                                activity?.runOnUiThread { showSuccessDialog() }
+                                activity?.runOnUiThread { showSuccessDialog(position) }
                             } else {
                             }
                         }
@@ -480,7 +495,7 @@ class AddIncomeFragment(
                         ) { model ->
                             AVLoading.stopAnimLoading()
                             if (model.success) {
-                                activity?.runOnUiThread { showSuccessDialog() }
+                                activity?.runOnUiThread { showSuccessDialog(position) }
                             } else {
                             }
                         }
@@ -659,7 +674,7 @@ class AddIncomeFragment(
         return 0L
     }
 
-    private fun showSuccessDialog() {
+    private fun showSuccessDialog(position: String) {
         val dialog = Dialog(requireActivity())
         dialog.setCanceledOnTouchOutside(false)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -674,6 +689,7 @@ class AddIncomeFragment(
         ok.setOnClickListener {
             val intent = Intent(requireActivity(), HomeActivity::class.java)
             AddListScreenActivity.textResult.value = ""
+            intent.putExtra("positionClick", position)
             startActivity(intent)
         }
     }
