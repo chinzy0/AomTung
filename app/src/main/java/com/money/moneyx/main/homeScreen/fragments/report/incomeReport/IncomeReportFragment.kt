@@ -2,6 +2,7 @@ package com.money.moneyx.main.homeScreen.fragments.report.incomeReport
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -93,10 +94,12 @@ class IncomeReportFragment(private val reportMonthListIncome: List<ReportMonthIn
         val pieChart = binding.pieChartIncome
         val color1 = ContextCompat.getColor(requireContext(), R.color.income_chart_1)
         val color2 = ContextCompat.getColor(requireContext(), R.color.income_chart_2)
+        val roundedIncomeCertainGraph = String.format("%.5f", incomeCertainGraph).toFloat()
+        val roundedIncomeUnCertainGraph = String.format("%.5f", incomeUnCertainGraph).toFloat()
         pieChart.apply {
             slices = listOf(
-                PieChart.Slice(incomeCertainGraph.toFloat(), color2, legend = "รายรับแน่นอน"),
-                PieChart.Slice(incomeUnCertainGraph.toFloat(), color1, legend = "รายรับไม่แน่นอน"),
+                PieChart.Slice(roundedIncomeCertainGraph, color2, legend = "รายรับแน่นอน"),
+                PieChart.Slice(roundedIncomeUnCertainGraph, color1, legend = "รายรับไม่แน่นอน"),
             )
         }
     }

@@ -93,14 +93,13 @@ class ExpendsReportFragment(
         val pieChart = binding.pieChartExpends
         val color1 = ContextCompat.getColor(requireContext(), R.color.expends_chart_1)
         val color2 = ContextCompat.getColor(requireContext(), R.color.expends_chart_2)
+        val roundedExpensesNecessaryGraph = String.format("%.5f", expensesNecessaryGraph).toFloat()
+        val roundedExpensesUnNecessaryGraph = String.format("%.5f", expensesUnNecessaryGraph).toFloat()
 
         pieChart.apply {
             slices = listOf(
-                PieChart.Slice(expensesNecessaryGraph.toFloat(), color2, legend = "รายจ่ายจำเป็น"),
-                PieChart.Slice(
-                    expensesUnNecessaryGraph.toFloat(),
-                    color1,
-                    legend = "รายจ่ายไม่จำเป็น"
+                PieChart.Slice(roundedExpensesNecessaryGraph, color2, legend = "รายจ่ายจำเป็น"),
+                PieChart.Slice(roundedExpensesUnNecessaryGraph, color1, legend = "รายจ่ายไม่จำเป็น"
                 )
             )
 

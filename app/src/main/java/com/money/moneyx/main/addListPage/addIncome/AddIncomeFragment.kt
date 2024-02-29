@@ -495,7 +495,7 @@ class AddIncomeFragment(
                         ) { model ->
                             AVLoading.stopAnimLoading()
                             if (model.success) {
-                                activity?.runOnUiThread { showSuccessDialog(position) }
+                                activity?.runOnUiThread { showSuccessDialog("") }
                             } else {
                             }
                         }
@@ -616,10 +616,8 @@ class AddIncomeFragment(
                     try {
                         var resultValue = s.toString().toDouble()
                         if (resultValue > 0) {
-                            val buttonColor =
-                                ContextCompat.getColor(requireContext(), R.color.income)
-                            binding.buttonAddIncome.backgroundTintList =
-                                ColorStateList.valueOf(buttonColor)
+                            val buttonColor = ContextCompat.getColor(requireContext(), R.color.income)
+                            binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
                             binding.buttonAddIncome.isEnabled = true
                             if (s!!.length > 13) {
                                 val truncatedText = s.toString().substring(0, 13)
@@ -636,15 +634,17 @@ class AddIncomeFragment(
                                 if (s.length > 10) {
                                     val truncatedText = s.toString().substring(0, 10)
                                     binding.textResult.setText(truncatedText)
+                                    resultValue = truncatedText.toDouble()
                                     binding.textResult.setSelection(truncatedText.length)
                                 }
                             }
+                            if (resultValue > 9999999999.99) {
+                                resultValue = 9999999999.99
+                            }
                             result = resultValue
                         } else {
-                            val buttonColor =
-                                ContextCompat.getColor(requireContext(), R.color.button_disable)
-                            binding.buttonAddIncome.backgroundTintList =
-                                ColorStateList.valueOf(buttonColor)
+                            val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
+                            binding.buttonAddIncome.backgroundTintList = ColorStateList.valueOf(buttonColor)
                             binding.buttonAddIncome.isEnabled = false
                         }
                         AddListScreenActivity.textResult.value = s.toString()

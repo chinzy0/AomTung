@@ -496,7 +496,7 @@ class AddExpendsFragment(
                         ) { model ->
                             AVLoading.stopAnimLoading()
                             if (model.success) {
-                                activity?.runOnUiThread { showSuccessDialog(position) }
+                                activity?.runOnUiThread { showSuccessDialog("") }
                                 edit = false
                             } else {
 
@@ -623,13 +623,16 @@ class AddExpendsFragment(
                                 if (s.length > 10) {
                                     val truncatedText = s.toString().substring(0, 10)
                                     binding.textTv.setText(truncatedText)
+                                    resultValue = truncatedText.toDouble()
                                     binding.textTv.setSelection(truncatedText.length)
                                 }
                             }
+                            if (resultValue > 9999999999.99) {
+                                resultValue = 9999999999.99
+                            }
                             result = resultValue
                         } else {
-                            val buttonColor =
-                                ContextCompat.getColor(requireContext(), R.color.button_disable)
+                            val buttonColor = ContextCompat.getColor(requireContext(), R.color.button_disable)
                             binding.buttonAddExpends.backgroundTintList =
                                 ColorStateList.valueOf(buttonColor)
                             binding.buttonAddExpends.isEnabled = false
